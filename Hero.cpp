@@ -3,6 +3,7 @@
 #include "data/GIFCenter.h"
 #include "algif5/algif.h"
 #include "shapes/Rectangle.h"
+#include <cmath>
 using namespace std;
 
 namespace HeroSetting{
@@ -46,23 +47,34 @@ void Hero::draw(){
 
 void Hero::update(){
     DataCenter *DC = DataCenter::get_instance();
-    if(DC->key_state[ALLEGRO_KEY_UP] ){
-        shape->update_center_y(shape->center_y() - speed);
+    float dx = 0, dy = 0;
+    if(DC->key_state[ALLEGRO_KEY_UP] || DC->key_state[ALLEGRO_KEY_W]){
         state = HeroState::BACK;
+        dy -= 1;
     }
-    else if(DC->key_state[ALLEGRO_KEY_LEFT] || DC->key_state[ALLEGRO_KEY_A]){
-        shape->update_center_x(shape->center_x() - speed);
+    if(DC->key_state[ALLEGRO_KEY_LEFT] || DC->key_state[ALLEGRO_KEY_A]){
         state = HeroState::LEFT;
+        dx -= 1;
     }
-    else if(DC->key_state[ALLEGRO_KEY_DOWN] || DC->key_state[ALLEGRO_KEY_S]){
-        shape->update_center_y(shape->center_y() + speed);
+    if(DC->key_state[ALLEGRO_KEY_DOWN] || DC->key_state[ALLEGRO_KEY_S]){
         state = HeroState::FRONT;
+        dy += 1;
     }
-    else if(DC->key_state[ALLEGRO_KEY_RIGHT] || DC->key_state[ALLEGRO_KEY_D]){
-        shape->update_center_x(shape->center_x() + speed);
+    if(DC->key_state[ALLEGRO_KEY_RIGHT] || DC->key_state[ALLEGRO_KEY_D]){
         state = HeroState::RIGHT;
+        dx += 1;
     }
-     // 2. 用 hero 中心來更新攝影機位置（世界座標 -> 視窗中心）
+    //normalization
+    float length = sqrt(dx*dx + dy*dy);
+    if(length > 0){
+        dx /= length;
+        dy /= length;
+        shape->update_center_x(shape->center_x() + dx * speed);
+        shape->update_center_y(shape->center_y() + dy * speed);
+    }
+
+
+    // 2. 用 hero 中心來更新攝影機位置（世界座標 -> 視窗中心）
     float hero_cx = shape->center_x();
     float hero_cy = shape->center_y();
 
