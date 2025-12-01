@@ -4,6 +4,7 @@
 #include "../towers/Tower.h"
 #include "../towers/Bullet.h"
 #include "../Player.h"
+#include "../Hero.h"
 
 void OperationCenter::update() {
 	// Update monsters.
@@ -16,6 +17,8 @@ void OperationCenter::update() {
 	_update_monster_towerBullet();
 	// If any monster reaches the end, hurt the player and delete the monster.
 	_update_monster_player();
+
+	_update_monster_hero();
 }
 
 void OperationCenter::_update_monster() {
@@ -83,6 +86,16 @@ void OperationCenter::_update_monster_player() {
 			monsters.erase(monsters.begin() + i);
 			player->HP--;
 			--i;
+		}
+	}
+}
+
+void OperationCenter::_update_monster_hero(){
+	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Monster *> &monsters = DC->monsters;
+	for(size_t i=0; i<monsters.size(); i++){
+		if(monsters[i]->shape->overlap(*(DC->hero->shape))){
+			monsters[i]->HP = 0;
 		}
 	}
 }

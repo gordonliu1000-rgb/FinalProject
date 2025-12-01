@@ -12,7 +12,7 @@ class Level;
 class Monster;
 class Tower;
 class Bullet;
-
+class Hero;
 /**
  * @brief Stores generic global data and relatively small data structures.
  * @details The globally used data such as FPS (frames per second), windows size, game region, and states of input devices (mouse and keyboard).
@@ -22,6 +22,8 @@ class Bullet;
 class DataCenter
 {
 public:
+	float camera_x;
+	float camera_y;
 	static DataCenter *get_instance() {
 		static DataCenter DC;
 		return &DC;
@@ -92,6 +94,8 @@ public:
 	 * @see Bullet
 	 */
 	std::vector<Bullet*> towerBullets;
+
+	Hero *hero;
 private:
 	DataCenter();
 };
