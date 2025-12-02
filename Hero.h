@@ -17,7 +17,6 @@ class Hero : public Object{
         void init();
         void update();
         void draw();
-    
     private:
         HeroState state = HeroState::FRONT;
         double speed = 5;

@@ -217,7 +217,7 @@ Game::game_update() {
 		ui->update();
 		DC->hero->update();
 		if(state != STATE::START) {
-			DC->level->update();
+			// DC->level->update();
 			OC->update();
 		}
 	}
@@ -240,48 +240,35 @@ Game::game_draw() {
     al_clear_to_color(al_map_rgb(100, 100, 100));
 
     if (state != STATE::END) {
+		// 2. 設定「世界座標」攝影機 transform，鏡頭位置用 DC->camera_x/y
+		ALLEGRO_TRANSFORM world;
+		al_identity_transform(&world);                                   // 單位矩陣[web:25][web:34]
+		al_translate_transform(&world, -DC->camera_x, -DC->camera_y);    // 製作世界往反方向平移矩陣[web:25][web:37]
+		al_use_transform(&world);
 
-    // 2. 設定「世界座標」攝影機 transform，鏡頭位置用 DC->camera_x/y
-    ALLEGRO_TRANSFORM world;
-    al_identity_transform(&world);                                   // 單位矩陣[web:25][web:34]
-    al_translate_transform(&world, -DC->camera_x, -DC->camera_y);    // 世界往反方向平移[web:25][web:37]
-    al_use_transform(&world);
+		// 3. 在世界座標下畫「會跟著鏡頭動」的東西：背景、地圖、hero、OC
+		// 背景（放大 2 倍）
+		al_draw_scaled_bitmap(background, 
+			0, 0,
+			DC->game_field_length, DC->game_field_length, 
+			0, 0,
+			DC->game_field_length * 2.0, DC->game_field_length * 2.0, 
+			0);
 
-    // 3. 在世界座標下畫「會跟著鏡頭動」的東西：背景、地圖、hero、OC
-    // 背景（放大 2 倍）
-    al_draw_scaled_bitmap(background,0, 0,DC->game_field_length, DC->game_field_length,0, 0,DC->game_field_length * 2.0, 
-		DC->game_field_length * 2.0, 0);
+		if (state != STATE::START) {
+			DC->level->draw();   // 這裡的座標都當「世界座標」
+			DC->hero->draw();    // Hero::draw 用 shape->center_x()/y() 就好
+			OC->draw();          // 若是遊戲物件（不是 UI），放這裡
+		}
 
-        // 若你仍要灰色補邊，這裡也會跟著鏡頭動（可視需求保留或刪掉）
-        /*if (DC->game_field_length < DC->window_width) {
-            al_draw_filled_rectangle(
-                DC->game_field_length, 0,
-                DC->window_width, DC->window_height,
-                al_map_rgb(100, 100, 100)
-            );
-        }
-        if (DC->game_field_length < DC->window_height) {
-            al_draw_filled_rectangle(
-                0, DC->game_field_length,
-                DC->window_width, DC->window_height,
-                al_map_rgb(100, 100, 100)
-            );
-        }
-		*/
-    if (state != STATE::START) {
-        DC->level->draw();   // 這裡的座標都當「世界座標」
-        DC->hero->draw();    // Hero::draw 用 shape->center_x()/y() 就好
-        OC->draw();          // 若是遊戲物件（不是 UI），放這裡
-    }
+		// 4. 畫 UI：改回「螢幕座標」，不跟鏡頭動
+		ALLEGRO_TRANSFORM ui_trans;
+		al_identity_transform(&ui_trans);
+		al_use_transform(&ui_trans);
 
-    // 4. 畫 UI：改回「螢幕座標」，不跟鏡頭動
-    ALLEGRO_TRANSFORM ui_trans;
-        al_identity_transform(&ui_trans);
-        al_use_transform(&ui_trans);
-
-        if (state != STATE::START) {
-            ui->draw();          // UI 用視窗座標，例如 (10,10)
-        }
+		if (state != STATE::START) {
+			ui->draw();          // UI 用視窗座標，例如 (10,10)
+		}
     }
 
     // 5. 疊加狀態畫面（此時已是螢幕座標）

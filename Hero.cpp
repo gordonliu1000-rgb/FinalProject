@@ -78,6 +78,7 @@ void Hero::update(){
     float hero_cx = shape->center_x();
     float hero_cy = shape->center_y();
 
+    //Camera左上角的座標
     DC->camera_x = hero_cx - DC->window_width  / 2.0f;
     DC->camera_y = hero_cy - DC->window_height / 2.0f;
 
