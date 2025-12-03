@@ -73,25 +73,4 @@ void Hero::update(){
         shape->update_center_y(shape->center_y() + dy * speed);
     }
 
-
-    // 2. 用 hero 中心來更新攝影機位置（世界座標 -> 視窗中心）
-    float hero_cx = shape->center_x();
-    float hero_cy = shape->center_y();
-
-    //Camera左上角的座標
-    DC->camera_x = hero_cx - DC->window_width  / 2.0f;
-    DC->camera_y = hero_cy - DC->window_height / 2.0f;
-
-    // 3. 限制攝影機不要超出地圖邊界（假設地圖是 game_field_length*2）
-    float map_w = DC->game_field_length * 2.0f;
-    float map_h = DC->game_field_length * 2.0f;
-
-    if (DC->camera_x < 0) DC->camera_x = 0;
-    if (DC->camera_y < 0) DC->camera_y = 0;
-    if (DC->camera_x > map_w - DC->window_width)
-        DC->camera_x = map_w - DC->window_width;
-    if (DC->camera_y > map_h - DC->window_height)
-        DC->camera_y = map_h - DC->window_height;
-
 }
-//|| DC->key_state[ALLEGRO_KEY_W]

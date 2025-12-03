@@ -13,6 +13,7 @@ class Monster;
 class Tower;
 class Bullet;
 class Hero;
+class Camera;
 /**
  * @brief Stores generic global data and relatively small data structures.
  * @details The globally used data such as FPS (frames per second), windows size, game region, and states of input devices (mouse and keyboard).
@@ -34,7 +35,7 @@ public:
 	 * @brief The width and height of game area (not window size). That is, the region excludes menu region.
 	 * @details The game area is sticked to the top-left of the display window.
 	 */
-	int game_field_length;
+	int game_field_length, game_field_width;
 	/**
 	 * @brief Stores the keyboard state whether a key is being pressed.
 	 * @details The states will be updated once a key is pressed, asynchronously with frame update.
@@ -79,6 +80,11 @@ public:
 	 * @see Level
 	 */
 	Level *level;
+
+	Hero *hero;
+
+	Camera *camera;
+
 	/**
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
@@ -95,7 +101,7 @@ public:
 	 */
 	std::vector<Bullet*> towerBullets;
 
-	Hero *hero;
+	
 private:
 	DataCenter();
 };

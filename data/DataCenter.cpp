@@ -6,13 +6,17 @@
 #include "../towers/Tower.h"
 #include "../towers/Bullet.h"
 #include "../Hero.h"
+#include "../Camera.h"
 
 // fixed settings
 namespace DataSetting {
 	constexpr double FPS = 60;
 	constexpr int window_width = 800;
 	constexpr int window_height = 600;
+	constexpr int backgorund_width = 800;
+	constexpr int backgorund_height = 600;
 	constexpr int game_field_length = 600;
+	constexpr int game_field_width = 1200;
 }
 
 DataCenter::DataCenter() {
@@ -20,6 +24,7 @@ DataCenter::DataCenter() {
 	this->window_width = DataSetting::window_width;
 	this->window_height = DataSetting::window_height;
 	this->game_field_length = DataSetting::game_field_length;
+	this->game_field_width = DataSetting::game_field_width;
 	memset(key_state, false, sizeof(key_state));
 	memset(prev_key_state, false, sizeof(prev_key_state));
 	mouse = Point(0, 0);
@@ -28,6 +33,7 @@ DataCenter::DataCenter() {
 	player = new Player();
 	level = new Level();
 	hero = new Hero();
+	camera = Camera::get_instance();
 }
 
 DataCenter::~DataCenter() {

@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Hero.h"
+#include "Camera.h"
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -15,6 +16,7 @@
 #include <allegro5/allegro_acodec.h>
 #include <vector>
 #include <cstring>
+#include "WorldCoordinate.h"
 
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
@@ -140,8 +142,8 @@ Game::game_init() {
 	ui->init();
 
 	DC->level->init();
-
 	DC->hero->init();
+	DC->camera->init();
 
 	// game start
 	background = IC->get(background_img_path);
@@ -216,8 +218,9 @@ Game::game_update() {
 		SC->update();
 		ui->update();
 		DC->hero->update();
+		DC->camera->update();
 		if(state != STATE::START) {
-			// DC->level->update();
+			DC->level->update();
 			OC->update();
 		}
 	}
@@ -241,10 +244,7 @@ Game::game_draw() {
 
     if (state != STATE::END) {
 		// 2. 設定「世界座標」攝影機 transform，鏡頭位置用 DC->camera_x/y
-		ALLEGRO_TRANSFORM world;
-		al_identity_transform(&world);                                   // 單位矩陣[web:25][web:34]
-		al_translate_transform(&world, -DC->camera_x, -DC->camera_y);    // 製作世界往反方向平移矩陣[web:25][web:37]
-		al_use_transform(&world);
+		WorldCoordinate::switch_to_world_coordinate();
 
 		// 3. 在世界座標下畫「會跟著鏡頭動」的東西：背景、地圖、hero、OC
 		// 背景（放大 2 倍）
@@ -262,9 +262,7 @@ Game::game_draw() {
 		}
 
 		// 4. 畫 UI：改回「螢幕座標」，不跟鏡頭動
-		ALLEGRO_TRANSFORM ui_trans;
-		al_identity_transform(&ui_trans);
-		al_use_transform(&ui_trans);
+		WorldCoordinate::switch_to_camera_coordinate();
 
 		if (state != STATE::START) {
 			ui->draw();          // UI 用視窗座標，例如 (10,10)
