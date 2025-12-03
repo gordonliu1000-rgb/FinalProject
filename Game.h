@@ -8,6 +8,11 @@
  * @brief Main class that runs the whole game.
  * @details All game procedures must be processed through this class.
  */
+
+struct Button{
+	float x, y, w, h;
+};
+
 class Game
 {
 public:
@@ -18,6 +23,10 @@ public:
 	void game_init();
 	bool game_update();
 	void game_draw();
+	bool show_help_menu;
+	Button start_btn;
+	Button help_btn;
+	Button quit_btn;
 private:
 	/**
 	 * @brief States of the game process in game_update.
