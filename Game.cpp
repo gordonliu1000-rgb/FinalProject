@@ -145,6 +145,18 @@ Game::game_init() {
 	DC->hero->init();
 	DC->camera->init();
 
+	show_help_menu = false;
+
+	float cx = DC->window_width / 2.0f;
+	float cy = DC->window_height / 2.0f;
+	float bw = 200.0f;
+	float bh = 50.0f;
+	float gap = 20.0f;
+
+	start_btn = { cx - bw/2, cy - bh - gap, bw, bh };
+	help_btn = { cx - bw/2, cy, bw, bh };
+	quit_btn = { cx - bw/2, cy + bh + gap, bw, bh };
+
 	// game start
 	background = IC->get(background_img_path);
 	debug_log("Game state: change to START\n");
@@ -174,11 +186,40 @@ Game::game_update() {
 				DC->level->load_level(1);
 				is_played = true;
 			}
+			// mouse push left button
+			bool mouse_down = DC->mouse_state[1];
+			bool mouse_prev = DC->prev_key_state[1];
+			float mx = DC->mouse.x;
+			float my = DC->mouse.y;
 
-			if(!SC->is_playing(instance)) {
+			auto hit = [&](Button b){ 
+				return (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <=b.y + b.h);
+			};
+
+			if(show_help_menu){
+				if(mouse_down && !mouse_prev){
+					show_help_menu = false;
+				}
+				break;
+			}
+
+			if(mouse_down && !mouse_prev){
+				if(hit(start_btn)){
+					debug_log("<Game> state: change to LEVEL\n");
+					state = STATE::LEVEL;
+				}
+				else if(hit(help_btn)){
+					show_help_menu = true;
+				}
+				else if(hit(quit_btn)){
+					debug_log("<Game> state: change to END\n");
+					state = STATE::END;
+				}
+			}
+			/*if(!SC->is_playing(instance)) {
 				debug_log("<Game> state: change to LEVEL\n");
 				state = STATE::LEVEL;
-			}
+			}*/
 			break;
 		} case STATE::LEVEL: {
 			static bool BGM_played = false;
@@ -272,6 +313,43 @@ Game::game_draw() {
     // 5. 疊加狀態畫面（此時已是螢幕座標）
     switch (state) {
         case STATE::START: {
+			//button color
+			auto btn_color  = al_map_rgb(50, 50, 50);
+			auto btn_hover = al_map_rgb(80, 80, 80);
+			auto text_color = al_map_rgb(255, 255, 255);
+
+			DataCenter *DC = DataCenter::get_instance();
+			float mx = DC->mouse.x;
+			float my = DC->mouse.y;
+
+			auto draw_button = [&](Button b, const char* text){
+				bool hover = (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h);
+				al_draw_filled_rectangle(b.x, b.y, b.x + b.w, b.y + b.h, hover? btn_hover:btn_color);
+				al_draw_rectangle(b.x, b.y, b.x + b.w, b.y + b.h, al_map_rgb(255, 255, 255), 2);
+				al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], text_color, b.x + b.w / 2.0f, 
+					b.y + b.h / 2.0f - al_get_font_line_height(FC->caviar_dreams[FontSize::MEDIUM]) / 2.0f,
+					ALLEGRO_ALIGN_CENTRE, text);
+			};
+
+			draw_button(start_btn, "Start");
+			draw_button(help_btn, "Help");
+			draw_button(quit_btn, "Quit");
+
+			if(show_help_menu){
+				al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(0, 0, 0, 150));
+
+				float w = DC->window_width * 0.6f;
+				float h = DC->window_height * 0.6f;
+				//半透明左上角標
+				float x = (DC->window_width - w) / 2.0f; 
+				float y = (DC->window_height - h) / 2.0f;
+				al_draw_filled_rectangle(x, y, x + w, y + h, al_map_rgb(230, 230, 230));
+				al_draw_rectangle(x, y, x + w, y + h, al_map_rgb(255, 255, 255), 2);
+
+				al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0), x + w/2.0f, y + 20.0f,
+					ALLEGRO_ALIGN_CENTRE, "HELP");
+
+			}
             break;
         }
         case STATE::LEVEL: {
