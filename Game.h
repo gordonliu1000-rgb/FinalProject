@@ -2,16 +2,13 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
+#include "Button.h"
 #include "UI.h"
 
 /**
  * @brief Main class that runs the whole game.
  * @details All game procedures must be processed through this class.
  */
-
-struct Button{
-	float x, y, w, h;
-};
 
 class Game
 {

@@ -153,9 +153,9 @@ Game::game_init() {
 	float bh = 50.0f;
 	float gap = 20.0f;
 
-	start_btn = { cx - bw/2, cy - bh - gap, bw, bh };
-	help_btn = { cx - bw/2, cy, bw, bh };
-	quit_btn = { cx - bw/2, cy + bh + gap, bw, bh };
+	start_btn = Button{ cx - bw/2, cy - bh - gap, bw, bh, "Start"};
+	help_btn = Button{ cx - bw/2, cy, bw, bh, "Help"};
+	quit_btn = Button{ cx - bw/2, cy + bh + gap, bw, bh, "Quit"};
 
 	// game start
 	background = IC->get(background_img_path);
@@ -192,10 +192,6 @@ Game::game_update() {
 			float mx = DC->mouse.x;
 			float my = DC->mouse.y;
 
-			auto hit = [&](Button b){ 
-				return (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <=b.y + b.h);
-			};
-
 			if(show_help_menu){
 				if(mouse_down && !mouse_prev){
 					show_help_menu = false;
@@ -203,18 +199,16 @@ Game::game_update() {
 				break;
 			}
 
-			if(mouse_down && !mouse_prev){
-				if(hit(start_btn)){
-					debug_log("<Game> state: change to LEVEL\n");
-					state = STATE::LEVEL;
-				}
-				else if(hit(help_btn)){
-					show_help_menu = true;
-				}
-				else if(hit(quit_btn)){
-					debug_log("<Game> state: change to END\n");
-					state = STATE::END;
-				}
+			if(start_btn.update(mx, my, mouse_down, mouse_prev)){
+				debug_log("<Game> state: change to LEVEL\n");
+				state = STATE::LEVEL;
+			}
+			else if(help_btn.update(mx, my, mouse_down, mouse_prev)){
+				show_help_menu = true;
+			}
+			else if(quit_btn.update(mx, my, mouse_down, mouse_prev)){
+				debug_log("<Game> state: change to END\n");
+				state = STATE::END;
 			}
 			/*if(!SC->is_playing(instance)) {
 				debug_log("<Game> state: change to LEVEL\n");
@@ -316,24 +310,17 @@ Game::game_draw() {
 			//button color
 			auto btn_color  = al_map_rgb(50, 50, 50);
 			auto btn_hover = al_map_rgb(80, 80, 80);
+			auto border = al_map_rgb(255, 255, 255);
 			auto text_color = al_map_rgb(255, 255, 255);
 
 			DataCenter *DC = DataCenter::get_instance();
 			float mx = DC->mouse.x;
 			float my = DC->mouse.y;
 
-			auto draw_button = [&](Button b, const char* text){
-				bool hover = (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h);
-				al_draw_filled_rectangle(b.x, b.y, b.x + b.w, b.y + b.h, hover? btn_hover:btn_color);
-				al_draw_rectangle(b.x, b.y, b.x + b.w, b.y + b.h, al_map_rgb(255, 255, 255), 2);
-				al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], text_color, b.x + b.w / 2.0f, 
-					b.y + b.h / 2.0f - al_get_font_line_height(FC->caviar_dreams[FontSize::MEDIUM]) / 2.0f,
-					ALLEGRO_ALIGN_CENTRE, text);
-			};
-
-			draw_button(start_btn, "Start");
-			draw_button(help_btn, "Help");
-			draw_button(quit_btn, "Quit");
+			ALLEGRO_FONT *font = FC->caviar_dreams[FontSize::MEDIUM];
+			start_btn.draw(font, btn_color, btn_hover, border, text_color, mx, my);
+			help_btn.draw(font, btn_color, btn_hover, border, text_color, mx, my);
+			quit_btn.draw(font, btn_color, btn_hover, border, text_color, mx, my);
 
 			if(show_help_menu){
 				al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(0, 0, 0, 150));
