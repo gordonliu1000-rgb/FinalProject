@@ -15,8 +15,8 @@ class Button{
         void set_text(const char* text);
         
     private:
-        float x_, y_, w_, h_;
-        const char* text_ = nullptr;
+        float x, y, w, h;
+        const char* text = nullptr;
 };
 
 
