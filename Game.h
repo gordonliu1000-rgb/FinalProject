@@ -2,7 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
-#include "Button.h"
+#include "Button/Button.h"
 #include "UI.h"
 
 /**

@@ -180,17 +180,16 @@ Game::game_update() {
 	switch(state) {
 		case STATE::START: {
 			static bool is_played = false;
-			static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
+			//static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 			if(!is_played) {
-				instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
+				/*instance =*/ SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				DC->level->load_level(1);
 				is_played = true;
 			}
-			// mouse push left button
+
 			bool mouse_down = DC->mouse_state[1];
 			bool mouse_prev = DC->prev_key_state[1];
-			float mx = DC->mouse.x;
-			float my = DC->mouse.y;
+			const Point &mouse = DC->mouse;
 
 			if(show_help_menu){
 				if(mouse_down && !mouse_prev){
@@ -199,14 +198,14 @@ Game::game_update() {
 				break;
 			}
 
-			if(start_btn.update(mx, my, mouse_down, mouse_prev)){
+			if(start_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to LEVEL\n");
 				state = STATE::LEVEL;
 			}
-			else if(help_btn.update(mx, my, mouse_down, mouse_prev)){
+			else if(help_btn.update(mouse, mouse_down, mouse_prev)){
 				show_help_menu = true;
 			}
-			else if(quit_btn.update(mx, my, mouse_down, mouse_prev)){
+			else if(quit_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
 			}
@@ -314,13 +313,11 @@ Game::game_draw() {
 			auto text_color = al_map_rgb(255, 255, 255);
 
 			DataCenter *DC = DataCenter::get_instance();
-			float mx = DC->mouse.x;
-			float my = DC->mouse.y;
-
+			const Point &mouse = DC->mouse;
 			ALLEGRO_FONT *font = FC->caviar_dreams[FontSize::MEDIUM];
-			start_btn.draw(font, btn_color, btn_hover, border, text_color, mx, my);
-			help_btn.draw(font, btn_color, btn_hover, border, text_color, mx, my);
-			quit_btn.draw(font, btn_color, btn_hover, border, text_color, mx, my);
+			start_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
+			help_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
+			quit_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
 
 			if(show_help_menu){
 				al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(0, 0, 0, 150));
