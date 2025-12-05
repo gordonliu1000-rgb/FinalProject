@@ -5,6 +5,7 @@
 #include "shapes/Rectangle.h"
 #include "weapon/Sword.h"
 #include <cmath>
+#include "Utils.h"
 using namespace std;
 
 namespace HeroSetting{
@@ -15,7 +16,11 @@ namespace HeroSetting{
         "Up",
         "Down"
     };
+    static constexpr int init_ATK = 10;
+    static constexpr double init_SPEED = 5;
+
 } 
+
 
 void Hero::init() {
     for (size_t type = 0; type < static_cast<size_t>(HeroState::HEROSTATE_MAX); ++type) {
@@ -30,13 +35,19 @@ void Hero::init() {
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
     DataCenter *DC = DataCenter::get_instance();
 
-    // 設定 hero 在「地圖世界」裡的起點，不要用 window_width/2 那種螢幕座標
+    // 設定 hero 在「地圖世界」裡的起點
     float start_x = DC->game_field_length;      // 例：地圖中間或左上某點
     float start_y = DC->game_field_length;
-
+    //Hitbox
     shape.reset(new Rectangle{start_x, start_y, start_x + gif->width, start_y + gif->height});
+    atk = HeroSetting::init_ATK;
+    speed = HeroSetting::init_SPEED;
 
-    weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
+    //buff initialize
+    buffs.emplace_back(Buff::create_buff(BuffType::SPEED));
+    buffs[0]->reset_duration();//測試用，給一個speed buff
+
+     weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
 }
 
 void Hero::draw(){
@@ -78,9 +89,12 @@ void Hero::update(){
         shape->update_center_x(shape->center_x() + dx * speed);
         shape->update_center_y(shape->center_y() + dy * speed);
     }
-    
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){
         w -> update(*this, dt);
+    }
+
+    for(auto &buff:buffs){
+        buff->update(); // 每個buff隨hero update
     }
 }

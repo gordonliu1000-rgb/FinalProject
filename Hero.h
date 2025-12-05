@@ -5,7 +5,11 @@
 #include <memory>
 #include <map>
 #include "Object.h"
+#include "buffs/Buff.h"
+#include <vector>
 #include "weapon/Weapon.h"
+
+class Buff;
 
 enum class HeroState{
     LEFT,
@@ -27,7 +31,12 @@ class Hero : public Object{
 
     private:
         HeroState state = HeroState::FRONT;
-        double speed = 5;
         std::map<HeroState, std::string> gifPath;
+    public:
+        std::vector<Buff*>buffs;
+        int hp;
+        int atk;
+        double speed;
+        
 };
 #endif

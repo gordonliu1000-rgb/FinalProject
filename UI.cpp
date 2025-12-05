@@ -11,12 +11,18 @@
 #include "Player.h"
 #include "towers/Tower.h"
 #include "Level.h"
+#include "buffs/Buff.h"
+#include "Hero.h"
 
 // fixed settings
 constexpr char love_img_path[] = "./assets/image/love.png";
 constexpr int love_img_padding = 5;
 constexpr int tower_img_left_padding = 30;
 constexpr int tower_img_top_padding = 30;
+
+
+constexpr int buff_icon_top_padding = 30;
+constexpr int buff_icon_left_padding = 30;
 
 void
 UI::init() {
@@ -193,5 +199,18 @@ UI::draw() {
 			al_draw_bitmap(bitmap, mouse.x - w / 2, mouse.y - h / 2, 0);
 			break;
 		}
+	}
+
+	//draw buff icon
+	for(int i=0;i<static_cast<int>(DC->hero->buffs.size());i++){
+		ALLEGRO_BITMAP *icon = DC->hero->buffs[i]->get_icon();
+		if(icon==nullptr) continue;
+		int icon_width = al_get_bitmap_width(icon);
+		al_draw_bitmap(icon, 
+			buff_icon_left_padding + (icon_width + buff_icon_left_padding)*(i%5),
+			buff_icon_top_padding + (icon_width + buff_icon_top_padding)*(i/5), 
+			0);
+		
+		
 	}
 }
