@@ -24,7 +24,7 @@ class Hero : public Object{
         void init();
         void update();
         void draw();
-
+        ~Hero();
         float x() const {return shape->center_x();}
         float y() const {return shape->center_y();}
         std::vector<std::unique_ptr<Weapon>> weapons; //store the weapon that hero have

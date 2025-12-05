@@ -1,5 +1,6 @@
 #include "Buff.h"
 #include "Speed.h"
+#include "Power.h"
 #include <allegro5/allegro.h>
 #include "../data/ImageCenter.h"
 #include <allegro5/allegro_primitives.h>
@@ -9,6 +10,9 @@ Buff* Buff::create_buff(BuffType type){
     switch(type){
         case BuffType::SPEED : {
             return new Speed(type);
+        }
+        case BuffType::POWER : {
+            return new Power(type);
         }
         default:{
             break;
@@ -21,8 +25,8 @@ Buff* Buff::create_buff(BuffType type){
 char buff_icon_img_prefix[] = "./assets/image/buff/icons";
 char buff_icon_img_file_name[static_cast<int>(BuffType::BUFFTYPE_MAX)][15]={
     "speed",
-    "heal",
     "power",
+    "heal",
     "absorb",
     "invincible",
     "revive",
@@ -48,6 +52,15 @@ void Speed::clear_effect(){
     DC->hero->speed = init_speed;
 }
 
+void Power::effect(){
+    static DataCenter *DC = DataCenter::get_instance();
+    DC->hero->atk = init_attack * 2;
+}
+
+void Power::clear_effect(){
+    static DataCenter *DC = DataCenter::get_instance();
+    DC->hero->atk = init_attack;
+}
 //new buff write here
 
 void Buff::draw_icon(){

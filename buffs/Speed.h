@@ -1,7 +1,6 @@
 #ifndef SPEEDPOISON_H_INCLUDED
 #define SPEEDPOISON_H_INCLUDED
 #include "Buff.h"
-#include <allegro5/allegro.h>
 
 class Speed : public Buff {
 public:

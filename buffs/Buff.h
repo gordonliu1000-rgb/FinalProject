@@ -8,8 +8,8 @@
 
 enum class BuffType{
     SPEED,
-    HEAL,
     POWER,
+    HEAL,
     ABSORB,
     INVINCIBLE,
     REVIVE,

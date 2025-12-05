@@ -46,8 +46,11 @@ void Hero::init() {
     //buff initialize
     buffs.emplace_back(Buff::create_buff(BuffType::SPEED));
     buffs[0]->reset_duration();//測試用，給一個speed buff
+    buffs.emplace_back(Buff::create_buff(BuffType::POWER));
+    buffs[1]->reset_duration();//測試用，給一個power buff
+    
 
-     weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
+    weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
 }
 
 void Hero::draw(){
@@ -96,5 +99,12 @@ void Hero::update(){
 
     for(auto &buff:buffs){
         buff->update(); // 每個buff隨hero update
+    }
+}
+
+Hero::~Hero(){
+    for(auto &buff:buffs){
+        buff->clear_effect(); // 清除buff效果
+        delete buff;
     }
 }

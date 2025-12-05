@@ -202,6 +202,7 @@ UI::draw() {
 	}
 
 	//draw buff icon
+	/*
 	for(int i=0;i<static_cast<int>(DC->hero->buffs.size());i++){
 		ALLEGRO_BITMAP *icon = DC->hero->buffs[i]->get_icon();
 		if(icon==nullptr) continue;
@@ -212,5 +213,17 @@ UI::draw() {
 			0);
 		
 		
+	}
+	*/
+	int num_of_drew_icon = 0;
+	for(auto &buff : DC->hero->buffs){
+		ALLEGRO_BITMAP *icon = buff->get_icon();
+		if(icon==nullptr) continue;
+		int icon_width = al_get_bitmap_width(icon);
+		al_draw_bitmap(icon, 
+			buff_icon_left_padding + (icon_width + buff_icon_left_padding) * (num_of_drew_icon%5),
+			buff_icon_top_padding + (icon_width + buff_icon_top_padding) * (num_of_drew_icon/5), 
+			0);
+		num_of_drew_icon++;
 	}
 }
