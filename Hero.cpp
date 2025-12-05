@@ -3,6 +3,7 @@
 #include "data/GIFCenter.h"
 #include "algif5/algif.h"
 #include "shapes/Rectangle.h"
+#include "weapon/Sword.h"
 #include <cmath>
 using namespace std;
 
@@ -34,6 +35,8 @@ void Hero::init() {
     float start_y = DC->game_field_length;
 
     shape.reset(new Rectangle{start_x, start_y, start_x + gif->width, start_y + gif->height});
+
+    weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
 }
 
 void Hero::draw(){
@@ -43,6 +46,9 @@ void Hero::draw(){
                 shape->center_x() - gif->width / 2,
                 shape->center_y() - gif->height / 2,
                 0);
+    for(auto &w : weapons){
+        w -> draw();
+    }
 }
 
 void Hero::update(){
@@ -72,5 +78,9 @@ void Hero::update(){
         shape->update_center_x(shape->center_x() + dx * speed);
         shape->update_center_y(shape->center_y() + dy * speed);
     }
-
+    
+    float dt = 1.0f / DC->FPS;
+    for(auto &w : weapons){
+        w -> update(*this, dt);
+    }
 }
