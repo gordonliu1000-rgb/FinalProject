@@ -251,10 +251,10 @@ Game::game_update() {
 		DC->player->update();
 		SC->update();
 		ui->update();
-		DC->hero->update();
 		DC->camera->update();
 		if(state != STATE::START) {
 			DC->level->update();
+			DC->hero->update();
 			OC->update();
 		}
 	}
