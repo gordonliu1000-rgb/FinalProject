@@ -7,7 +7,7 @@ public:
     Power(BuffType type) : Buff{BuffType::POWER}{
         DataCenter *DC = DataCenter::get_instance();
         init_attack = DC->hero->atk;
-        init_duration = 300; 
+        init_duration = 600; 
         duration = 0;
     }
     ~Power(){};
