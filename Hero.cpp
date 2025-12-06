@@ -16,7 +16,7 @@ namespace HeroSetting{
         "Up",
         "Down"
     };
-    static constexpr float init_ATK = 2.0;
+    static constexpr float init_ATK = 5.0;
     static constexpr double init_SPEED = 5;
 
 } 

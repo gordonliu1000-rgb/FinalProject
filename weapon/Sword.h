@@ -7,8 +7,7 @@
 
 class Sword: public Weapon{
     public:
-        Sword(float get_dmg, float radius, float angular_speed);
-        float get(float get_dmg);
+        Sword(float dmg, float radius, float angular_speed);
         void draw() override;
     
     private:

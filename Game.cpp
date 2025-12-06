@@ -188,7 +188,7 @@ Game::game_update() {
 			}
 
 			bool mouse_down = DC->mouse_state[1];
-			bool mouse_prev = DC->prev_key_state[1];
+			bool mouse_prev = DC->prev_mouse_state[1];
 			const Point &mouse = DC->mouse;
 
 			if(show_help_menu){
@@ -306,19 +306,6 @@ Game::game_draw() {
     // 5. 疊加狀態畫面（此時已是螢幕座標）
     switch (state) {
         case STATE::START: {
-			//button color
-			auto btn_color  = al_map_rgb(50, 50, 50);
-			auto btn_hover = al_map_rgb(80, 80, 80);
-			auto border = al_map_rgb(255, 255, 255);
-			auto text_color = al_map_rgb(255, 255, 255);
-
-			DataCenter *DC = DataCenter::get_instance();
-			const Point &mouse = DC->mouse;
-			ALLEGRO_FONT *font = FC->caviar_dreams[FontSize::MEDIUM];
-			start_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
-			help_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
-			quit_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
-
 			if(show_help_menu){
 				al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(0, 0, 0, 150));
 
@@ -332,8 +319,20 @@ Game::game_draw() {
 
 				al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0), x + w/2.0f, y + 20.0f,
 					ALLEGRO_ALIGN_CENTRE, "HELP");
-
+				break;
 			}
+
+			//button color
+			auto btn_color  = al_map_rgb(50, 50, 50);
+			auto btn_hover = al_map_rgb(80, 80, 80);
+			auto border = al_map_rgb(255, 255, 255);
+			auto text_color = al_map_rgb(255, 255, 255);
+			const Point &mouse = DC->mouse;
+			ALLEGRO_FONT *font = FC->caviar_dreams[FontSize::MEDIUM];
+			start_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
+			help_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
+			quit_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
+
             break;
         }
         case STATE::LEVEL: {

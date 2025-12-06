@@ -6,6 +6,7 @@
 #include "../towers/Bullet.h"
 #include "../Player.h"
 #include "../Hero.h"
+#include "../Utils.h"
 
 void OperationCenter::update() {
 	// Update monsters.
@@ -74,8 +75,11 @@ void OperationCenter::_update_monster_weapon(){
 	std::vector<Monster*> &monsters = DC->monsters;
 	for(size_t i = 0; i < monsters.size(); ++i){
 		for(size_t j=0; j < weapons.size(); ++j){
+			if(!(weapons[j] ->can_hit())) continue;
+
 			if(monsters[i]->shape->overlap(*(weapons[j]->shape))) {
 				monsters[i]->HP -= weapons[j] ->get_dmg();
+				weapons[j] -> reset_cooldown();
 			}
 		}
 	}
