@@ -16,7 +16,7 @@ namespace HeroSetting{
         "Up",
         "Down"
     };
-    static constexpr int init_ATK = 10;
+    static constexpr float init_ATK = 5.0;
     static constexpr double init_SPEED = 5;
 
 } 
@@ -50,7 +50,7 @@ void Hero::init() {
     buffs[1]->reset_duration();//測試用，給一個power buff
     
 
-    weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
+    weapons.emplace_back(std::make_unique<Sword>(atk, 80.0f, 4.0f));
 }
 
 void Hero::draw(){
