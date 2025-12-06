@@ -1,5 +1,6 @@
 #include "OperationCenter.h"
 #include "DataCenter.h"
+#include "../weapon/Weapon.h"
 #include "../monsters/Monster.h"
 #include "../towers/Tower.h"
 #include "../towers/Bullet.h"
@@ -18,7 +19,9 @@ void OperationCenter::update() {
 	// If any monster reaches the end, hurt the player and delete the monster.
 	_update_monster_player();
 
-	_update_monster_hero();
+	//_update_monster_hero();
+
+	_update_monster_weapon();
 }
 
 void OperationCenter::_update_monster() {
@@ -60,6 +63,19 @@ void OperationCenter::_update_monster_towerBullet() {
 				delete towerBullets[j];
 				towerBullets.erase(towerBullets.begin() + j);
 				--j;
+			}
+		}
+	}
+}
+
+void OperationCenter::_update_monster_weapon(){
+	DataCenter *DC = DataCenter::get_instance();
+	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
+	std::vector<Monster*> &monsters = DC->monsters;
+	for(size_t i = 0; i < monsters.size(); ++i){
+		for(size_t j=0; j < weapons.size(); ++j){
+			if(monsters[i]->shape->overlap(*(weapons[j]->shape))) {
+				monsters[i]->HP -= weapons[j] ->get_dmg();
 			}
 		}
 	}

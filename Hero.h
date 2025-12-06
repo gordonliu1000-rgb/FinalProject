@@ -35,7 +35,7 @@ class Hero : public Object{
     public:
         std::vector<Buff*>buffs;
         int hp;
-        int atk;
+        float atk;
         double speed;
         
 };
