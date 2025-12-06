@@ -7,7 +7,7 @@ public:
     Speed(BuffType type) : Buff{BuffType::SPEED}{
         DataCenter *DC = DataCenter::get_instance();
         init_speed = DC->hero->speed;
-        init_duration = 300; 
+        init_duration = 1800; 
         duration = 0;
     }
     ~Speed(){};

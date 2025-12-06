@@ -56,6 +56,7 @@ UI::update() {
 	DataCenter *DC = DataCenter::get_instance();
 	const Point &mouse = DC->mouse;
 
+	/*
 	switch(state) {
 		case STATE::HALT: {
 			for(size_t i = 0; i < tower_items.size(); ++i) {
@@ -128,7 +129,9 @@ UI::update() {
 			state = STATE::HALT;
 			break;
 		}
+		
 	}
+		*/
 }
 
 void
@@ -150,6 +153,7 @@ UI::draw() {
 		game_field_length+love_img_padding, love_img_padding,
 		ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
 	// draw tower shop items
+	/*
 	for(auto &[bitmap, p, price] : tower_items) {
 		int w = al_get_bitmap_width(bitmap);
 		int h = al_get_bitmap_height(bitmap);
@@ -163,7 +167,8 @@ UI::draw() {
 			p.x + w / 2, p.y + h,
 			ALLEGRO_ALIGN_CENTRE, "%d", price);
 	}
-
+	*/
+	/*
 	switch(state) {
 		static Tower *selected_tower = nullptr;
 		case STATE::HALT: {
@@ -200,21 +205,8 @@ UI::draw() {
 			break;
 		}
 	}
-
-	//draw buff icon
-	/*
-	for(int i=0;i<static_cast<int>(DC->hero->buffs.size());i++){
-		ALLEGRO_BITMAP *icon = DC->hero->buffs[i]->get_icon();
-		if(icon==nullptr) continue;
-		int icon_width = al_get_bitmap_width(icon);
-		al_draw_bitmap(icon, 
-			buff_icon_left_padding + (icon_width + buff_icon_left_padding)*(i%5),
-			buff_icon_top_padding + (icon_width + buff_icon_top_padding)*(i/5), 
-			0);
-		
-		
-	}
 	*/
+	// draw buff icons
 	int num_of_drew_icon = 0;
 	for(auto &buff : DC->hero->buffs){
 		ALLEGRO_BITMAP *icon = buff->get_icon();
