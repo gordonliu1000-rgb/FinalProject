@@ -282,11 +282,13 @@ Game::game_draw() {
 
 		// 3. 在世界座標下畫「會跟著鏡頭動」的東西：背景、地圖、hero、OC
 		// 背景（放大 2 倍）
+		int w = al_get_bitmap_width(background);
+		int h = al_get_bitmap_height(background);
 		al_draw_scaled_bitmap(background, 
 			0, 0,
-			DC->game_field_length, DC->game_field_length, 
+			h, w, 
 			0, 0,
-			DC->game_field_length * 2.0, DC->game_field_length * 2.0, 
+			DC->game_field_length, DC->game_field_width, 
 			0);
 
 		if (state != STATE::START) {

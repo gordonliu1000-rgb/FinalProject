@@ -36,8 +36,8 @@ void Hero::init() {
     DataCenter *DC = DataCenter::get_instance();
 
     // 設定 hero 在「地圖世界」裡的起點
-    float start_x = DC->game_field_length;      // 例：地圖中間或左上某點
-    float start_y = DC->game_field_length;
+    float start_x = DC->game_field_length / 2;      // 例：地圖中間或左上某點
+    float start_y = DC->game_field_length / 2;
     //Hitbox
     shape.reset(new Rectangle{start_x, start_y, start_x + gif->width, start_y + gif->height});
     atk = HeroSetting::init_ATK;

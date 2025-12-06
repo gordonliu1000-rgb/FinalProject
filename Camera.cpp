@@ -14,9 +14,9 @@ void Camera::init(){
     //更新相機座標至跟隨人物，並限制不超出地圖邊界(相機座標設為左上角)
     DataCenter *DC = DataCenter::get_instance();
     set_target(DC->hero);
-    double map_w = DC->game_field_length * 2.0f;
-    double map_h = DC->game_field_length * 2.0f;
-    if(hero->shape->center_x()-DC->window_width/2.0f <0)
+    double map_w = DC->game_field_width;
+    double map_h = DC->game_field_length;
+    if(hero->shape->center_x()-DC->window_width/2.0f < 0)
         x = 0;
     else if(hero->shape->center_x()+DC->window_width / 2.0f > map_w)
         x = map_w - DC->window_width;
@@ -33,8 +33,8 @@ void Camera::init(){
 
 void Camera::update(){
     DataCenter *DC = DataCenter::get_instance();
-    double map_w = DC->game_field_length * 2.0f;
-    double map_h = DC->game_field_length * 2.0f;
+    double map_w = DC->game_field_width;
+    double map_h = DC->game_field_length;
     
     if(hero->shape->center_x()-DC->window_width/2.0f <0)
         x = 0;

@@ -15,8 +15,8 @@ namespace DataSetting {
 	constexpr int window_height = 800;
 	//constexpr int backgorund_width = 800;
 	//constexpr int backgorund_height = 600;
-	constexpr int game_field_length = 1024;
-	constexpr int game_field_width = 1200;
+	constexpr int game_field_length = 2048;
+	constexpr int game_field_width = 2048;
 }
 
 DataCenter::DataCenter() {
