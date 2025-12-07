@@ -15,6 +15,10 @@ public:
 	void update_center_x(const double &x) { this->x = x; }
 	void update_center_y(const double &y) { this->y = y; }
 	const ShapeType getType() const { return ShapeType::CIRCLE; }
+	double left() const override {return (x - r);}
+	double right() const override {return (x + r);}
+	double top() const override {return (y - r);}
+	double bottom() const override {return (y + r);}
 public:
 	Circle() {}
 	Circle(double x, double y, double r) : x{x}, y{y}, r{r} {}

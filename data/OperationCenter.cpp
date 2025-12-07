@@ -1,6 +1,8 @@
 #include "OperationCenter.h"
 #include "DataCenter.h"
 #include "../weapon/Weapon.h"
+#include "../buffs/Buffitem.h"
+#include "../Random.h"
 #include "../monsters/Monster.h"
 #include "../towers/Tower.h"
 #include "../towers/Bullet.h"
@@ -23,6 +25,15 @@ void OperationCenter::update() {
 	//_update_monster_hero();
 
 	_update_monster_weapon();
+
+	_update_buff_pickup();
+
+	_update_buff_spawn();
+}
+
+static bool shape_overlap(const Shape &a, const Shape &b){
+	return !(a.right() < b.left() || a.left() > b.right() || 
+				a.bottom() < b.top() || a.top() > b.bottom());
 }
 
 void OperationCenter::_update_monster() {
@@ -124,6 +135,7 @@ void OperationCenter::draw() {
 	_draw_monster();
 	_draw_tower();
 	_draw_towerBullet();
+	_draw_buff();
 }
 
 void OperationCenter::_draw_monster() {
@@ -142,4 +154,65 @@ void OperationCenter::_draw_towerBullet() {
 	std::vector<Bullet*> &towerBullets = DataCenter::get_instance()->towerBullets;
 	for(Bullet *towerBullet : towerBullets)
 		towerBullet->draw();
+}
+
+void OperationCenter::_draw_buff(){
+	DataCenter *DC = DataCenter::get_instance();
+	for(auto &item : DC->buff_items){
+		item->draw();
+	}
+}
+
+void OperationCenter::_update_buff_spawn(){
+	DataCenter *DC = DataCenter::get_instance();
+
+	static int spawn_counter = 0;
+	spawn_counter++;
+
+	if(spawn_counter >= 300){
+		spawn_counter = 0;
+		
+		int t = Random::range(0, 1);
+		BuffType type = (t == 0 ? BuffType::SPEED : BuffType::POWER);
+
+		float x = Random::range(0.0, (float)DC->game_field_length);
+		float y = Random::range(0.0, (float)DC->game_field_width);
+
+		DC->buff_items.emplace_back(std::make_unique<Buffitem>(type, Point{x, y}));
+		debug_log("spawn buff at x=%.1f y=%.1f type=%d\n", x, y, (int)type);
+	}
+	
+}
+
+
+void OperationCenter::_update_buff_pickup(){
+	DataCenter *DC = DataCenter::get_instance();
+	Hero *hero = DC->hero;
+	auto &items = DC->buff_items;
+
+	for(size_t i = 0; i < items.size();){
+		Buffitem *item = items[i].get();
+		if(shape_overlap(*hero->shape, *item->shape)){
+			BuffType type = item->get_type();
+			bool search = false;
+			for(auto *b : hero->buffs){
+				if(b->get_type() == type){
+					b->reset_duration();
+					search = true;
+					break;
+				}
+			}
+			if(!search){
+				Buff *buff = Buff::create_buff(item->get_type());
+				if(buff){
+					buff->reset_duration();
+					hero->buffs.emplace_back(buff);
+				}
+			}
+			debug_log("hero picked buff type=%d\n", (int)type);
+			items.erase(items.begin() + i);
+		} else{
+			++i;
+		}
+	}
 }
