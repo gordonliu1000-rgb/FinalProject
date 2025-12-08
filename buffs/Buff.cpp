@@ -21,7 +21,6 @@ Buff* Buff::create_buff(BuffType type){
     return nullptr;
 }
 
-
 char buff_icon_img_prefix[] = "./assets/image/buff/icons";
 char buff_icon_img_file_name[static_cast<int>(BuffType::BUFFTYPE_MAX)][15]={
     "speed",
