@@ -2,7 +2,9 @@
 #include "Speed.h"
 #include "Power.h"
 #include <allegro5/allegro.h>
+#include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
+#include "../Hero.h"
 #include <allegro5/allegro_primitives.h>
 #include "../Utils.h"
 
@@ -41,6 +43,13 @@ void Buff::reset_duration(){
     duration = init_duration;
 }
 
+Speed::Speed(BuffType type) : Buff(type){
+    DataCenter *DC = DataCenter::get_instance();
+    init_speed = DC->hero->speed;
+    init_duration = 1800;
+    duration = 0;
+}
+
 void Speed::effect(){
     static DataCenter *DC = DataCenter::get_instance();
     DC->hero->speed = init_speed * 2;
@@ -49,6 +58,13 @@ void Speed::effect(){
 void Speed::clear_effect(){
     static DataCenter *DC = DataCenter::get_instance();
     DC->hero->speed = init_speed;
+}
+
+Power::Power(BuffType type) : Buff(type){
+    DataCenter *DC = DataCenter::get_instance();
+    init_attack = DC->hero->atk;
+    init_duration = 600;
+    duration = 0;
 }
 
 void Power::effect(){

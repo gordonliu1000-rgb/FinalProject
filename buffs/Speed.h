@@ -1,16 +1,13 @@
 #ifndef SPEEDPOISON_H_INCLUDED
 #define SPEEDPOISON_H_INCLUDED
 #include "Buff.h"
+class DataCenter;
 
 class Speed : public Buff {
 public:
-    Speed(BuffType type) : Buff{BuffType::SPEED}{
-        DataCenter *DC = DataCenter::get_instance();
-        init_speed = DC->hero->speed;
-        init_duration = 1800; 
-        duration = 0;
-    }
+    Speed(BuffType type);
     ~Speed(){};
+    
     void effect();
     void clear_effect();
 private:

@@ -3,9 +3,11 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 #include <allegro5/keycodes.h>
 #include <allegro5/mouse.h>
 #include "../shapes/Point.h"
+#include "../buffs/Buffitem.h" 
 
 class Player;
 class Level;
@@ -14,6 +16,8 @@ class Tower;
 class Bullet;
 class Hero;
 class Camera;
+class Buffitem;
+
 /**
  * @brief Stores generic global data and relatively small data structures.
  * @details The globally used data such as FPS (frames per second), windows size, game region, and states of input devices (mouse and keyboard).
@@ -100,6 +104,8 @@ public:
 	 * @see Bullet
 	 */
 	std::vector<Bullet*> towerBullets;
+
+	std::vector<std::unique_ptr<Buffitem>> buff_items;
 
 	
 private:

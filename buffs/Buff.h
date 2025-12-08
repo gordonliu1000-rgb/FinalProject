@@ -3,8 +3,9 @@
 #include <allegro5/allegro.h>
 #include "../Object.h"
 #include "../shapes/Point.h"
-#include "../Hero.h"
-#include "../data/DataCenter.h"
+
+class Hero;
+class DenterCenter;
 
 enum class BuffType{
     SPEED,
@@ -23,6 +24,7 @@ public:
     virtual void reset_duration();
     Buff(BuffType type);
     virtual ~Buff() {al_destroy_bitmap(icon);}
+    BuffType get_type() const {return type;}
     void update(); // 更新持續時間
     ALLEGRO_BITMAP *get_icon() {return icon;} 
     void draw_icon();
