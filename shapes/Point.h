@@ -23,10 +23,6 @@ public:
 	void update_center_x(const double &x) { this->x = x; }
 	void update_center_y(const double &y) { this->y = y; }
 	const ShapeType getType() const { return ShapeType::POINT; }
-	double left() const override {return x;}
-	double right() const override {return x;}
-	double top() const override {return y;}
-	double bottom() const override {return y;}
 public:
 	Point() {}
 	Point(double x, double y) : x{x}, y{y} {}

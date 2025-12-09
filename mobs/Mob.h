@@ -1,15 +1,18 @@
 #ifndef MOB_H_INCLUDED
 #define MOB_H_INCLUDED
 #include "../Object.h"
+#include "../shapes/Circle.h"
 #include <allegro5/allegro.h>
 #include <array>
 #include <vector>
+#include <memory>
 
-enum class State {
+enum class MobState {
     WALK,
     ATK,
     HURT,
-    DIE
+    DIE,
+    IDLE
 };
 
 enum class Dir{
@@ -32,14 +35,16 @@ public :
     
     Mob(MobType type);
     ~Mob(){}
-    static Mob *create_mob(MobType type);
+    static std::unique_ptr<Mob> create_mob(MobType type);
     void draw();
     void update();
     virtual void atk_hero() = 0;
     void hurt(float dmg);
+    bool die = false;
 private :
     MobType type;
-    State state = State::WALK;
+    MobState state = MobState::WALK;
+    void dropItem();
 protected :
     std::unique_ptr<Circle> atk_range;
     double atk_range_radius;
@@ -47,10 +52,11 @@ protected :
     int init_atk_cool_down;
     Dir dir = Dir::DOWN;
     bool can_attack = true;
-    std::array<std::vector<std::vector<int>>, 4> bitmap_img_ids;
+    std::array<std::array<int, 4>, 4> bitmap_img_ids;//the size of pictures in every dir
     int bitmap_switch_counter;
 	int bitmap_switch_freq;
-	int bitmap_img_id;
+	int bitmap_img_id = 0;
+    int attack_frame_id;
 };
 
 

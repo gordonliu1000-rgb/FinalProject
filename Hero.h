@@ -40,8 +40,8 @@ class Hero : public Object{
         float hp; //目前血量
         float max_hp; //最大血量
         float level;
-        float xp; // 經驗值
-        float xp_to_next; //生到下一級所需的經驗值
+        float exp; // 經驗值
+        float exp_to_next; //生到下一級所需的經驗值
         float atk;
         double speed;
         int hurt_cooldown = 0;
