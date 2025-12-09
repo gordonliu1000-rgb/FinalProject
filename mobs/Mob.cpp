@@ -102,15 +102,15 @@ Mob::Mob(MobType type){
     const float &w = al_get_bitmap_width(bitmap) * 0.8;
     const float &h = al_get_bitmap_height(bitmap) * 0.8;
 
-    atk_range.reset(new Circle{x, 
-        y, 
-        atk_range_radius});
     shape.reset(new Rectangle{
         x - w/2.,
         y - h/2.,
         x + w/2.,
         y + h/2.
     });
+    atk_range.reset(new Circle{shape->center_x(), 
+        shape->center_y(), 
+        atk_range_radius});
 
     dir = Dir::DOWN;
     state = MobState::IDLE;
@@ -251,7 +251,7 @@ void Slime::atk_hero(){
 }
 
 void Mob::dropItem(){
-    bool drop = Random::range(1, 100) <= 10;// 10%掉落率
+    bool drop = true;//Random::range(1, 100) <= 10;// 10%掉落率
     if(drop){
         DataCenter *DC = DataCenter::get_instance();
         BuffType type = static_cast<BuffType>(Random::range(0, 1));
@@ -263,7 +263,7 @@ void Mob::dropItem(){
 
 void Mob::draw(){
 
-
+    debug_log("atk_range_r = %lf\n", atk_range_radius);
     ImageCenter *IC = ImageCenter::get_instance();
     char buffer[50];
 
@@ -276,8 +276,22 @@ void Mob::draw(){
     bitmap_img_id);
     
 	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
+    float scale_rate = 1;
+    /*
+    al_draw_scaled_bitmap(
+        bitmap,
+        0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), 
+        shape->center_x() - al_get_bitmap_width(bitmap) / 2,
+		shape->center_y() - al_get_bitmap_height(bitmap) / 2,
+        shape->center_y() - al_get_bitmap_width(bitmap) / 2 + scale_rate * al_get_bitmap_width(bitmap),
+        shape->center_y() - al_get_bitmap_height(bitmap) / 2 + scale_rate * al_get_bitmap_height(bitmap),
+        0
+    );
+    */
+    
 	al_draw_bitmap(
 		bitmap,
 		shape->center_x() - al_get_bitmap_width(bitmap) / 2,
 		shape->center_y() - al_get_bitmap_height(bitmap) / 2, 0);
+    
 }

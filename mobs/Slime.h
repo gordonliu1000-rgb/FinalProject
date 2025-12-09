@@ -11,7 +11,7 @@ public :
     Slime(MobType type) : Mob{type}{
         hp = 20;
         atk = 10;
-        speed = 5;
+        speed = 10;
         atk_range_radius = 32;
         init_atk_cool_down = 180;
         atk_cool_down = 20;
