@@ -77,7 +77,7 @@ UI::draw() {
 	//Hp 
 	float Hp_ratio = hero->hp / hero->max_hp;
 	if(Hp_ratio < 0) Hp_ratio = 0;
-	if(Hp_ratio > 0) Hp_ratio = 1;
+	if(Hp_ratio > 1) Hp_ratio = 1;
 
 	float HpBar_x = 10.0;
 	float HpBar_y = 40.0;

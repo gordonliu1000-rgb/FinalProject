@@ -41,10 +41,10 @@ void OperationCenter::_update_mob_weapon(){
 }
 
 void OperationCenter:: _update_mob_spawn(){
-	static int one = 1;
-	if(one==0) return ;//debug
+	//static int one = 1;
+	//if(one==0) return ;//debug
 
-	const int init_timer = 0;
+	const int init_timer = 120;
 	static int timer = init_timer;
 	if(timer > 0) timer--;
 	else {
@@ -55,7 +55,7 @@ void OperationCenter:: _update_mob_spawn(){
 		
 		timer = init_timer;
 	}
-	one--;
+	//one--;
 }
 
 void OperationCenter::_update_mob(){
