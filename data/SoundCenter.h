@@ -23,7 +23,7 @@ public:
 	bool init();
 	void update();
 	bool erase_sample(const std::string &path);
-	ALLEGRO_SAMPLE_INSTANCE *play(const std::string &path, ALLEGRO_PLAYMODE mode);
+	ALLEGRO_SAMPLE_INSTANCE *play(const std::string &path, ALLEGRO_PLAYMODE mode, float gain = 1.0);
 	bool is_playing(const ALLEGRO_SAMPLE_INSTANCE *const inst);
 	void toggle_playing(ALLEGRO_SAMPLE_INSTANCE *inst);
 private:

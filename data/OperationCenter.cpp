@@ -20,7 +20,7 @@ void OperationCenter::update() {
 	_update_mob_weapon();
 }
 
-constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
+//constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
 void OperationCenter::_update_mob_weapon(){
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
@@ -28,12 +28,12 @@ void OperationCenter::_update_mob_weapon(){
 
 	for(auto &mob:mobs){
 		for(auto &weapon:weapons){
-			if(!weapon->can_hit()) continue;
+			//if(!weapon->can_hit()) continue;
 			if(mob->shape->overlap(*(weapon->shape))){
-				SoundCenter *SC = SoundCenter::get_instance();
-				SC->play(sword_hit_sound_path, ALLEGRO_PLAYMODE_ONCE);
+				//SoundCenter *SC = SoundCenter::get_instance();
+				//SC->play(sword_hit_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				mob->hurt(weapon->get_dmg());
-				weapon->reset_cooldown();
+				//weapon->reset_cooldown();
 			}
 		}
 	}

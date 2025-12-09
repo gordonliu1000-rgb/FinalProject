@@ -89,7 +89,7 @@ SoundCenter::erase_sample(const std::string &path) {
  * @details For the list of supported play modes, refer to [manual](https://liballeg.org/a5docs/trunk/audio.html#allegro_playmode).
  */
 ALLEGRO_SAMPLE_INSTANCE*
-SoundCenter::play(const string &path, ALLEGRO_PLAYMODE mode) {
+SoundCenter::play(const string &path, ALLEGRO_PLAYMODE mode, float gain) {
 	auto it = samples.find(path);
 	if(it == samples.end()) {
 		ALLEGRO_SAMPLE *sample = al_load_sample(path.c_str());
@@ -101,6 +101,7 @@ SoundCenter::play(const string &path, ALLEGRO_PLAYMODE mode) {
 	insts.emplace_back(instance);
 
 	al_set_sample_instance_playmode(instance, mode);
+	al_set_sample_instance_gain(instance, gain);
 	al_attach_sample_instance_to_mixer(instance, al_get_default_mixer());
 	al_play_sample_instance(instance);
 	return instance;
