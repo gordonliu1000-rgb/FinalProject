@@ -251,7 +251,6 @@ Game::game_update() {
 	if(state != STATE::PAUSE) {
 		DC->player->update();
 		SC->update();
-		ui->update();
 		DC->camera->update();
 		if(state != STATE::START) {
 			DC->level->update();
