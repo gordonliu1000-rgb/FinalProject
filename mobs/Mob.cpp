@@ -274,7 +274,7 @@ void Slime::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
     Hero *hero = DC->hero;
     //第六張圖是攻擊動作
-    bool stop_atk = false;
+    //bool stop_atk = false;
     if(bitmap_img_id == 6){
         if(atk_range->overlap(*(DC->hero->shape))){ 
             hero->hurt(atk);

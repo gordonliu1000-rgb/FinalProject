@@ -59,7 +59,7 @@ UI::draw() {
 	DataCenter *DC = DataCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
 	Hero *hero = DC->hero;
-	const Point &mouse = DC->mouse;
+	//const Point &mouse = DC->mouse;
 	
 	// draw buff icons
 	int num_of_drew_icon = 0;
