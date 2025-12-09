@@ -1,5 +1,6 @@
 #include "OperationCenter.h"
 #include "DataCenter.h"
+#include "SoundCenter.h"
 #include "../weapon/Weapon.h"
 #include "../buffs/Buffitem.h"
 #include "../Random.h"
@@ -80,6 +81,7 @@ void OperationCenter::_update_monster_towerBullet() {
 	}
 }
 
+constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
 void OperationCenter::_update_monster_weapon(){
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
@@ -89,6 +91,9 @@ void OperationCenter::_update_monster_weapon(){
 			if(!(weapons[j] ->can_hit())) continue;
 
 			if(monsters[i]->shape->overlap(*(weapons[j]->shape))) {
+				//debug_log("cwd = %s\n", std::filesystem::current_path().string().c_str());
+				SoundCenter *SC = SoundCenter::get_instance();
+				SC->play(sword_hit_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				monsters[i]->HP -= weapons[j] ->get_dmg();
 				weapons[j] -> reset_cooldown();
 			}

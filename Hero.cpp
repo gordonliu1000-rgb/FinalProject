@@ -39,6 +39,12 @@ void Hero::init() {
     float start_x = DC->game_field_length / 2;      // 例：地圖中間或左上某點
     float start_y = DC->game_field_length / 2;
     //Hitbox
+    max_hp = 100;
+    hp = max_hp;
+    level = 1;
+    exp = 0;
+    exp_to_next = 100;
+
     shape.reset(new Rectangle{start_x, start_y, start_x + gif->width, start_y + gif->height});
     atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
@@ -101,6 +107,33 @@ void Hero::update(){
     for(auto &buff:buffs){
         buff->update(); // 每個buff隨hero update
     }
+
+    if(hurt_cooldown > 0) --hurt_cooldown;
+}
+
+void Hero::hurt(float dmg){
+    if(hurt_cooldown > 0) return;
+
+    hp -= static_cast<int>(dmg);
+    if(hp < 0) hp = 0;
+    hurt_cooldown = 5;
+
+}
+
+void Hero::gain_exp(int amount){
+    exp += amount;
+    while(exp >= exp_to_next){
+        exp -= exp_to_next;
+        level_up();
+    }
+}
+
+void Hero::level_up(){
+    level++;
+    max_hp += 20;
+    hp = max_hp;
+    atk += 20;
+    exp_to_next = static_cast<int>(exp_to_next * 1.2);
 }
 
 Hero::~Hero(){

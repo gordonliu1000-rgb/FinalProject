@@ -48,7 +48,6 @@ protected :
     Dir dir = Dir::DOWN;
     bool can_attack = true;
     std::array<std::vector<std::vector<int>>, 4> bitmap_img_ids;
-    std::map<HeroState, std::string> gifPath;
     int bitmap_switch_counter;
 	int bitmap_switch_freq;
 	int bitmap_img_id;

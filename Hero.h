@@ -24,6 +24,9 @@ class Hero : public Object{
         void init();
         void update();
         void draw();
+        void hurt(float dmg);
+        void gain_exp(int amount);
+        void level_up();
         ~Hero();
         float x() const {return shape->center_x();}
         float y() const {return shape->center_y();}
@@ -34,9 +37,14 @@ class Hero : public Object{
         std::map<HeroState, std::string> gifPath;
     public:
         std::vector<Buff*>buffs;
-        int hp;
+        float hp; //目前血量
+        float max_hp; //最大血量
+        float level;
+        float xp; // 經驗值
+        float xp_to_next; //生到下一級所需的經驗值
         float atk;
         double speed;
+        int hurt_cooldown = 0;
         
 };
 #endif

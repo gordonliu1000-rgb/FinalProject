@@ -14,7 +14,8 @@ Sword::Sword(float dmg, float radius, float angular_speed) : Weapon(dmg, radius,
 
     float w = al_get_bitmap_width(bitmap);
     float h = al_get_bitmap_height(bitmap);
-    shape.reset(new Rectangle{0.0, 0.0, w, h});
+    float scale = 1.5;
+    shape.reset(new Rectangle{0.0, 0.0, w*scale, h*scale}); 
 
 }
 
@@ -28,7 +29,9 @@ void Sword::draw(){
 
     float bmp_cx = w / 2.0f;
     float bmp_cy = h / 2.0f;
+    float scale = 1.5;
 
-    al_draw_rotated_bitmap(bitmap, bmp_cx, bmp_cy, cx, cy, angle, 0);
+
+    al_draw_scaled_rotated_bitmap(bitmap, bmp_cx, bmp_cy, cx, cy, scale, scale, angle, 0);
 }
 

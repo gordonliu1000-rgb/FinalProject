@@ -122,6 +122,7 @@ Game::game_init() {
 	SoundCenter *SC = SoundCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
+	
 	// set window icon
 	game_icon = IC->get(game_icon_img_path);
 	al_set_display_icon(display, game_icon);
@@ -182,7 +183,7 @@ Game::game_update() {
 			static bool is_played = false;
 			//static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 			if(!is_played) {
-				/*instance =*/ SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
+				SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				DC->level->load_level(1);
 				is_played = true;
 			}
@@ -216,10 +217,10 @@ Game::game_update() {
 			break;
 		} case STATE::LEVEL: {
 			static bool BGM_played = false;
-			if(!BGM_played) {
+			/*if(!BGM_played) {
 				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
 				BGM_played = true;
-			}
+			}*/
 
 			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
 				SC->toggle_playing(background);

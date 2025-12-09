@@ -9,7 +9,7 @@
 #include <cmath>
 #include "Slime.h"
 #include "../algif5/algif.h"
-
+    
 
 
 
@@ -173,6 +173,7 @@ void Mob::update(){
             break;
         }
         case State::DIE:{
+
             // to do
             break;
         }
@@ -205,7 +206,7 @@ void Slime::atk_hero(){
     bool stop_atk = false;
     if(bitmap_img_id == 6){
         if(stop_atk && atk_range->overlap(*(DC->hero->shape))){ 
-            DC->hero->hp -= atk;
+            DC->hero->hurt(atk);
             stop_atk = true;
             atk_cool_down = init_atk_cool_down;//重置冷卻
         }
