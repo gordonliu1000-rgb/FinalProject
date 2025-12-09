@@ -95,13 +95,13 @@ void Buff::draw_icon(){
     GAME_ASSERT(base, "path incorrect");
     int w = al_get_bitmap_width(base);
     int h = al_get_bitmap_height(base);
-    ALLEGRO_BITMAP *result = al_create_bitmap(2*w, 2*h);
+    ALLEGRO_BITMAP *result = al_create_bitmap(w, h);
     ALLEGRO_BITMAP *display = al_get_target_bitmap();
     al_set_target_bitmap(result);//將繪圖對象設成目標
     al_clear_to_color(al_map_rgba(0, 0, 0, 0)); //透明底
-    al_draw_scaled_bitmap(base, 0, 0, w, h, 0, 0, 2*w, 2*h, 0);// 背景底圖
-    double mask_y = duration/static_cast<double>(init_duration) * 2 * h;// 計算遮罩位置
-    al_draw_filled_rectangle(0, mask_y, 2*w, 2*h, al_map_rgba(255,255,255,175));
+    al_draw_scaled_bitmap(base, 0, 0, w, h, 0, 0, w, h, 0);// 背景底圖
+    double mask_y = duration/static_cast<double>(init_duration) * h;// 計算遮罩位置
+    al_draw_filled_rectangle(0, mask_y, w, h, al_map_rgba(255,255,255,175));
     
     icon = result;
     al_set_target_bitmap(display);// 回到原先繪圖對象

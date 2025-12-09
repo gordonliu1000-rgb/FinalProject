@@ -126,7 +126,9 @@ void Mob::hurt(float dmg){
     bitmap_img_id = 0;
     if(hp <= 0){
         state = MobState::DIE;
-        
+        DataCenter *DC = DataCenter::get_instance();
+        Hero *hero = DC->hero;
+        hero->gain_exp(20);
         return;
     }
     state = MobState::HURT;
@@ -279,4 +281,3 @@ void Mob::draw(){
 		shape->center_x() - al_get_bitmap_width(bitmap) / 2,
 		shape->center_y() - al_get_bitmap_height(bitmap) / 2, 0);
 }
-

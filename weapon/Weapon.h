@@ -21,7 +21,7 @@ class Weapon : public Object{
         float angular_speed;
         float angle;
         float cooldown = 0.0;
-        float hit_interval = 0.2;
+        float hit_interval = 0.3;
 };
 
 #endif

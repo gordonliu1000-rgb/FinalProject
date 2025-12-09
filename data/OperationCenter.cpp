@@ -13,98 +13,14 @@
 #include "../mobs/Mob.h"
 
 void OperationCenter::update() {
-	// Update monsters.
-	_update_monster();
-	// Update towers.
-	_update_tower();
-	// Update tower bullets.
-	_update_towerBullet();
-	// If any bullet overlaps with any monster, we delete the bullet, reduce the HP of the monster, and delete the monster if necessary.
-	_update_monster_towerBullet();
-	// If any monster reaches the end, hurt the player and delete the monster.
-	_update_monster_player();
-
-	//_update_monster_hero();
-
-	_update_monster_weapon();
-
 	_update_buffitem_pickup();
-
 	_update_buffitem_spawn();
-
-	
 	_update_mob_spawn();
-
 	_update_mob();
-
 	_update_mob_weapon();
-	
-}
-
-void OperationCenter::_update_monster() {
-	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
-	for(Monster *monster : monsters)
-		monster->update();
-}
-
-void OperationCenter::_update_tower() {
-	std::vector<Tower*> &towers = DataCenter::get_instance()->towers;
-	for(Tower *tower : towers)
-		tower->update();
-}
-
-void OperationCenter::_update_towerBullet() {
-	std::vector<Bullet*> &towerBullets = DataCenter::get_instance()->towerBullets;
-	for(Bullet *towerBullet : towerBullets)
-		towerBullet->update();
-	// Detect if a bullet flies too far (exceeds its fly distance limit), which means the bullet lifecycle has ended.
-	for(size_t i = 0; i < towerBullets.size(); ++i) {
-		if(towerBullets[i]->get_fly_dist() <= 0) {
-			delete towerBullets[i];
-			towerBullets.erase(towerBullets.begin() + i);
-			--i;
-		}
-	}
-}
-
-void OperationCenter::_update_monster_towerBullet() {
-	DataCenter *DC = DataCenter::get_instance();
-	std::vector<Monster*> &monsters = DC->monsters;
-	std::vector<Bullet*> &towerBullets = DC->towerBullets;
-	for(size_t i = 0; i < monsters.size(); ++i) {
-		for(size_t j = 0; j < towerBullets.size(); ++j) {
-			// Check if the bullet overlaps with the monster.
-			if(monsters[i]->shape->overlap(*(towerBullets[j]->shape))) {
-				// Reduce the HP of the monster. Delete the bullet.
-				monsters[i]->HP -= towerBullets[j]->get_dmg();
-				delete towerBullets[j];
-				towerBullets.erase(towerBullets.begin() + j);
-				--j;
-			}
-		}
-	}
 }
 
 constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
-void OperationCenter::_update_monster_weapon(){
-	DataCenter *DC = DataCenter::get_instance();
-	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
-	std::vector<Monster*> &monsters = DC->monsters;
-	for(size_t i = 0; i < monsters.size(); ++i){
-		for(size_t j=0; j < weapons.size(); ++j){
-			if(!(weapons[j] ->can_hit())) continue;
-
-			if(monsters[i]->shape->overlap(*(weapons[j]->shape))) {
-				//debug_log("cwd = %s\n", std::filesystem::current_path().string().c_str());
-				SoundCenter *SC = SoundCenter::get_instance();
-				SC->play(sword_hit_sound_path, ALLEGRO_PLAYMODE_ONCE);
-				monsters[i]->HP -= weapons[j] ->get_dmg();
-				weapons[j] -> reset_cooldown();
-			}
-		}
-	}
-}
-
 void OperationCenter::_update_mob_weapon(){
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
@@ -114,6 +30,8 @@ void OperationCenter::_update_mob_weapon(){
 		for(auto &weapon:weapons){
 			if(!weapon->can_hit()) continue;
 			if(mob->shape->overlap(*(weapon->shape))){
+				SoundCenter *SC = SoundCenter::get_instance();
+				SC->play(sword_hit_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				mob->hurt(weapon->get_dmg());
 				weapon->reset_cooldown();
 			}
@@ -251,9 +169,6 @@ void OperationCenter::_update_buffitem_spawn(){
 
 // draw
 void OperationCenter::draw() {
-	_draw_monster();
-	_draw_tower();
-	_draw_towerBullet();
 	_draw_buffitem();
 	_draw_mob();
 }

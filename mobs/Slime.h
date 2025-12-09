@@ -9,7 +9,7 @@ class Slime : public Mob
 {
 public :
     Slime(MobType type) : Mob{type}{
-        hp = 200;
+        hp = 20;
         atk = 10;
         speed = 5;
         atk_range_radius = 32;
