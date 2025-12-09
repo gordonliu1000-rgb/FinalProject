@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include "Mob.h"
+#include <memory>
 
 
 class Slime : public Mob
@@ -16,6 +17,9 @@ public :
         init_atk_cool_down = 180;
         atk_cool_down = 20;
         attack_frame_id = 6;
+        atk_range.reset(new Circle{shape->center_x(), 
+            shape->center_y(), 
+            atk_range_radius});
         int state = static_cast<int>(MobState::WALK);
         for(int i=0;i<4;i++){
             bitmap_img_ids[state][i] = 8; 
