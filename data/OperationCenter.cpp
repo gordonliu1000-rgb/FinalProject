@@ -115,7 +115,6 @@ void OperationCenter::_update_mob_weapon(){
 			if(!weapon->can_hit()) continue;
 			if(mob->shape->overlap(*(weapon->shape))){
 				mob->hurt(weapon->get_dmg());
-				debug_log("mob get dmg\n");
 				weapon->reset_cooldown();
 			}
 		}
@@ -124,7 +123,10 @@ void OperationCenter::_update_mob_weapon(){
 }
 
 void OperationCenter:: _update_mob_spawn(){
-	const int init_timer = 60;
+	static int one = 1;
+	if(one==0) return ;//debug
+
+	const int init_timer = 0;
 	static int timer = init_timer;
 	if(timer > 0) timer--;
 	else {
@@ -135,6 +137,7 @@ void OperationCenter:: _update_mob_spawn(){
 		
 		timer = init_timer;
 	}
+	one--;
 }
 
 void OperationCenter::_update_mob(){

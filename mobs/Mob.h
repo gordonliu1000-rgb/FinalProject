@@ -52,11 +52,14 @@ protected :
     int init_atk_cool_down;
     Dir dir = Dir::DOWN;
     bool can_attack = true;
-    std::array<std::array<int, 4>, 4> bitmap_img_ids;//the size of pictures in every dir
+    std::array<std::array<int, 4>, 5> bitmap_img_ids;//the size of pictures in every dir
     int bitmap_switch_counter;
 	int bitmap_switch_freq;
 	int bitmap_img_id = 0;
     int attack_frame_id;
+    int hurt_init_cooldown = 20;
+    int hurt_cooldown = 0;
+
 };
 
 
