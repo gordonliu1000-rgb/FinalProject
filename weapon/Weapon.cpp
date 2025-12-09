@@ -3,7 +3,6 @@
 #include <cmath>
 
 void Weapon::update(const Hero &hero, float dt){
-    if(cooldown >= 0.0) cooldown -= dt;
     angle += angular_speed * dt;
 
     float hx = hero.x();

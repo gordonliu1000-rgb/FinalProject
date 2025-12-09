@@ -1,6 +1,7 @@
 #include "Mob.h"
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
+#include "../data/SoundCenter.h"
 #include "../Hero.h"
 #include "../Random.h"
 #include "../Utils.h"
@@ -26,6 +27,7 @@ namespace MobSetting {
     static constexpr char dir_path_prefix[][10] = {
         "up", "down", "left", "right"
     };
+    constexpr char weapon_hit_sound_path[] = "./assets/sound/Hit.ogg";
 }
 
 
@@ -122,6 +124,8 @@ Mob::Mob(MobType type){
 void Mob::hurt(float dmg){
     if(state == MobState::DIE || hurt_cooldown != 0) return;
     hp -= dmg;
+    SoundCenter *SC = SoundCenter::get_instance();
+	SC->play(MobSetting::weapon_hit_sound_path, ALLEGRO_PLAYMODE_ONCE, 1);
     hurt_cooldown = hurt_init_cooldown;
     bitmap_img_id = 0;
     if(hp <= 0){
