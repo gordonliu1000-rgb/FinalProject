@@ -95,8 +95,27 @@ void Hero::update(){
     if(length > 0){
         dx /= length;
         dy /= length;
-        shape->update_center_x(shape->center_x() + dx * speed);
-        shape->update_center_y(shape->center_y() + dy * speed);
+        int new_x = shape->center_x() + dx * speed;
+        int new_y = shape->center_y() + dy * speed;
+        
+        if(shape->center_y() + dy * speed > DC->game_field_length - DC->wall_width){
+            new_y = DC->game_field_length - DC->wall_width;
+        }
+        else if(shape->center_y() + dy * speed < DC->wall_width){
+            new_y = DC->wall_width;
+        }
+
+        if(shape->center_x() + dx * speed > DC->game_field_width - DC->wall_width){
+            new_x = DC->game_field_width - DC->wall_width;
+        }
+        else if(shape->center_x() + dx * speed < DC->wall_width){
+            new_x = DC->wall_width;
+        }
+        
+        
+
+        shape->update_center_x(new_x);
+        shape->update_center_y(new_y);
     }
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){
@@ -108,6 +127,7 @@ void Hero::update(){
     }
 
     if(hurt_cooldown > 0) --hurt_cooldown;
+
 }
 
 void Hero::hurt(float dmg){

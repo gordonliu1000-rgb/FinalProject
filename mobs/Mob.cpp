@@ -275,22 +275,21 @@ void Mob::draw(){
     bitmap_img_id);
     
 	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
-    float scale_rate = 1;
-    /*
+    float scale_rate = 1.5;
     al_draw_scaled_bitmap(
         bitmap,
-        0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap), 
-        shape->center_x() - al_get_bitmap_width(bitmap) / 2,
-		shape->center_y() - al_get_bitmap_height(bitmap) / 2,
-        shape->center_y() - al_get_bitmap_width(bitmap) / 2 + scale_rate * al_get_bitmap_width(bitmap),
-        shape->center_y() - al_get_bitmap_height(bitmap) / 2 + scale_rate * al_get_bitmap_height(bitmap),
+        0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap),
+        shape->center_x() - (al_get_bitmap_width(bitmap) * scale_rate) / 2,
+        shape->center_y() - (al_get_bitmap_height(bitmap) * scale_rate) / 2,
+        al_get_bitmap_width(bitmap) * scale_rate, // dw
+        al_get_bitmap_height(bitmap) * scale_rate, // dh
         0
     );
-    */
-    
+    /*
 	al_draw_bitmap(
 		bitmap,
 		shape->center_x() - al_get_bitmap_width(bitmap) / 2,
 		shape->center_y() - al_get_bitmap_height(bitmap) / 2, 0);
+    */
     
 }

@@ -17,11 +17,13 @@ namespace DataSetting {
 	//constexpr int backgorund_height = 600;
 	constexpr int game_field_length = 2048;
 	constexpr int game_field_width = 2048;
+	constexpr int wall_width = 32;
 }
 
 DataCenter::DataCenter() {
 	this->FPS = DataSetting::FPS;
 	this->window_width = DataSetting::window_width;
+	this->wall_width = DataSetting::wall_width;
 	this->window_height = DataSetting::window_height;
 	this->game_field_length = DataSetting::game_field_length;
 	this->game_field_width = DataSetting::game_field_width;
