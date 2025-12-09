@@ -127,7 +127,9 @@ void Mob::hurt(float dmg){
     bitmap_img_id = 0;
     if(hp <= 0){
         state = MobState::DIE;
-        
+        DataCenter *DC = DataCenter::get_instance();
+        Hero *hero = DC->hero;
+        hero->gain_exp(20);
         return;
     }
     state = MobState::HURT;
@@ -270,12 +272,12 @@ void Mob::draw(){
 
 void Slime::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
+    Hero *hero = DC->hero;
     //第六張圖是攻擊動作
     bool stop_atk = false;
     if(bitmap_img_id == 6){
-        if(stop_atk && atk_range->overlap(*(DC->hero->shape))){ 
-            DC->hero->hp -= atk;
-            stop_atk = true;
+        if(atk_range->overlap(*(DC->hero->shape))){ 
+            hero->hurt(atk);
             atk_cool_down = init_atk_cool_down;//重置冷卻
         }
     }

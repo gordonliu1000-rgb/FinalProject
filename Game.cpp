@@ -22,7 +22,7 @@
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
-constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
+constexpr char background_sound_path[] = "./assets/sound/BackGroundSound.mp3";
 
 /**
  * @brief Game entry.
@@ -142,7 +142,6 @@ Game::game_init() {
 	ui = new UI();
 	ui->init();
 
-	DC->level->init();
 	DC->hero->init();
 	DC->camera->init();
 
@@ -181,10 +180,8 @@ Game::game_update() {
 	switch(state) {
 		case STATE::START: {
 			static bool is_played = false;
-			//static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 			if(!is_played) {
 				SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
-				DC->level->load_level(1);
 				is_played = true;
 			}
 
@@ -210,26 +207,17 @@ Game::game_update() {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
 			}
-			/*if(!SC->is_playing(instance)) {
-				debug_log("<Game> state: change to LEVEL\n");
-				state = STATE::LEVEL;
-			}*/
 			break;
 		} case STATE::LEVEL: {
 			static bool BGM_played = false;
-			/*if(!BGM_played) {
+			if(!BGM_played) {
 				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
 				BGM_played = true;
-			}*/
-
+			}
 			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
 				SC->toggle_playing(background);
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
-			}
-			if(DC->level->remain_monsters() == 0 && DC->monsters.size() == 0) {
-				debug_log("<Game> state: change to END\n");
-				state = STATE::END;
 			}
 			if(DC->player->HP == 0) {
 				debug_log("<Game> state: change to END\n");
@@ -253,7 +241,6 @@ Game::game_update() {
 		SC->update();
 		DC->camera->update();
 		if(state != STATE::START) {
-			DC->level->update();
 			DC->hero->update();
 			OC->update();
 		}
@@ -284,12 +271,8 @@ Game::game_draw() {
 		// 背景（放大 2 倍）
 		int w = al_get_bitmap_width(background);
 		int h = al_get_bitmap_height(background);
-		al_draw_scaled_bitmap(background, 
-			0, 0,
-			h, w, 
-			0, 0,
-			DC->game_field_length, DC->game_field_width, 
-			0);
+		al_draw_scaled_bitmap(background, 0, 0,h, w, 0, 0,
+			DC->game_field_length, DC->game_field_width, 0);
 
 		if (state != STATE::START) {
 			DC->level->draw();   // 這裡的座標都當「世界座標」
