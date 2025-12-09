@@ -41,21 +41,19 @@ void OperationCenter::_update_mob_weapon(){
 }
 
 void OperationCenter:: _update_mob_spawn(){
-	static int one = 1;
-	if(one==0) return ;//debug
-
-	const int init_timer = 0;
+	DataCenter *DC = DataCenter::get_instance();
+	if(DC->mobs.size() == 200) return;
+	const int init_timer = 120;
 	static int timer = init_timer;
 	if(timer > 0) timer--;
 	else {
 		int rn = Random::range(0, static_cast<int>(MobType::MOBTYPE_MAX)-1);
 		MobType type = static_cast<MobType>(rn); 
-		DataCenter *DC = DataCenter::get_instance();
+		
 		DC->mobs.emplace_back(Mob::create_mob(type));
 		
 		timer = init_timer;
 	}
-	one--;
 }
 
 void OperationCenter::_update_mob(){
@@ -73,32 +71,6 @@ void OperationCenter::_update_mob(){
 
 
 
-
-
-void OperationCenter::_update_monster_player() {
-	DataCenter *DC = DataCenter::get_instance();
-	std::vector<Monster*> &monsters = DC->monsters;
-	Player *&player = DC->player;
-	for(size_t i = 0; i < monsters.size(); ++i) {
-		// Check if the monster is killed.
-		if(monsters[i]->HP <= 0) {
-			// Monster gets killed. Player receives money.
-			player->coin += monsters[i]->get_money();
-			delete monsters[i];
-			monsters.erase(monsters.begin() + i);
-			--i;
-			// Since the current monsster is killed, we can directly proceed to next monster.
-			break;
-		}
-		// Check if the monster reaches the end.
-		if(monsters[i]->get_path().empty()) {
-			delete monsters[i];
-			monsters.erase(monsters.begin() + i);
-			player->HP--;
-			--i;
-		}
-	}
-}
 
 void OperationCenter::_update_monster_hero(){
 	DataCenter *DC = DataCenter::get_instance();
@@ -143,8 +115,8 @@ void OperationCenter::_update_buffitem_pickup(){
 }
 
 void OperationCenter::_update_buffitem_spawn(){
-	DataCenter *DC = DataCenter::get_instance();
 
+	DataCenter *DC = DataCenter::get_instance();
 	static int spawn_counter = 0;
 	spawn_counter++;
 

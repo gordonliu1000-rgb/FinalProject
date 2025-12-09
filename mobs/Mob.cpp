@@ -62,7 +62,7 @@ Mob::Mob(MobType type){
     MobGenPos mob_gen_pos = 
     static_cast<MobGenPos>(Random::range(0, 3));//生成怪物的位置(hero的上下左右其中一邊)
 
-    float x = -1, y = -1;
+    float x = 0, y = 0;
     switch(mob_gen_pos){
         case MobGenPos::UP:{
             x = Random::range(0.0, (float)DC->game_field_width);
@@ -263,7 +263,6 @@ void Mob::dropItem(){
 
 void Mob::draw(){
 
-    debug_log("atk_range_r = %lf\n", atk_range_radius);
     ImageCenter *IC = ImageCenter::get_instance();
     char buffer[50];
 
