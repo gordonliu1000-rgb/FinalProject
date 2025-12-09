@@ -14,7 +14,7 @@
 using namespace std;
 
 // fixed settings
-enum class Dir {
+enum class MonsterDir {
 	UP, DOWN, LEFT, RIGHT
 };
 namespace MonsterSetting {
@@ -58,16 +58,16 @@ Monster *Monster::create_monster(MonsterType type, const vector<Point> &path) {
 /**
  * @brief Given velocity of x and y direction, determine which direction the monster should face.
  */
-Dir convert_dir(const Point &v) {
+MonsterDir convert_dir(const Point &v) {
 	if(v.y < 0 && abs(v.y) >= abs(v.x))
-		return Dir::UP;
+		return MonsterDir::UP;
 	if(v.y > 0 && abs(v.y) >= abs(v.x))
-		return Dir::DOWN;
+		return MonsterDir::DOWN;
 	if(v.x < 0 && abs(v.x) >= abs(v.y))
-		return Dir::LEFT;
+		return MonsterDir::LEFT;
 	if(v.x > 0 && abs(v.x) >= abs(v.y))
-		return Dir::RIGHT;
-	return Dir::RIGHT;
+		return MonsterDir::RIGHT;
+	return MonsterDir::RIGHT;
 }
 
 Monster::Monster(const vector<Point> &path, MonsterType type) {
@@ -75,7 +75,7 @@ Monster::Monster(const vector<Point> &path, MonsterType type) {
 
 	shape.reset(new Rectangle{0, 0, 0, 0});
 	this->type = type;
-	dir = Dir::RIGHT;
+	dir = MonsterDir::RIGHT;
 	bitmap_img_id = 0;
 	bitmap_switch_counter = 0;
 	for(const Point &p : path)
@@ -116,7 +116,7 @@ Monster::update() {
 
 		// Extract the next destination as "next_goal". If we want to reach next_goal, we need to move "d" pixels.
 		double d = Point::dist(Point{shape->center_x(), shape->center_y()}, next_goal);
-		Dir tmpdir;
+		MonsterDir tmpdir;
 		if(d < movement) {
 			// If we can move more than "d" pixels in this frame, we can directly move onto next_goal and reduce "movement" by "d".
 			movement -= d;

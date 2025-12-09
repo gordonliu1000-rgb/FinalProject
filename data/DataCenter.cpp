@@ -34,6 +34,7 @@ DataCenter::DataCenter() {
 	level = new Level();
 	hero = new Hero();
 	camera = Camera::get_instance();
+	mobs.reserve(200);
 }
 
 DataCenter::~DataCenter() {

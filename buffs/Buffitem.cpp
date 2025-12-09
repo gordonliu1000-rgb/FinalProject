@@ -39,5 +39,5 @@ void Buffitem::draw(){
 }
 
 void Buffitem::update(){
-
+    
 }

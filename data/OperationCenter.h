@@ -32,14 +32,17 @@ private:
 	void _update_monster_player();
 	void _update_monster_hero();
 	void _update_monster_weapon();
-	void _update_buff_spawn();
-	void _update_buff_pickup();
-
+	void _update_buffitem_spawn();
+	void _update_buffitem_pickup();
+	void _update_mob_spawn();
+	void _update_mob();
+	void _update_mob_weapon();
 private:
 	void _draw_monster();
 	void _draw_tower();
 	void _draw_towerBullet();
-	void _draw_buff();
+	void _draw_buffitem();
+	void _draw_mob();
 };
 
 #endif

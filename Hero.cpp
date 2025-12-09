@@ -60,7 +60,6 @@ void Hero::draw(){
                 shape->center_x() - gif->width / 2,
                 shape->center_y() - gif->height / 2,
                 0);
-    debug_log("gif_idx:%d\n", gif->display_index);
     for(auto &w : weapons){
         w -> draw();
     }

@@ -7,7 +7,7 @@
 #include <vector>
 #include <queue>
 
-enum class Dir;
+enum class MonsterDir;
 
 // fixed settings
 enum class MonsterType {
@@ -41,8 +41,8 @@ protected:
 	 * @brief The amount of money that player will earn when the monster is killed.
 	 **
 	 * @var bitmap_img_ids
-	 * @brief The first vector is the Dir index, and the second vector is image id.
-	 * @details `bitmap_img_ids[Dir][<ordered_id>]`
+	 * @brief The first vector is the MonsterDir index, and the second vector is image id.
+	 * @details `bitmap_img_ids[MonsterDir][<ordered_id>]`
 	 **
 	 * @var bitmap_switch_counter
 	 * @brief Counting down for bitmap_switch_freq.
@@ -70,7 +70,7 @@ protected:
 	int bitmap_img_id;
 private:
 	MonsterType type;
-	Dir dir;
+	MonsterDir dir;
 	std::queue<Point> path;
 };
 

@@ -8,6 +8,7 @@
 #include <allegro5/mouse.h>
 #include "../shapes/Point.h"
 #include "../buffs/Buffitem.h" 
+#include "../mobs/Mob.h"
 
 class Player;
 class Level;
@@ -106,6 +107,8 @@ public:
 	std::vector<Bullet*> towerBullets;
 
 	std::vector<std::unique_ptr<Buffitem>> buff_items;
+
+	std::vector<std::unique_ptr<Mob>> mobs;
 
 	
 private:

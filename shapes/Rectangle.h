@@ -21,10 +21,6 @@ public:
 		y1 += dy, y2 += dy;
 	}
 	const ShapeType getType() const { return ShapeType::RECTANGLE; }
-	double left() const override {return x1;}
-	double top() const override {return y1;}
-	double right() const override {return x2;}
-	double bottom() const override {return y2;}
 
 public:
 	Rectangle() {}
