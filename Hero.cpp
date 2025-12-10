@@ -101,8 +101,8 @@ void Hero::update(){
         if(shape->center_y() + dy * speed > DC->game_field_length - DC->wall_width){
             new_y = DC->game_field_length - DC->wall_width;
         }
-        else if(shape->center_y() + dy * speed < DC->wall_width){
-            new_y = DC->wall_width;
+        else if(shape->center_y() + dy * speed < 92.0){
+            new_y = 92.0;
         }
 
         if(shape->center_x() + dx * speed > DC->game_field_width - DC->wall_width){
@@ -112,8 +112,6 @@ void Hero::update(){
             new_x = DC->wall_width;
         }
         
-        
-
         shape->update_center_x(new_x);
         shape->update_center_y(new_y);
     }

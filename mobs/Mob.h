@@ -3,9 +3,27 @@
 #include "../Object.h"
 #include "../shapes/Circle.h"
 #include <allegro5/allegro.h>
-#include <array>
 #include <vector>
 #include <memory>
+#include <map>
+#include "../data/ImageCenter.h"
+
+enum class MobType {
+    SLIME, MOBTYPE_MAX
+};
+
+namespace MobSetting {
+    static constexpr char mob_imgs_root_path[static_cast<size_t>(MobType::MOBTYPE_MAX)][50] = {
+        "./assets/image/mob/slime1"
+    };
+    static constexpr char state_path_prefix[][10] = {
+        "walk", "atk", "hurt", "die", "idle"
+    };
+    static constexpr char dir_path_prefix[][10] = {
+        "up", "down", "left", "right"
+    };
+    constexpr char weapon_hit_sound_path[] = "./assets/sound/Hit.ogg";
+}
 
 enum class MobState {
     WALK,
@@ -15,19 +33,19 @@ enum class MobState {
     IDLE
 };
 
-enum class Dir{
+enum class MobDir{
     UP,
     DOWN,
     LEFT,
     RIGHT
 };
 
-enum class MobType {
-    SLIME, MOBTYPE_MAX
-};
+
 
 
 class Mob : public Object{
+public:
+    static void init();
 public :
     float hp;
     float atk;
@@ -43,23 +61,23 @@ public :
     bool die = false;
 private :
     MobType type;
-    MobState state = MobState::WALK;
     void dropItem();
 protected :
+    MobState state = MobState::WALK;
     std::unique_ptr<Circle> atk_range;
     double atk_range_radius;
     int atk_cool_down;//以幀率計算
     int init_atk_cool_down;
-    Dir dir = Dir::DOWN;
+    MobDir dir = MobDir::DOWN;
     bool can_attack = true;
-    std::array<std::array<int, 4>, 5> bitmap_img_ids;//the size of pictures in every dir
     int bitmap_switch_counter;
 	int bitmap_switch_freq;
 	int bitmap_img_id = 0;
     int attack_frame_id;
-    int hurt_init_cooldown = 20;
+    int hurt_init_cooldown = 30;
     int hurt_cooldown = 0;
-
+    virtual ALLEGRO_BITMAP* get_bitmap(int bitmap_id) = 0;
+    virtual int get_bitmaps_last_idx(MobState state) = 0;
 };
 
 

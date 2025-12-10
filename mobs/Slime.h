@@ -1,46 +1,118 @@
 #ifndef SLIME_H_INCLUDED
 #define SLIME_H_INCLUDED
-#include <vector>
-#include <array>
 #include "Mob.h"
 #include <memory>
 
-
 class Slime : public Mob
 {
+public:
+    static std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> img;
+    static void init_img(){
+        ImageCenter *IC = ImageCenter::get_instance();
+        
+        char buffer[60];
+        MobState state = MobState::WALK;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<8;j++){
+                sprintf(
+                buffer, "%s/%s/%s/%d.png",
+                "./assets/image/mob/slime1",
+                MobSetting::state_path_prefix[static_cast<int>(state)],
+                MobSetting::dir_path_prefix[i],
+                j);
+                img[state][static_cast<MobDir>(i)].emplace_back(IC->get(buffer));
+            }
+            
+        }
+
+        state = MobState::ATK;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<10;j++){
+                sprintf(
+                buffer, "%s/%s/%s/%d.png",
+                "./assets/image/mob/slime1",
+                MobSetting::state_path_prefix[static_cast<int>(state)],
+                MobSetting::dir_path_prefix[i],
+                j);
+                img[state][static_cast<MobDir>(i)].emplace_back(IC->get(buffer));
+            }
+        }
+
+        state = MobState::DIE;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<10;j++){
+                sprintf(
+                buffer, "%s/%s/%s/%d.png",
+                "./assets/image/mob/slime1",
+                MobSetting::state_path_prefix[static_cast<int>(state)],
+                MobSetting::dir_path_prefix[i],
+                j);
+                img[state][static_cast<MobDir>(i)].emplace_back(IC->get(buffer));
+            }
+            
+        }
+
+        state = MobState::HURT;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<5;j++){
+                sprintf(
+                buffer, "%s/%s/%s/%d.png",
+                "./assets/image/mob/slime1",
+                MobSetting::state_path_prefix[static_cast<int>(state)],
+                MobSetting::dir_path_prefix[i],
+                j);
+                img[state][static_cast<MobDir>(i)].emplace_back(IC->get(buffer));
+            }
+            
+        }
+
+        state = MobState::IDLE;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<6;j++){
+                sprintf(
+                buffer, "%s/%s/%s/%d.png",
+                "./assets/image/mob/slime1",
+                MobSetting::state_path_prefix[static_cast<int>(state)],
+                MobSetting::dir_path_prefix[i],
+                j);
+                img[state][static_cast<MobDir>(i)].emplace_back(IC->get(buffer));
+            }
+            
+        }
+        
+    }
 public :
+    ALLEGRO_BITMAP* get_bitmap(int bitmap_id){
+        return img[state][dir][bitmap_id];
+    }
+
+    int get_bitmaps_last_idx(MobState state){
+        return img[state][dir].size() - 1;
+    }
+
     Slime(MobType type) : Mob{type}{
         hp = 20;
         atk = 10;
-        speed = 10;
-        atk_range_radius = 32;
+        speed = 20;
+        atk_range_radius = 40;
         init_atk_cool_down = 180;
         atk_cool_down = 20;
         attack_frame_id = 6;
+        const float &w = al_get_bitmap_width(img[state][dir][0]);
+        const float &h = al_get_bitmap_width(img[state][dir][0]);
+        shape.reset(new Rectangle{
+            shape->center_x() - w/2,
+            shape->center_y() - h/2,
+            shape->center_x() + w/2,
+            shape->center_y() + h/2
+        });
+
         atk_range.reset(new Circle{shape->center_x(), 
             shape->center_y(), 
-            atk_range_radius});
-        int state = static_cast<int>(MobState::WALK);
-        for(int i=0;i<4;i++){
-            bitmap_img_ids[state][i] = 8; 
-        }
-        state = static_cast<int>(MobState::ATK);
-        for(int i=0;i<4;i++){
-            bitmap_img_ids[state][i] = 10; 
-        }
-        state = static_cast<int>(MobState::HURT);
-        for(int i=0;i<4;i++){
-            bitmap_img_ids[state][i] = 5; 
-        }
-        state = static_cast<int>(MobState::DIE);
-        for(int i=0;i<4;i++){
-            bitmap_img_ids[state][i] = 10; 
-        }
-        state = static_cast<int>(MobState::IDLE);
-        for(int i=0;i<4;i++){
-            bitmap_img_ids[state][i] = 6; 
-        }
-        bitmap_switch_freq = 9;
+            this->atk_range_radius});
+        bitmap_switch_freq = 7;
+
+        debug_log("mob spawn at x=%f y=%f\n", shape->center_x(), shape->center_y());
     }
     void atk_hero();
 };

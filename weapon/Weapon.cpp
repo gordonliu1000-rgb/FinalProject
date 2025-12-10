@@ -1,9 +1,11 @@
 #include "Weapon.h"
 #include "../Hero.h"
 #include <cmath>
+#include "../data/DataCenter.h"
 
 void Weapon::update(const Hero &hero, float dt){
     angle += angular_speed * dt;
+    dmg = hero.atk;
 
     float hx = hero.x();
     float hy = hero.y();

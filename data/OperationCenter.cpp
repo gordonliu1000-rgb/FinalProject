@@ -28,12 +28,8 @@ void OperationCenter::_update_mob_weapon(){
 
 	for(auto &mob:mobs){
 		for(auto &weapon:weapons){
-			//if(!weapon->can_hit()) continue;
 			if(mob->shape->overlap(*(weapon->shape))){
-				//SoundCenter *SC = SoundCenter::get_instance();
-				//SC->play(sword_hit_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				mob->hurt(weapon->get_dmg());
-				//weapon->reset_cooldown();
 			}
 		}
 	}
@@ -60,7 +56,7 @@ void OperationCenter::_update_mob(){
 	std::vector<std::unique_ptr<Mob>> &mobs = DataCenter::get_instance()->mobs;
 	for(auto m=mobs.begin();m!=mobs.end();){
 		if((*m)->die){
-			mobs.erase(m);
+			m = mobs.erase(m);
 		}
 		else{
 			(*m)->update();

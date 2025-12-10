@@ -74,8 +74,6 @@ public:
 	 */
 	bool prev_mouse_state[ALLEGRO_MOUSE_MAX_EXTRA_AXES];
 public:
-	float camera_x;
-	float camera_y;
 	/**
 	 * @brief Stores the basic information that a player should have.
 	 * @details For a tower-defense game, coin and health point is enough to represent a player.

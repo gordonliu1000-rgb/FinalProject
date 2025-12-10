@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Hero.h"
+#include "./mobs/Mob.h"
 #include "Camera.h"
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -144,6 +145,7 @@ Game::game_init() {
 
 	DC->hero->init();
 	DC->camera->init();
+	Mob::init();
 
 	show_help_menu = false;
 
@@ -260,11 +262,10 @@ Game::game_draw() {
     OperationCenter *OC = OperationCenter::get_instance();
     FontCenter *FC = FontCenter::get_instance();
 
-    // 1. 清畫面
+    // 清畫面
     al_clear_to_color(al_map_rgb(100, 100, 100));
 
     if (state != STATE::END) {
-		// 2. 設定「世界座標」攝影機 transform，鏡頭位置用 DC->camera_x/y
 		WorldCoordinate::switch_to_world_coordinate();
 
 		// 3. 在世界座標下畫「會跟著鏡頭動」的東西：背景、地圖、hero、OC
