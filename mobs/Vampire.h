@@ -17,7 +17,7 @@ public:
             for(int j=0;j<6;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/flower1",
+                "./assets/image/mob/vampire1",
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -31,7 +31,7 @@ public:
             for(int j=0;j<12;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/flower1",
+                "./assets/image/mob/vampire1",
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -40,11 +40,11 @@ public:
         }
 
         state = MobState::DIE;
-        for(int i=0;i<11;i++){
-            for(int j=0;j<10;j++){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<11;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/flower1",
+                "./assets/image/mob/vampire1",
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -58,7 +58,7 @@ public:
             for(int j=0;j<4;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/flower1",
+                "./assets/image/mob/vampire1",
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -72,7 +72,7 @@ public:
             for(int j=0;j<4;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/flower1",
+                "./assets/image/mob/vampire1",
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
