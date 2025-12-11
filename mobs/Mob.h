@@ -9,12 +9,13 @@
 #include "../data/ImageCenter.h"
 
 enum class MobType {
-    SLIME, MOBTYPE_MAX
+    SLIME, FLOWER, MOBTYPE_MAX
 };
 
 namespace MobSetting {
     static constexpr char mob_imgs_root_path[static_cast<size_t>(MobType::MOBTYPE_MAX)][50] = {
-        "./assets/image/mob/slime1"
+        "./assets/image/mob/slime1",
+        "./assets/image/mob/flower1"
     };
     static constexpr char state_path_prefix[][10] = {
         "walk", "atk", "hurt", "die", "idle"
