@@ -2,6 +2,7 @@
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 #include "../data/SoundCenter.h"
+#include "../Camera.h"
 #include "../Hero.h"
 #include "../Random.h"
 #include "../Utils.h"
@@ -9,6 +10,7 @@
 #include "../shapes/Rectangle.h"
 #include <cmath>
 #include "Slime.h"
+#include "Flower.h"
 #include "../buffs/Buff.h"
 #include "../algif5/algif.h"
 #include <memory>
@@ -24,16 +26,20 @@ enum class MobGenPos {
 
 void Mob::init(){
     Slime::init_img();
+    Flower::init_img();
 }
 
 
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime::img;
+std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Flower::img;
 
 std::unique_ptr<Mob> Mob::create_mob(MobType type){
     switch(type){
         case MobType::SLIME : {
-            
             return std::make_unique<Slime>(type);
+        }
+        case MobType::FLOWER : {
+            return std::make_unique<Flower>(type);
         }
         default :{
             GAME_ASSERT(0, "Unknow mob type");
@@ -50,8 +56,8 @@ Mob::Mob(MobType type){
     DataCenter *DC = DataCenter::get_instance();
     
 
-    MobGenPos mob_gen_pos = 
-    static_cast<MobGenPos>(Random::range(0, 3));//生成怪物的位置(hero的上下左右其中一邊)
+    //MobGenPos mob_gen_pos = 
+    //static_cast<MobGenPos>(Random::range(0, 3));//生成怪物的位置(hero的上下左右其中一邊)
 
     float x = 0, y = 0;
     x = Random::range((float)DC->wall_width, (float)DC->game_field_width - DC->wall_width);
@@ -193,6 +199,15 @@ void Slime::atk_hero(){
     }
 }
 
+void Flower::atk_hero(){
+    DataCenter *DC = DataCenter::get_instance();
+    //第六張圖是攻擊動作
+    if(atk_range->overlap(*(DC->hero->shape))){ 
+        DC->hero->hp -= atk;
+        atk_cool_down = init_atk_cool_down;//重置冷卻
+    }
+}
+
 
 
 void Mob::dropItem(){
@@ -207,7 +222,16 @@ void Mob::dropItem(){
 }
 
 void Mob::draw(){
-    
+    //超出範圍不draw
+    static const int &window_width = DataCenter::get_instance()->window_width;
+    static const int &window_height = DataCenter::get_instance()->window_height;
+    const double camera_x = DataCenter::get_instance()->camera->top_left_x();
+    const double camera_y = DataCenter::get_instance()->camera->top_left_y();
+    if(!(camera_x < shape->center_x() && shape->center_x() < camera_x + window_width )||
+    !(camera_y < shape->center_y() && shape->center_y() < camera_y + window_height)){
+        return;
+    }
+
 	ALLEGRO_BITMAP *bitmap = get_bitmap(bitmap_img_id);
     float scale_rate = 1.5;
     al_draw_scaled_bitmap(
