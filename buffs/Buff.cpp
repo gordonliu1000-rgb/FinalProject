@@ -2,6 +2,7 @@
 #include "Speed.h"
 #include "Power.h"
 #include "Heal.h"
+#include "Absorb.h"
 #include <allegro5/allegro.h>
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
@@ -19,6 +20,9 @@ Buff* Buff::create_buff(BuffType type){
         }
         case BuffType::HEAL: {
             return new Heal(type);
+        }
+        case BuffType::ABSORB: {
+            return new Absorb(type);
         }
         default:{
             break;
@@ -96,6 +100,26 @@ void Heal::effect() {
 }
 
 void Heal::clear_effect() {}
+
+Absorb::Absorb(BuffType type) : Buff(type) {
+    DataCenter *DC = DataCenter::get_instance();
+    init_duration = 600;
+    duration = 0;
+    shield_amount = DC->hero->max_hp * 0.5;
+} 
+
+void Absorb::effect(){
+    if(used) return;
+
+    DataCenter *DC = DataCenter::get_instance();
+    DC->hero->gain_shield(shield_amount);
+    used = true;
+}
+
+void Absorb::clear_effect(){
+    DataCenter *DC = DataCenter::get_instance();
+    DC->hero->shield = 0.0;
+}
 //new buff write here
 
 void Buff::draw_icon(){

@@ -131,10 +131,24 @@ void Hero::update(){
 void Hero::hurt(float dmg){
     if(hurt_cooldown > 0) return;
 
-    hp -= static_cast<int>(dmg);
-    if(hp < 0) hp = 0;
+    if(shield > 0){
+        float shield_absorb = std::min(shield, dmg);
+        shield -= shield_absorb;
+        dmg -= shield_absorb;
+    }
+
+    if(dmg > 0){
+        hp -= static_cast<int>(dmg);
+        if(hp < 0) hp = 0;
+    }
+
     hurt_cooldown = 5;
 
+}
+
+void Hero::gain_shield(float amount){
+    shield += amount;
+    max_shield = amount;
 }
 
 void Hero::gain_exp(int amount){

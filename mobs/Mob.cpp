@@ -200,7 +200,7 @@ void Mob::update(){
 void Slime::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
     if(atk_range->overlap(*(DC->hero->shape))){ 
-        DC->hero->hp -= atk;
+        DC->hero->hurt(atk);
         atk_cool_down = init_atk_cool_down;//重置冷卻
     }
 }
@@ -208,7 +208,7 @@ void Slime::atk_hero(){
 void Flower::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
     if(atk_range->overlap(*(DC->hero->shape))){ 
-        DC->hero->hp -= atk;
+        DC->hero->hurt(atk);
         atk_cool_down = init_atk_cool_down;//重置冷卻
     }
 }
@@ -216,7 +216,7 @@ void Flower::atk_hero(){
 void Vampire::atk_hero(){// to do
     DataCenter *DC = DataCenter::get_instance();
     if(atk_range->overlap(*(DC->hero->shape))){ 
-        DC->hero->hp -= atk;
+        DC->hero->hurt(atk);
         atk_cool_down = init_atk_cool_down;//重置冷卻
     }
 }
@@ -228,7 +228,7 @@ void Mob::dropItem(){
     bool drop = 100;
     if(drop){
         DataCenter *DC = DataCenter::get_instance();
-        BuffType type = static_cast<BuffType>(Random::range(0, 2));
+        BuffType type = static_cast<BuffType>(Random::range(0, 3));
         DC->buff_items.emplace_back(std::make_unique<Buffitem>(type, 
             Point{shape->center_x(), shape->center_y()}));
         debug_log("spawn buff at x=%.1f y=%.1f type=%d\n", shape->center_x(), shape->center_y(), (int)type);
