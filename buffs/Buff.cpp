@@ -1,6 +1,7 @@
 #include "Buff.h"
 #include "Speed.h"
 #include "Power.h"
+#include "Heal.h"
 #include <allegro5/allegro.h>
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
@@ -15,6 +16,9 @@ Buff* Buff::create_buff(BuffType type){
         }
         case BuffType::POWER : {
             return new Power(type);
+        }
+        case BuffType::HEAL: {
+            return new Heal(type);
         }
         default:{
             break;
@@ -76,6 +80,22 @@ void Power::clear_effect(){
     static DataCenter *DC = DataCenter::get_instance();
     DC->hero->atk = init_attack;
 }
+
+Heal::Heal(BuffType type) : Buff(type){
+    init_duration = 300;
+    duration = 0;
+
+}
+
+void Heal::effect() {
+    DataCenter *DC = DataCenter::get_instance();
+    if(DC->hero->hp < DC->hero->max_hp){
+        DC->hero->hp += 0.167;
+    }
+    if(DC->hero->hp > DC->hero->max_hp) DC->hero->hp = DC->hero->max_hp;
+}
+
+void Heal::clear_effect() {}
 //new buff write here
 
 void Buff::draw_icon(){

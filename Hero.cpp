@@ -148,7 +148,6 @@ void Hero::gain_exp(int amount){
 void Hero::level_up(){
     level++;
     max_hp += 20;
-    hp = max_hp;
     atk += 20;
     exp_to_next = static_cast<int>(exp_to_next * 1.2);
 }

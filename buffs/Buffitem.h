@@ -11,12 +11,14 @@
  * @details Buffitem 繼承 Object，使用 Rectangle 做 hit box。
  */
 
+
+ 
 class Buffitem : public Object{
     public:
         Buffitem(BuffType type, const Point &pos);
-
         void update();
         void draw();
+        ALLEGRO_BITMAP *bitmap;
         BuffType get_type() const {return type;}
 
     private:

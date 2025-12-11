@@ -213,7 +213,7 @@ Game::game_update() {
 		} case STATE::LEVEL: {
 			static bool BGM_played = false;
 			if(!BGM_played) {
-				//background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP, 0.1);
+				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP, 0.1);
 				BGM_played = true;
 			}
 			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
