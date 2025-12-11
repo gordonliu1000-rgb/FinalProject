@@ -11,9 +11,11 @@
 #include <cmath>
 #include "Slime.h"
 #include "Flower.h"
+#include "Vampire.h"
 #include "../buffs/Buff.h"
 #include "../algif5/algif.h"
 #include <memory>
+
 
 enum class MobGenPos {
     UP,
@@ -27,11 +29,13 @@ enum class MobGenPos {
 void Mob::init(){
     Slime::init_img();
     Flower::init_img();
+    Vampire::init_img();
 }
 
 
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime::img;
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Flower::img;
+std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Vampire::img;
 
 std::unique_ptr<Mob> Mob::create_mob(MobType type){
     switch(type){
@@ -40,6 +44,9 @@ std::unique_ptr<Mob> Mob::create_mob(MobType type){
         }
         case MobType::FLOWER : {
             return std::make_unique<Flower>(type);
+        }
+        case MobType::VAMPIRE : {
+            return std::make_unique<Vampire>(type);
         }
         default :{
             GAME_ASSERT(0, "Unknow mob type");
@@ -192,7 +199,6 @@ void Mob::update(){
 
 void Slime::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
-    //第六張圖是攻擊動作
     if(atk_range->overlap(*(DC->hero->shape))){ 
         DC->hero->hp -= atk;
         atk_cool_down = init_atk_cool_down;//重置冷卻
@@ -201,7 +207,14 @@ void Slime::atk_hero(){
 
 void Flower::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
-    //第六張圖是攻擊動作
+    if(atk_range->overlap(*(DC->hero->shape))){ 
+        DC->hero->hp -= atk;
+        atk_cool_down = init_atk_cool_down;//重置冷卻
+    }
+}
+
+void Vampire::atk_hero(){// to do
+    DataCenter *DC = DataCenter::get_instance();
     if(atk_range->overlap(*(DC->hero->shape))){ 
         DC->hero->hp -= atk;
         atk_cool_down = init_atk_cool_down;//重置冷卻
