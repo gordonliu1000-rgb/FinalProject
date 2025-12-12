@@ -15,23 +15,28 @@ namespace DataSetting {
 	constexpr int window_height = 800;
 	//constexpr int backgorund_width = 800;
 	//constexpr int backgorund_height = 600;
-	constexpr int game_field_length = 2048;
+	constexpr int game_field_height = 2048;
 	constexpr int game_field_width = 2048;
 	constexpr int wall_width = 32;
+	constexpr int cell_width = 64;
 }
 
 DataCenter::DataCenter() {
 	this->FPS = DataSetting::FPS;
+	this->cell_width = DataSetting::cell_width;
 	this->window_width = DataSetting::window_width;
 	this->wall_width = DataSetting::wall_width;
 	this->window_height = DataSetting::window_height;
-	this->game_field_length = DataSetting::game_field_length;
+	this->game_field_height = DataSetting::game_field_height;
 	this->game_field_width = DataSetting::game_field_width;
+	
 	memset(key_state, false, sizeof(key_state));
 	memset(prev_key_state, false, sizeof(prev_key_state));
 	mouse = Point(0, 0);
 	memset(mouse_state, false, sizeof(mouse_state));
 	memset(prev_mouse_state, false, sizeof(prev_mouse_state));
+	grids.assign(this->game_field_height/DataSetting::cell_width,
+		std::vector<Cell>(this->game_field_width/DataSetting::cell_width, Cell()));
 	player = new Player();
 	level = new Level();
 	hero = new Hero();

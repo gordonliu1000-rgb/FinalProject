@@ -47,8 +47,8 @@ Level::load_level(int lvl) {
 	FILE *f = fopen(buffer, "r");
 	GAME_ASSERT(f != nullptr, "cannot find level.");
 	level = lvl;
-	grid_w = DC->game_field_length / LevelSetting::grid_size[lvl];
-	grid_h = DC->game_field_length / LevelSetting::grid_size[lvl];
+	grid_w = DC->game_field_height / LevelSetting::grid_size[lvl];
+	grid_h = DC->game_field_height / LevelSetting::grid_size[lvl];
 	num_of_monsters.clear();
 	road_path.clear();
 

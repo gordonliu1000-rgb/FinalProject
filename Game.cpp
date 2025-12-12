@@ -273,12 +273,12 @@ Game::game_draw() {
 		int w = al_get_bitmap_width(background);
 		int h = al_get_bitmap_height(background);
 		al_draw_scaled_bitmap(background, 0, 0,h, w, 0, 0,
-			DC->game_field_length, DC->game_field_width, 0);
+			DC->game_field_height, DC->game_field_width, 0);
 
 		if (state != STATE::START) {
-			DC->level->draw();   // 這裡的座標都當「世界座標」
-			DC->hero->draw();    // Hero::draw 用 shape->center_x()/y() 就好
-			OC->draw();          // 若是遊戲物件（不是 UI），放這裡
+			//DC->level->draw();   // 這裡的座標都當「世界座標」
+			OC->draw();  
+			DC->hero->draw();        // 若是遊戲物件（不是 UI），放這裡
 		}
 
 		// 4. 畫 UI：改回「螢幕座標」，不跟鏡頭動

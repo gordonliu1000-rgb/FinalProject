@@ -20,19 +20,33 @@ void OperationCenter::update() {
 	_update_mob_weapon();
 }
 
+bool inbounds(int x, int y, int cols, int rows){
+	return x >= 0 && x < rows && y >= 0 && y < cols;
+}
+
 //constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
 void OperationCenter::_update_mob_weapon(){
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
-	std::vector<std::unique_ptr<Mob>> &mobs = DC->mobs;
-
-	for(auto &mob:mobs){
-		for(auto &weapon:weapons){
-			if(mob->shape->overlap(*(weapon->shape))){
-				mob->hurt(weapon->get_dmg());
+	static int grid_x = 0, grid_y = 0;
+	static const int dx[8] = {1, -1, 0,  0,  1,  1, -1, -1};
+	static const int dy[8] = {0,  0, 1, -1,  1, -1,  1, -1};
+	for(auto &weapon:weapons){
+		for(int i=0;i<8;i++){
+			grid_x = weapon->shape->center_x()/DC->cell_width + dx[i];
+			grid_y = weapon->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
+			if(inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
+				for(auto &mob:DC->grids[grid_y][grid_x].mobs){
+					if(mob->shape->overlap(*(weapon->shape))){
+						mob->hurt(weapon->get_dmg());
+					}
+				}
 			}
 		}
+		
 	}
+
+				
 
 }
 
@@ -45,36 +59,33 @@ void OperationCenter:: _update_mob_spawn(){
 	else {
 		int rn = Random::range(0, static_cast<int>(MobType::MOBTYPE_MAX)-1);
 		MobType type = static_cast<MobType>(rn); 
-		
 		DC->mobs.emplace_back(Mob::create_mob(type));
-		
+
 		timer = init_timer;
 	}
 }
 
 void OperationCenter::_update_mob(){
+	DataCenter *DC = DataCenter::get_instance();
 	std::vector<std::unique_ptr<Mob>> &mobs = DataCenter::get_instance()->mobs;
+	for(auto &grids:DC->grids){
+		for(auto &cell:grids){
+			cell.mobs.clear();
+		}
+	}
+	static int gird_x = 0, grid_y = 0;
 	for(auto m=mobs.begin();m!=mobs.end();){
 		if((*m)->die){
 			m = mobs.erase(m);
 		}
 		else{
 			(*m)->update();
+			gird_x = (*m)->shape->center_x()/DC->cell_width;
+			grid_y = (*m)->shape->center_y()/DC->cell_width;
+			DC->grids[grid_y][gird_x].mobs.push_back((*m).get());
 			m++;
 		}
-	}
-}
 
-
-
-
-void OperationCenter::_update_monster_hero(){
-	DataCenter *DC = DataCenter::get_instance();
-	std::vector<Monster *> &monsters = DC->monsters;
-	for(size_t i=0; i<monsters.size(); i++){
-		if(monsters[i]->shape->overlap(*(DC->hero->shape))){
-			monsters[i]->HP = 0;
-		}
 	}
 }
 
@@ -122,7 +133,7 @@ void OperationCenter::_update_buffitem_spawn(){
 		int t = Random::range(0, 1);
 		BuffType type = (t == 0 ? BuffType::SPEED : BuffType::POWER);
 
-		float x = Random::range(0.0, (float)DC->game_field_length);
+		float x = Random::range(0.0, (float)DC->game_field_height);
 		float y = Random::range(0.0, (float)DC->game_field_width);
 
 		DC->buff_items.emplace_back(std::make_unique<Buffitem>(type, Point{x, y}));
