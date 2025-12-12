@@ -29,7 +29,7 @@ UI::init() {
 	DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	love = IC->get(love_img_path);
-	int tl_x = DC->game_field_length + tower_img_left_padding;
+	int tl_x = DC->game_field_height + tower_img_left_padding;
 	int tl_y = tower_img_top_padding;
 	int max_height = 0;
 	// arrange tower shop
@@ -38,7 +38,7 @@ UI::init() {
 		int w = al_get_bitmap_width(bitmap);
 		int h = al_get_bitmap_height(bitmap);
 		if(tl_x + w > DC->window_width) {
-			tl_x = DC->game_field_length + tower_img_left_padding;
+			tl_x = DC->game_field_height + tower_img_left_padding;
 			tl_y += max_height + tower_img_top_padding;
 			max_height = 0;
 		}

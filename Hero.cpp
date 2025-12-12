@@ -37,8 +37,8 @@ void Hero::init() {
     DataCenter *DC = DataCenter::get_instance();
 
     // 設定 hero 在「地圖世界」裡的起點
-    float start_x = DC->game_field_length / 2;      // 例：地圖中間或左上某點
-    float start_y = DC->game_field_length / 2;
+    float start_x = DC->game_field_height / 2;      // 例：地圖中間或左上某點
+    float start_y = DC->game_field_height / 2;
     //Hitbox
     max_hp = 100;
     hp = max_hp;
@@ -94,8 +94,8 @@ void Hero::update(){
         int new_x = shape->center_x() + dx * speed;
         int new_y = shape->center_y() + dy * speed;
         
-        if(shape->center_y() + dy * speed > DC->game_field_length - DC->wall_width){
-            new_y = DC->game_field_length - DC->wall_width;
+        if(shape->center_y() + dy * speed > DC->game_field_height - DC->wall_width){
+            new_y = DC->game_field_height - DC->wall_width;
         }
         else if(shape->center_y() + dy * speed < 92.0){
             new_y = 92.0;

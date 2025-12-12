@@ -25,13 +25,6 @@ public:
 private:
 	OperationCenter() {}
 private:
-	void _update_monster();
-	void _update_tower();
-	void _update_towerBullet();
-	void _update_monster_towerBullet();
-	void _update_monster_player();
-	void _update_monster_hero();
-	void _update_monster_weapon();
 	void _update_buffitem_spawn();
 	void _update_buffitem_pickup();
 	void _update_mob_spawn();

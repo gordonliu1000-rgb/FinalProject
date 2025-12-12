@@ -15,7 +15,7 @@ void Camera::init(){
     DataCenter *DC = DataCenter::get_instance();
     set_target(DC->hero);
     double map_w = DC->game_field_width;
-    double map_h = DC->game_field_length;
+    double map_h = DC->game_field_height;
     if(hero->shape->center_x()-DC->window_width/2.0f < 0)
         x = 0;
     else if(hero->shape->center_x()+DC->window_width / 2.0f > map_w)
@@ -34,7 +34,7 @@ void Camera::init(){
 void Camera::update(){
     DataCenter *DC = DataCenter::get_instance();
     double map_w = DC->game_field_width;
-    double map_h = DC->game_field_length;
+    double map_h = DC->game_field_height;
     
     if(hero->shape->center_x()-DC->window_width/2.0f <0)
         x = 0;

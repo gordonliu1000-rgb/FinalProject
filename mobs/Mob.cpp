@@ -68,9 +68,8 @@ Mob::Mob(MobType type){
 
     float x = 0, y = 0;
     x = Random::range((float)DC->wall_width, (float)DC->game_field_width - DC->wall_width);
-    y = Random::range(92.0, DC->game_field_length - DC->wall_width);
+    y = Random::range(92.0, DC->game_field_height - DC->wall_width);
     shape.reset(new Point{x, y});
-    debug_log("mob spawn at x=%f y=%f\n", shape->center_x(), shape->center_y());
 }
 
 void Mob::hurt(float dmg){
@@ -88,7 +87,6 @@ void Mob::hurt(float dmg){
         return;
     }
     state = MobState::HURT;
-    debug_log("mobState : Hurt\n");
 }
 
 void Mob::update(){
@@ -148,8 +146,6 @@ void Mob::update(){
                 state = MobState::IDLE;
                 bitmap_img_id = 0;
                 bitmap_switch_counter = bitmap_switch_freq;
-                
-                debug_log("mobState : Idle\n");
             }
             break;
         }
@@ -177,14 +173,12 @@ void Mob::update(){
             if (!atk_range->overlap(*(hero->shape))) {
                 bitmap_img_id = 0;
                 state = MobState::WALK;
-                debug_log("MobState : Walk\n");
                 break;
             }
 
             // hero 還在範圍內且冷卻好了 → 再進一次 ATK
             if (atk_cool_down == 0) {
                 state = MobState::ATK;
-                debug_log("MobState : Atk\n");
                 bitmap_switch_counter = 0;
                 bitmap_img_id = 0;
             }

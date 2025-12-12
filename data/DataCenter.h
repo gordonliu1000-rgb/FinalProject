@@ -19,12 +19,19 @@ class Hero;
 class Camera;
 class Buffitem;
 
+
+
+
 /**
  * @brief Stores generic global data and relatively small data structures.
  * @details The globally used data such as FPS (frames per second), windows size, game region, and states of input devices (mouse and keyboard).
  * Player and Level are stored here mainly because the objects are small enough that do not require complex management.
  * Other specific data like game objects (towers, monsters ... etc) or ALLEGRO_BITMAP will be managed by other center objects.
  */
+
+
+
+
 class DataCenter
 {
 public:
@@ -32,17 +39,19 @@ public:
 		static DataCenter DC;
 		return &DC;
 	}
+	
 	~DataCenter();
 public:
 	double FPS;
 
 	int window_width, window_height;
 	int wall_width;
+	int cell_width;
 	/**
 	 * @brief The width and height of game area (not window size). That is, the region excludes menu region.
 	 * @details The game area is sticked to the top-left of the display window.
 	 */
-	int game_field_length, game_field_width;
+	int game_field_height, game_field_width;
 	/**
 	 * @brief Stores the keyboard state whether a key is being pressed.
 	 * @details The states will be updated once a key is pressed, asynchronously with frame update.
@@ -73,6 +82,11 @@ public:
 	 * @see Game::game_update()
 	 */
 	bool prev_mouse_state[ALLEGRO_MOUSE_MAX_EXTRA_AXES];
+private:
+	struct Cell{
+		std::vector<Mob*> mobs;
+		Cell(){};
+	};
 public:
 	/**
 	 * @brief Stores the basic information that a player should have.
@@ -110,8 +124,10 @@ public:
 
 	std::vector<std::unique_ptr<Mob>> mobs;
 
-	
+	std::vector<std::vector<Cell>> grids;
 private:
+	
+
 	DataCenter();
 };
 
