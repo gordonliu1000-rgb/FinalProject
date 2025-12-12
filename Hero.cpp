@@ -4,6 +4,7 @@
 #include "algif5/algif.h"
 #include "shapes/Rectangle.h"
 #include "weapon/Sword.h"
+#include "weapon/Lightball.h"
 #include <cmath>
 #include "Utils.h"
 using namespace std;
@@ -49,14 +50,9 @@ void Hero::init() {
     atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
 
-    //buff initialize
-    buffs.emplace_back(Buff::create_buff(BuffType::SPEED));
-    buffs[0]->reset_duration();//測試用，給一個speed buff
-    buffs.emplace_back(Buff::create_buff(BuffType::POWER));
-    buffs[1]->reset_duration();//測試用，給一個power buff
-    
 
-    weapons.emplace_back(std::make_unique<Sword>(atk, 80.0f, 4.0f));
+    weapons.emplace_back(std::make_unique<Sword>(atk, 80.0, 4.0));
+    weapons.emplace_back(std::make_unique<Lightball>(atk * 1.5f, 120.0, 6.0));
 }
 
 void Hero::draw(){
@@ -115,6 +111,7 @@ void Hero::update(){
         shape->update_center_x(new_x);
         shape->update_center_y(new_y);
     }
+    debug_log("Hero update, weapons size = %d\n", (int)weapons.size());
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){
         w -> update(*this, dt);
@@ -131,14 +128,14 @@ void Hero::update(){
 void Hero::hurt(float dmg){
     if(hurt_cooldown > 0) return;
 
-    if(shield > 0){
+    if(shield > 0.0){
         float shield_absorb = std::min(shield, dmg);
         shield -= shield_absorb;
         dmg -= shield_absorb;
     }
 
     if(dmg > 0){
-        hp -= static_cast<int>(dmg);
+        hp -= dmg;
         if(hp < 0) hp = 0;
     }
 
@@ -147,7 +144,7 @@ void Hero::hurt(float dmg){
 }
 
 void Hero::gain_shield(float amount){
-    shield += amount;
+    shield = amount;
     max_shield = amount;
 }
 
@@ -164,6 +161,17 @@ void Hero::level_up(){
     max_hp += 20;
     atk += 20;
     exp_to_next = static_cast<int>(exp_to_next * 1.2);
+
+    weapons.clear();
+    int sword_count = 1 + (level / 2);
+    int light_count = 1 + level / 3;
+
+    for(int i = 0; i < sword_count; i++){
+        weapons.emplace_back(std::make_unique<Sword>(atk, 80.0, 4.0));
+    }
+    for(int i = 0; i < light_count; i++){
+        weapons.emplace_back(std::make_unique<Lightball>(atk * 1.5, 120.0, 6.0));
+    }
 }
 
 Hero::~Hero(){

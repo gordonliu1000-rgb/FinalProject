@@ -40,7 +40,7 @@ class Hero : public Object{
         std::vector<Buff*>buffs;
         float hp; //目前血量
         float max_hp; //最大血量
-        float level;
+        int level;
         float exp; // 經驗值
         float exp_to_next; //生到下一級所需的經驗值
         float atk;

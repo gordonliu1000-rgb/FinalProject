@@ -113,7 +113,7 @@ UI::draw() {
 	al_draw_rectangle(ExpBar_x, ExpBar_y, 
 			ExpBar_x + ExpBar_w, ExpBar_y + ExpBar_h, al_map_rgb(255, 255, 255), 2);
 		
-	sprintf(buf, "LV:%.0f   EXP:%.0f / %.0f", hero->level, hero->exp, hero->exp_to_next);
+	sprintf(buf, "LV:%d   EXP:%.0f / %.0f", hero->level, hero->exp, hero->exp_to_next);
 	al_draw_text(FC->caviar_dreams[FontSize::SMALL], al_map_rgb(255, 255, 255),
 			ExpBar_x, ExpBar_y - 20.0, 0, buf);
 

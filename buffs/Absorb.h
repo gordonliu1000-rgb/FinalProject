@@ -7,6 +7,7 @@ class Absorb : public Buff {
         Absorb(BuffType type);
         void effect();
         void clear_effect();
+        void reset_duration() override;
     private:
         float shield_amount;
         bool used = false;
