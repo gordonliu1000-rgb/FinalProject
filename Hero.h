@@ -27,6 +27,7 @@ class Hero : public Object{
         void hurt(float dmg);
         void gain_exp(int amount);
         void level_up();
+        void gain_shield(float amount);
         ~Hero();
         float x() const {return shape->center_x();}
         float y() const {return shape->center_y();}
@@ -43,6 +44,8 @@ class Hero : public Object{
         float exp; // 經驗值
         float exp_to_next; //生到下一級所需的經驗值
         float atk;
+        float shield;
+        float max_shield;
         double speed;
         int hurt_cooldown = 0;
         

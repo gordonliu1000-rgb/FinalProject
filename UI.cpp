@@ -95,6 +95,7 @@ UI::draw() {
 	sprintf(buf, "HP:%.0f / %.0f", hero->hp, hero->max_hp);
 	al_draw_text(FC->caviar_dreams[FontSize::SMALL], al_map_rgb(255, 255, 255), 
 				HpBar_x, HpBar_y -22.0, 0, buf);
+
 	//Exp
 	float Exp_ratio = hero->exp / hero->exp_to_next;
 	if(Exp_ratio < 0) Exp_ratio = 0;
@@ -115,4 +116,23 @@ UI::draw() {
 	sprintf(buf, "LV:%.0f   EXP:%.0f / %.0f", hero->level, hero->exp, hero->exp_to_next);
 	al_draw_text(FC->caviar_dreams[FontSize::SMALL], al_map_rgb(255, 255, 255),
 			ExpBar_x, ExpBar_y - 20.0, 0, buf);
+
+	//shield
+	if(hero->shield != 0.0){
+		float shield_ratio = hero->shield / hero->max_shield;
+		if(shield_ratio < 0) shield_ratio = 0;
+		if(shield_ratio > 1) shield_ratio = 1;
+
+		float Shildbar_x = 280;
+		float Shildbar_y = 40;
+		float Shildbar_w = 100.0;
+		float Shildbar_h = 20.0;
+		
+		al_draw_filled_rectangle(Shildbar_x, Shildbar_y, 
+				Shildbar_x + Shildbar_w, Shildbar_y + Shildbar_h, al_map_rgb(60, 60, 60));
+		al_draw_filled_rectangle(Shildbar_x, Shildbar_y, 
+				Shildbar_x + Shildbar_w * shield_ratio, Shildbar_y + Shildbar_h, al_map_rgb(255, 255, 0));
+		al_draw_rectangle(Shildbar_x, Shildbar_y, 
+				Shildbar_x + Shildbar_w, Shildbar_y + Shildbar_h, al_map_rgb(255, 255, 255), 2);
+	}
 }

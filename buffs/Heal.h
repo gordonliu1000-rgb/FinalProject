@@ -11,4 +11,5 @@ class Heal : public Buff{
         bool used = false;
         float heal_amount;
 };
+
 #endif
