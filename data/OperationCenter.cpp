@@ -18,21 +18,21 @@ void OperationCenter::update() {
 	_update_mob_spawn();
 	_update_mob();
 	_update_mob_weapon();
+	_update_bump_dmg();
 }
 
 bool inbounds(int x, int y, int cols, int rows){
 	return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
-//constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
 void OperationCenter::_update_mob_weapon(){
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
 	static int grid_x = 0, grid_y = 0;
-	static const int dx[8] = {1, -1, 0,  0,  1,  1, -1, -1};
-	static const int dy[8] = {0,  0, 1, -1,  1, -1,  1, -1};
+	static const int dx[9] = {1, -1, 0,  0,  0, 1,  1, -1, -1};
+	static const int dy[9] = {0,  0, 1, -1,  0, 1, -1,  1, -1};
 	for(auto &weapon:weapons){
-		for(int i=0;i<8;i++){
+		for(int i=0;i<9;i++){
 			grid_x = weapon->shape->center_x()/DC->cell_width + dx[i];
 			grid_y = weapon->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
 			if(inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
@@ -43,11 +43,7 @@ void OperationCenter::_update_mob_weapon(){
 				}
 			}
 		}
-		
 	}
-
-				
-
 }
 
 void OperationCenter:: _update_mob_spawn(){
@@ -89,6 +85,26 @@ void OperationCenter::_update_mob(){
 	}
 }
 
+void OperationCenter::_update_bump_dmg(){
+	DataCenter *DC = DataCenter::get_instance();
+	Hero *hero = DC->hero;
+	static int grid_x = 0, grid_y = 0;
+	static const int dx[9] = {1, -1, 0,  0,  0, 1,  1, -1, -1};
+	static const int dy[9] = {0,  0, 1, -1,  0, 1, -1,  1, -1};
+	for(int i=0;i<9;i++){
+		grid_x = hero->shape->center_x()/DC->cell_width + dx[i];
+		grid_y = hero->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
+		if(inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
+			for(auto &mob:DC->grids[grid_y][grid_x].mobs){
+				if(hero->shape->overlap(*(mob->shape))){
+					hero->hurt(mob->atk);
+					debug_log("Hero hurt\n");
+				}
+			}
+		}
+	}
+}
+
 void OperationCenter::_update_buffitem_pickup(){
 	DataCenter *DC = DataCenter::get_instance();
 	Hero *hero = DC->hero;
@@ -122,7 +138,6 @@ void OperationCenter::_update_buffitem_pickup(){
 }
 
 void OperationCenter::_update_buffitem_spawn(){
-
 	DataCenter *DC = DataCenter::get_instance();
 	static int spawn_counter = 0;
 	spawn_counter++;

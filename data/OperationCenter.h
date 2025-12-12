@@ -30,6 +30,7 @@ private:
 	void _update_mob_spawn();
 	void _update_mob();
 	void _update_mob_weapon();
+	void _update_bump_dmg();
 private:
 	void _draw_monster();
 	void _draw_tower();

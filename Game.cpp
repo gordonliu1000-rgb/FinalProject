@@ -18,6 +18,7 @@
 #include <vector>
 #include <cstring>
 #include "WorldCoordinate.h"
+#include "Random.h"
 
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
@@ -134,6 +135,8 @@ Game::game_init() {
     al_register_event_source(event_queue, al_get_mouse_event_source());
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
+	//消費亂數
+	Random::range(0, 99999);
 	// init sound setting
 	SC->init();
 
