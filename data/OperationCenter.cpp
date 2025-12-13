@@ -22,7 +22,7 @@ void OperationCenter::update() {
 }
 
 bool inbounds(int x, int y, int cols, int rows){
-	return x >= 0 && x < rows && y >= 0 && y < cols;
+	
 }
 
 void OperationCenter::_update_mob_weapon(){
@@ -35,7 +35,7 @@ void OperationCenter::_update_mob_weapon(){
 		for(int i=0;i<9;i++){
 			grid_x = weapon->shape->center_x()/DC->cell_width + dx[i];
 			grid_y = weapon->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
-			if(inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
+			if(DC->grid_inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
 				for(auto &mob:DC->grids[grid_y][grid_x].mobs){
 					if(mob->shape->overlap(*(weapon->shape))){
 						mob->hurt(weapon->get_dmg());
