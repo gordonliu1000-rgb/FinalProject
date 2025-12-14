@@ -99,7 +99,7 @@ public :
         atk_cool_down = 20;
         attack_frame_id = 6;
         const float &w = al_get_bitmap_width(img[state][dir][0]);
-        const float &h = al_get_bitmap_width(img[state][dir][0]);
+        const float &h = al_get_bitmap_height(img[state][dir][0]);
         shape.reset(new Rectangle{
             shape->center_x() - w/2,
             shape->center_y() - h/2,

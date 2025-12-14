@@ -40,6 +40,7 @@ public:
 		return &DC;
 	}
 	
+	
 	~DataCenter();
 public:
 	double FPS;
@@ -87,6 +88,10 @@ private:
 		std::vector<Mob*> mobs;
 		Cell(){};
 	};
+public:
+	static bool grid_inbounds(int x, int y, int cols, int rows){
+		return x >= 0 && x < rows && y >= 0 && y < cols;
+	}
 public:
 	/**
 	 * @brief Stores the basic information that a player should have.

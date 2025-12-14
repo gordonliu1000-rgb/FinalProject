@@ -8,6 +8,7 @@
 #include "buffs/Buff.h"
 #include <vector>
 #include "weapon/Weapon.h"
+#include "spell/Spell.h"
 
 class Buff;
 
@@ -32,6 +33,7 @@ class Hero : public Object{
         float x() const {return shape->center_x();}
         float y() const {return shape->center_y();}
         std::vector<std::unique_ptr<Weapon>> weapons; //store the weapon that hero have
+        std::vector<std::unique_ptr<Spell>> spells;
 
     private:
         HeroState state = HeroState::FRONT;
@@ -44,6 +46,7 @@ class Hero : public Object{
         float exp; // 經驗值
         float exp_to_next; //生到下一級所需的經驗值
         float atk;
+        float init_atk;
         float shield;
         float max_shield;
         double speed;
