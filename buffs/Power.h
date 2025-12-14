@@ -10,6 +10,7 @@ public:
     void effect();
     void clear_effect();
 private:
+    bool used = false;
     double init_attack;
 };
 

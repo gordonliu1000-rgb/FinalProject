@@ -14,7 +14,7 @@
 
 void OperationCenter::update() {
 	_update_buffitem_pickup();
-	//_update_buffitem_spawn();
+	_update_buffitem_spawn();
 	_update_mob_spawn();
 	_update_mob();
 	_update_mob_weapon();
@@ -24,10 +24,40 @@ bool inbounds(int x, int y, int cols, int rows){
 	return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
-//constexpr char sword_hit_sound_path[] = "./assets/sound/Hit.ogg";
-void OperationCenter::_update_mob_weapon(){
+void OperationCenter::_update_mob_weapon() {
 	DataCenter *DC = DataCenter::get_instance();
-	std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
+	std::vector<Weapon*> current_weapons;
+	current_weapons.reserve(DC->hero->weapons.size());
+	for(auto &w : DC->hero->weapons){
+		if(w) current_weapons.emplace_back(w.get());
+	}
+	static int grid_x = 0, grid_y = 0;
+	static const int dx[8] = {1, -1, 0,  0,  1,  1, -1, -1};
+	static const int dy[8] = {0,  0, 1, -1,  1, -1,  1, -1};
+	for(auto *weapon : current_weapons){
+		for(int i=0;i<8;i++){
+			grid_x = weapon->shape->center_x()/DC->cell_width + dx[i];
+			grid_y = weapon->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
+			if(inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
+				for(auto &mob:DC->grids[grid_y][grid_x].mobs){
+					if(mob->shape->overlap(*(weapon->shape))){
+						//debug_log("mob hurt1\n");
+						mob->hurt(weapon->get_dmg());
+						//debug_log("mob hurt2\n");
+						if(DC->hero->levelup){
+							debug_log("hero level up stop update\n");
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/*
+std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
 	static int grid_x = 0, grid_y = 0;
 	static const int dx[8] = {1, -1, 0,  0,  1,  1, -1, -1};
 	static const int dy[8] = {0,  0, 1, -1,  1, -1,  1, -1};
@@ -45,10 +75,43 @@ void OperationCenter::_update_mob_weapon(){
 		}
 		
 	}
+*/
 
-				
+/*void OperationCenter::_update_mob_weapon() {
+    DataCenter *DC = DataCenter::get_instance();
+    debug_log("weapon\n");
 
+    // 1. 先複製一份當前武器指標（snapshot）
+    std::vector<Weapon*> current_weapons;
+    current_weapons.reserve(DC->hero->weapons.size());
+    for (auto &w : DC->hero->weapons) {
+        if (w) current_weapons.push_back(w.get());
+    }
+
+    static int grid_x = 0, grid_y = 0;
+    static const int dx[8] = {1, -1, 0,  0,  1,  1, -1, -1};
+    static const int dy[8] = {0,  0, 1, -1,  1, -1,  1, -1};
+
+    // 2. 用 snapshot 來做碰撞，不再直接遍歷 hero->weapons
+    for (Weapon *weapon : current_weapons) {
+        if (!weapon || !weapon->shape) continue;
+
+        for (int i = 0; i < 8; ++i) {
+            grid_x = weapon->shape->center_x() / DC->cell_width + dx[i];
+            grid_y = weapon->shape->center_y() / DC->cell_width + dy[i];
+
+            if (inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())) {
+                for (auto &mob : DC->grids[grid_y][grid_x].mobs) {
+                    if (mob && mob->shape &&
+                        mob->shape->overlap(*(weapon->shape))) {
+                        mob->hurt(weapon->get_dmg());
+                    }
+                }
+            }
+        }
+    }
 }
+*/
 
 void OperationCenter:: _update_mob_spawn(){
 	DataCenter *DC = DataCenter::get_instance();

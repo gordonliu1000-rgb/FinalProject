@@ -9,6 +9,7 @@
 #include "Utils.h"
 using namespace std;
 
+const float PI = 3.14159;
 namespace HeroSetting{
     static constexpr char gif_root_path[50] = "./assets/gif/crow";
     static constexpr char gif_postfix[][10] = {
@@ -50,9 +51,7 @@ void Hero::init() {
     atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
 
-
     weapons.emplace_back(std::make_unique<Sword>(atk, 80.0, 4.0));
-    weapons.emplace_back(std::make_unique<Lightball>(atk * 1.5f, 120.0, 6.0));
 }
 
 void Hero::draw(){
@@ -68,6 +67,7 @@ void Hero::draw(){
 }
 
 void Hero::update(){
+    levelup = false;
     DataCenter *DC = DataCenter::get_instance();
     float dx = 0, dy = 0;
     if(DC->key_state[ALLEGRO_KEY_UP] || DC->key_state[ALLEGRO_KEY_W]){
@@ -111,10 +111,10 @@ void Hero::update(){
         shape->update_center_x(new_x);
         shape->update_center_y(new_y);
     }
-    debug_log("Hero update, weapons size = %d\n", (int)weapons.size());
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){
         w -> update(*this, dt);
+        debug_log("the weapon attack is %.2f\n", w->get_dmg());
     }
 
     for(auto &buff:buffs){
@@ -149,6 +149,7 @@ void Hero::gain_shield(float amount){
 }
 
 void Hero::gain_exp(int amount){
+    levelup = false;
     exp += amount;
     while(exp >= exp_to_next){
         exp -= exp_to_next;
@@ -161,16 +162,29 @@ void Hero::level_up(){
     max_hp += 20;
     atk += 20;
     exp_to_next = static_cast<int>(exp_to_next * 1.2);
+    levelup = true;
 
-    weapons.clear();
-    int sword_count = 1 + (level / 2);
-    int light_count = 1 + level / 3;
+    if(level % 5 == 0 || level % 8 == 0){
+        debug_log("level up\n");
+        weapons.clear();
+        int sword_count = 1 + (level / 5);
+        int light_count = level / 8;
 
-    for(int i = 0; i < sword_count; i++){
-        weapons.emplace_back(std::make_unique<Sword>(atk, 80.0, 4.0));
-    }
-    for(int i = 0; i < light_count; i++){
-        weapons.emplace_back(std::make_unique<Lightball>(atk * 1.5, 120.0, 6.0));
+        for(int i=0; i<sword_count; i++){
+            float angle0 = 2.0 * PI * i / sword_count;
+            auto sword = std::make_unique<Sword>(atk, 80.0, 4.0);
+            sword->set_angle(angle0);
+            weapons.emplace_back(std::move(sword));
+        }
+
+        for(int i=0; i<light_count; i++){
+            float angle0 = 2.0 * PI * i / light_count;
+            auto lightball = std::make_unique<Lightball>(atk*1.5, 120.0, 6.0);
+            lightball->set_angle(angle0);
+            weapons.emplace_back(std::move(lightball));
+        }
+
+        debug_log("weapon reset done\n");
     }
 }
 

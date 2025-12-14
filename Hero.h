@@ -48,6 +48,7 @@ class Hero : public Object{
         float max_shield;
         double speed;
         int hurt_cooldown = 0;
+        bool levelup = false;
         
 };
 #endif
