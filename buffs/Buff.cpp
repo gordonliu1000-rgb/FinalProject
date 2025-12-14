@@ -73,9 +73,10 @@ Power::Power(BuffType type) : Buff(type){
     duration = 0;
 }
 
+
 void Power::effect(){
     static DataCenter *DC = DataCenter::get_instance();
-    DC->hero->atk = DC->hero->init_atk * 2;
+    DC->hero->atk = DC->hero->init_atk * 2;// double init atk
 }
 
 void Power::clear_effect(){
