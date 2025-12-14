@@ -1,6 +1,7 @@
 #include "Thunder.h"
 #include "../data/ImageCenter.h"
 #include "../data/DataCenter.h"
+#include "../data/SoundCenter.h"
 #include "../Hero.h"
 #include "../mobs/Mob.h"
 #include <algorithm>
@@ -27,7 +28,7 @@ void Thunder::init_img(){
 Thunder::Thunder(SpellType type) : Spell{type}{
     GAME_ASSERT(!img.empty(), "Thunder img haven't init!\n");
     DataCenter *DC = DataCenter::get_instance();
-    init_cooldown = 900;// 幀
+    init_cooldown = 100;// 幀
     level = 1;
     atk = (DC->hero->atk)*2;
     num_of_strikes = 3 + level*2;
@@ -39,20 +40,17 @@ void Thunder::draw(){
         if(s->end || s->wait_time > 0){
             continue;
         }
+        static int bitmap_offset_y = 20;
         al_draw_bitmap(
             img[s->bitmap_img_id],
             s->shape->center_x() - al_get_bitmap_width(img[s->bitmap_img_id])/2,
-            s->shape->center_y() - al_get_bitmap_height(img[s->bitmap_img_id])/2,
+            s->shape->center_y() - al_get_bitmap_height(img[s->bitmap_img_id])/2 - bitmap_offset_y,
             0
         );
     }
 }
 
 void Thunder::update(){
-    if(cooldown!=0){
-        cooldown--;
-        return;
-    }
     if(strikes.size() > 0){
         for(auto it=strikes.begin();it!=strikes.end();){
             if((*it)->end){
@@ -65,17 +63,19 @@ void Thunder::update(){
         }
         return;
     }
+    if(cooldown > 0){
+        cooldown--;
+        return;
+    }
+    cooldown = init_cooldown;
     DataCenter *DC = DataCenter::get_instance();
-    atk = (DC->hero->atk)*2;
     Hero *hero = DC->hero;
+    atk = (hero->atk)*2;
     const int &cell_width = DC->cell_width;
-    int hero_grid_x = hero->shape->center_x()/DC->cell_width;
-    int hero_grid_y = hero->shape->center_y()/DC->cell_width;
     int min_grid_x = std::max((int)(hero->shape->center_x() - atk_radius)/cell_width, 0);
     int min_grid_y = std::max((int)(hero->shape->center_y() - atk_radius)/cell_width, 0);
     int max_grid_x = std::min((int)(hero->shape->center_x() + atk_radius)/cell_width, (int)DC->grids[0].size()-1);
     int max_grid_y = std::min((int)(hero->shape->center_y() + atk_radius)/cell_width, (int)DC->grids.size()-1);
-    int remain_strikes = num_of_strikes;
 
     struct MobInfo {
         Mob* mob;
@@ -94,8 +94,8 @@ void Thunder::update(){
 
     std::shuffle(pool.begin(), pool.end(), Random::rng);// 決定落雷位置(怪密度較高較易選中)
 
-    for (int i = 0; i < num_of_strikes && i < pool.size(); ++i) {
-        auto* m = pool[i].mob;
+    for (std::size_t i = 0; i < (std::size_t)num_of_strikes && i < pool.size(); ++i) {
+        auto *m = pool[i].mob;
         // 決定落雷偏移量
         double offset_x = Random::range(-static_cast<float>(strike_radius) * 0.3f, static_cast<float>(strike_radius) * 0.3f);
         double offset_y = Random::range(-static_cast<float>(strike_radius) * 0.3f, static_cast<float>(strike_radius) * 0.3f);
@@ -105,15 +105,15 @@ void Thunder::update(){
                 m->shape->center_x() + offset_x,
                 m->shape->center_y() + offset_y,
                 strike_radius,
-                i * 10,
-                atk
+                i * 20,
+                this->atk
             )
         );
+        strikes.shrink_to_fit();
     }
 }
 
 Strike::Strike(double x, double y, double r, int wait_time, double atk){
-    const float &w = al_get_bitmap_width(Thunder::img[0]);
     shape.reset(new Circle{x, y, r});
     bitmap_switch_counter = bitmap_switch_freq;
     this->wait_time = wait_time;
@@ -132,7 +132,7 @@ void Strike::update(){
     }
     bitmap_switch_counter = bitmap_switch_freq;
     bitmap_img_id += 1;// to do out of index handle
-    if(bitmap_img_id >= Thunder::img.size()){
+    if((std::size_t)bitmap_img_id >= Thunder::img.size()){
         end = true;
         return;
     }
@@ -140,6 +140,8 @@ void Strike::update(){
 	static const int dx[9] = {1, -1, 0,  0,  0, 1,  1, -1, -1};
 	static const int dy[9] = {0,  0, 1, -1,  0, 1, -1,  1, -1};
     if(can_atk && bitmap_img_id==attack_img_id){
+        SoundCenter *SC = SoundCenter::get_instance();
+	    SC->play("./assets/sound/thunder.wav", ALLEGRO_PLAYMODE_ONCE, 1);
         for(int i=0;i<9;i++){
 			grid_x = shape->center_x()/DC->cell_width + dx[i];
 			grid_y = shape->center_y()/DC->cell_width + dy[i];

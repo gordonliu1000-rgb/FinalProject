@@ -6,7 +6,7 @@
 
 
 enum class SpellType{
-    LAZER, LIGHTNING, FIRE_BALL, SPELL_TYPE_MAX
+    LAZER, THUNDER, FIRE_BALL, SPELL_TYPE_MAX
 };
 
 
@@ -21,9 +21,10 @@ public:
     int cooldown = 0;// 幀
     int init_cooldown;
     int level;
-    virtual void draw() = 0;
     virtual void update() = 0;
     Spell(SpellType type) : type{type}{};
+    static void init();
+    static std::unique_ptr<Spell> create_spell(SpellType type);
 };
 
 

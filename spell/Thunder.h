@@ -4,7 +4,8 @@
 #include "../shapes/Circle.h"
 
 
-class Strike : public Object{
+
+class Strike{
 public:
     bool end = false;
     int wait_time;
@@ -16,6 +17,7 @@ public:
     bool can_atk = true;
     Strike(double x, double y, double r, int wait_time, double atk);
     void update();
+    std::unique_ptr<Shape> shape;
 };
 
 
@@ -24,7 +26,7 @@ public:
     Thunder(SpellType type);
     void update();
     void draw();
-    double atk_radius = 100;
+    double atk_radius = 200;
     int num_of_strikes;
     double strike_radius;
     std::vector<std::unique_ptr<Strike>> strikes;

@@ -7,7 +7,7 @@
 static constexpr char sword_img_path[] = 
     "./assets/image/weapon/Sword.png";
 
-Sword::Sword(float dmg, float radius, float angular_speed) : Weapon(dmg, radius, angular_speed)
+Sword::Sword(float radius, float angular_speed) : Weapon(radius, angular_speed)
 {
     ImageCenter *IC = ImageCenter::get_instance();
     bitmap = IC->get(sword_img_path);

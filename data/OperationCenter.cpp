@@ -11,6 +11,7 @@
 #include "../Hero.h"
 #include "../Utils.h"
 #include "../mobs/Mob.h"
+#include <algorithm>
 
 void OperationCenter::update() {
 	_update_buffitem_pickup();
@@ -19,10 +20,6 @@ void OperationCenter::update() {
 	_update_mob();
 	_update_mob_weapon();
 	_update_bump_dmg();
-}
-
-bool inbounds(int x, int y, int cols, int rows){
-	
 }
 
 void OperationCenter::_update_mob_weapon(){
@@ -70,6 +67,23 @@ void OperationCenter::_update_mob(){
 		}
 	}
 	static int gird_x = 0, grid_y = 0;
+	for(size_t i=0;i<mobs.size();){
+		if(mobs[i]->die){
+			std::swap(mobs[i], mobs.back());
+			mobs.pop_back();
+		}
+		else{
+			mobs[i]->update();
+			gird_x = mobs[i]->shape->center_x()/DC->cell_width;
+			grid_y = mobs[i]->shape->center_y()/DC->cell_width;
+			DC->grids[grid_y][gird_x].mobs.push_back(mobs[i].get());
+			i++;
+		}
+
+	}
+
+
+	/*
 	for(auto m=mobs.begin();m!=mobs.end();){
 		if((*m)->die){
 			m = mobs.erase(m);
@@ -83,6 +97,7 @@ void OperationCenter::_update_mob(){
 		}
 
 	}
+	*/
 }
 
 void OperationCenter::_update_bump_dmg(){
@@ -94,11 +109,10 @@ void OperationCenter::_update_bump_dmg(){
 	for(int i=0;i<9;i++){
 		grid_x = hero->shape->center_x()/DC->cell_width + dx[i];
 		grid_y = hero->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
-		if(inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
+		if(DC->grid_inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
 			for(auto &mob:DC->grids[grid_y][grid_x].mobs){
 				if(hero->shape->overlap(*(mob->shape))){
 					hero->hurt(mob->atk);
-					debug_log("Hero hurt\n");
 				}
 			}
 		}

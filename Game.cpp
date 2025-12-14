@@ -150,6 +150,7 @@ Game::game_init() {
 	DC->camera->init();
 	Mob::init();
 
+
 	show_help_menu = false;
 
 	float cx = DC->window_width / 2.0f;

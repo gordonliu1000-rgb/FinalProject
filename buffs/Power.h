@@ -9,8 +9,9 @@ public:
     ~Power(){};
     void effect();
     void clear_effect();
-private:
-    double init_attack;
+// private:
+//     double init_attack;
+//     bool init_attack_saved = false;
 };
 
 #endif

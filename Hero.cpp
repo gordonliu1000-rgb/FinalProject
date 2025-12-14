@@ -47,6 +47,7 @@ void Hero::init() {
 
     shape.reset(new Rectangle{start_x, start_y, start_x + gif->width, start_y + gif->height});
     atk = HeroSetting::init_ATK;
+    init_atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
 
     //buff initialize
@@ -56,7 +57,10 @@ void Hero::init() {
     buffs[1]->reset_duration();//測試用，給一個power buff
     
 
-    weapons.emplace_back(std::make_unique<Sword>(atk, 80.0f, 4.0f));
+    weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
+
+    Spell::init();
+    spells.emplace_back(Spell::create_spell(SpellType::THUNDER));
 }
 
 void Hero::draw(){
@@ -68,6 +72,10 @@ void Hero::draw(){
                 0);
     for(auto &w : weapons){
         w -> draw();
+    }
+
+    for(auto &s : spells){
+        s->draw();
     }
 }
 
@@ -124,6 +132,10 @@ void Hero::update(){
         buff->update(); // 每個buff隨hero update
     }
 
+    for(auto &s : spells){
+        s->update();
+    }
+
     if(hurt_cooldown > 0) --hurt_cooldown;
 
 }
@@ -156,13 +168,15 @@ void Hero::gain_exp(int amount){
     while(exp >= exp_to_next){
         exp -= exp_to_next;
         level_up();
+        debug_log("hero lvl up! atk : %lf\n", atk);
     }
 }
 
 void Hero::level_up(){
     level++;
     max_hp += 20;
-    atk += 20;
+    init_atk += 20;
+    atk = init_atk;
     exp_to_next = static_cast<int>(exp_to_next * 1.2);
 }
 
