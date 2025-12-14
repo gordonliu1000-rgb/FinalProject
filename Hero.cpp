@@ -52,9 +52,6 @@ void Hero::init() {
     init_atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
 
-<<<<<<< HEAD
-    weapons.emplace_back(std::make_unique<Sword>(atk, 80.0, 4.0));
-=======
     //buff initialize
     buffs.emplace_back(Buff::create_buff(BuffType::SPEED));
     buffs[0]->reset_duration();//測試用，給一個speed buff
@@ -66,7 +63,6 @@ void Hero::init() {
 
     Spell::init();
     spells.emplace_back(Spell::create_spell(SpellType::THUNDER));
->>>>>>> a6edc0fbf093f1443f43641e6ee3140de2a32266
 }
 
 void Hero::draw(){
