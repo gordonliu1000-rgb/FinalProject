@@ -71,20 +71,20 @@ void Speed::clear_effect(){
 Power::Power(BuffType type) : Buff(type){
 
     DataCenter *DC = DataCenter::get_instance();
-    init_attack = DC->hero->atk;
 
     init_duration = 600;
     duration = 0;
 }
 
+
 void Power::effect(){
     static DataCenter *DC = DataCenter::get_instance();
-    init_attack = DC->hero->atk * 2;
+    DC->hero->atk = DC->hero->init_atk * 2;// double init atk
 }
 
 void Power::clear_effect(){
     static DataCenter *DC = DataCenter::get_instance();
-    DC->hero->atk = init_attack;
+    DC->hero->atk = DC->hero->init_atk;
 }
 
 Heal::Heal(BuffType type) : Buff(type){
