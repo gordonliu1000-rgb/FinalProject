@@ -6,7 +6,7 @@
 
 class Lightball : public Weapon {
     public:
-        Lightball(float dmg, float radius, float angular_speed);
+        Lightball(float radius, float angular_speed);
         void draw() override;
     private:
         ALGIF_ANIMATION *gif = nullptr;

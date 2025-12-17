@@ -6,7 +6,7 @@
 static constexpr char lightball_img_path[] = 
         "./assets/gif/Weapon/lightball.gif";
 
-Lightball::Lightball(float dmg, float radius, float angular_speed) : Weapon(dmg, radius, angular_speed)
+Lightball::Lightball(float radius, float angular_speed) : Weapon(radius, angular_speed)
 {
     GIFCenter *GIFC = GIFCenter::get_instance();
     gif = GIFC->get(lightball_img_path);

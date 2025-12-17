@@ -52,13 +52,6 @@ void Hero::init() {
     init_atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
 
-    //buff initialize
-    buffs.emplace_back(Buff::create_buff(BuffType::SPEED));
-    buffs[0]->reset_duration();//測試用，給一個speed buff
-    buffs.emplace_back(Buff::create_buff(BuffType::POWER));
-    buffs[1]->reset_duration();//測試用，給一個power buff
-    
-
     weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
 
     Spell::init();
@@ -193,14 +186,14 @@ void Hero::level_up(){
 
         for(int i=0; i<sword_count; i++){
             float angle0 = 2.0 * PI * i / sword_count;
-            auto sword = std::make_unique<Sword>(atk, 80.0, 4.0);
+            auto sword = std::make_unique<Sword>(80.0, 4.0);
             sword->set_angle(angle0);
             weapons.emplace_back(std::move(sword));
         }
 
         for(int i=0; i<light_count; i++){
             float angle0 = 2.0 * PI * i / light_count;
-            auto lightball = std::make_unique<Lightball>(atk*1.5, 120.0, 6.0);
+            auto lightball = std::make_unique<Lightball>(120.0, 6.0);
             lightball->set_angle(angle0);
             weapons.emplace_back(std::move(lightball));
         }
