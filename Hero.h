@@ -5,6 +5,7 @@
 #include <memory>
 #include <map>
 #include "Object.h"
+#include "Creature.h"
 #include "buffs/Buff.h"
 #include <vector>
 #include "weapon/Weapon.h"
@@ -20,7 +21,7 @@ enum class HeroState{
     HEROSTATE_MAX
 };
 
-class Hero : public Object{
+class Hero : public Creature{
     public:
         void init();
         void update();

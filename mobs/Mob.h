@@ -7,6 +7,7 @@
 #include <memory>
 #include <map>
 #include "../data/ImageCenter.h"
+#include "../Creature.h"
 
 enum class MobType {
     SLIME, FLOWER, VAMPIRE, MOBTYPE_MAX
@@ -45,7 +46,7 @@ enum class MobDir{
 
 
 
-class Mob : public Object{
+class Mob : public Creature{
 public:
     static void init();
 public :
