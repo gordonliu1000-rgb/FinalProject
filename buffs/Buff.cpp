@@ -60,7 +60,7 @@ Speed::Speed(BuffType type) : Buff(type){
 
 void Speed::effect(){
     static DataCenter *DC = DataCenter::get_instance();
-    DC->hero->speed = init_speed * 2;
+    DC->hero->speed = init_speed * 1.5;
 }
 
 void Speed::clear_effect(){

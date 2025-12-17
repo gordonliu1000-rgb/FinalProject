@@ -57,7 +57,7 @@ public :
     ~Mob(){}
     static std::unique_ptr<Mob> create_mob(MobType type);
     void draw();
-    void update();
+    virtual void update();
     virtual void atk_hero() = 0;
     void hurt(float dmg);
     bool die = false;

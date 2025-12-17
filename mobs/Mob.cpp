@@ -155,6 +155,25 @@ void Mob::update(){
                 bitmap_img_id = 0;
                 bitmap_switch_counter = bitmap_switch_freq;
             }
+
+            // walk
+            float fspeed = speed * 1/DC->FPS;
+            float dx = hero->shape->center_x() - shape->center_x();
+            float dy = hero->shape->center_y() - shape->center_y();
+            float length = sqrt(dx*dx + dy*dy);
+            float new_x = shape->center_x() + dx/length * fspeed;
+            float new_y = shape->center_y() + dy/length * fspeed;//將方向正規化後乘以速度計算步數
+            shape->update_center_x(new_x);
+            shape->update_center_y(new_y);// 走動
+            atk_range->update_center_x(new_x);
+            atk_range->update_center_y(new_y);// 更新攻擊範圍位置
+            
+
+            if (std::abs(dx) >= std::abs(dy)) {
+                dir = (dx >= 0 ? MobDir::RIGHT : MobDir::LEFT);
+            } else {
+                dir = (dy >= 0 ? MobDir::DOWN : MobDir::UP);
+            }
                 
             break;
         }
