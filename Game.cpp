@@ -243,11 +243,13 @@ Game::game_update() {
 	}
 	// If the game is not paused, we should progress update.
 	if(state != STATE::PAUSE) {
-		DC->player->update();
+		//DC->player->update();
 		SC->update();
 		DC->camera->update();
 		if(state != STATE::START) {
+			//debug_log("update hero\n");
 			DC->hero->update();
+			//debug_log("update OC\n");
 			OC->update();
 		}
 	}

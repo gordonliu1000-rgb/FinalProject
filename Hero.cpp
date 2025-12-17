@@ -4,10 +4,12 @@
 #include "algif5/algif.h"
 #include "shapes/Rectangle.h"
 #include "weapon/Sword.h"
+#include "weapon/Lightball.h"
 #include <cmath>
 #include "Utils.h"
 using namespace std;
 
+const float PI = 3.14159;
 namespace HeroSetting{
     static constexpr char gif_root_path[50] = "./assets/gif/crow";
     static constexpr char gif_postfix[][10] = {
@@ -50,13 +52,6 @@ void Hero::init() {
     init_atk = HeroSetting::init_ATK;
     speed = HeroSetting::init_SPEED;
 
-    //buff initialize
-    buffs.emplace_back(Buff::create_buff(BuffType::SPEED));
-    buffs[0]->reset_duration();//測試用，給一個speed buff
-    buffs.emplace_back(Buff::create_buff(BuffType::POWER));
-    buffs[1]->reset_duration();//測試用，給一個power buff
-    
-
     weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
 
     Spell::init();
@@ -80,6 +75,7 @@ void Hero::draw(){
 }
 
 void Hero::update(){
+    levelup = false;
     DataCenter *DC = DataCenter::get_instance();
     float dx = 0, dy = 0;
     if(DC->key_state[ALLEGRO_KEY_UP] || DC->key_state[ALLEGRO_KEY_W]){
@@ -126,6 +122,7 @@ void Hero::update(){
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){
         w -> update(*this, dt);
+        debug_log("the weapon attack is %.2f\n", w->get_dmg());
     }
 
     for(auto &buff:buffs){
@@ -143,14 +140,14 @@ void Hero::update(){
 void Hero::hurt(float dmg){
     if(hurt_cooldown > 0) return;
 
-    if(shield > 0){
+    if(shield > 0.0){
         float shield_absorb = std::min(shield, dmg);
         shield -= shield_absorb;
         dmg -= shield_absorb;
     }
 
     if(dmg > 0){
-        hp -= static_cast<int>(dmg);
+        hp -= dmg;
         if(hp < 0) hp = 0;
     }
 
@@ -159,11 +156,12 @@ void Hero::hurt(float dmg){
 }
 
 void Hero::gain_shield(float amount){
-    shield += amount;
+    shield = amount;
     max_shield = amount;
 }
 
 void Hero::gain_exp(int amount){
+    levelup = false;
     exp += amount;
     while(exp >= exp_to_next){
         exp -= exp_to_next;
@@ -178,6 +176,30 @@ void Hero::level_up(){
     init_atk += 20;
     atk = init_atk;
     exp_to_next = static_cast<int>(exp_to_next * 1.2);
+    levelup = true;
+
+    if(level % 5 == 0 || level % 8 == 0){
+        debug_log("level up\n");
+        weapons.clear();
+        int sword_count = 1 + (level / 5);
+        int light_count = level / 8;
+
+        for(int i=0; i<sword_count; i++){
+            float angle0 = 2.0 * PI * i / sword_count;
+            auto sword = std::make_unique<Sword>(80.0, 4.0);
+            sword->set_angle(angle0);
+            weapons.emplace_back(std::move(sword));
+        }
+
+        for(int i=0; i<light_count; i++){
+            float angle0 = 2.0 * PI * i / light_count;
+            auto lightball = std::make_unique<Lightball>(120.0, 6.0);
+            lightball->set_angle(angle0);
+            weapons.emplace_back(std::move(lightball));
+        }
+
+        debug_log("weapon reset done\n");
+    }
 }
 
 Hero::~Hero(){

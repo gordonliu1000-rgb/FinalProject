@@ -69,6 +69,9 @@ void Speed::clear_effect(){
 }
 
 Power::Power(BuffType type) : Buff(type){
+
+    DataCenter *DC = DataCenter::get_instance();
+
     init_duration = 600;
     duration = 0;
 }
@@ -108,16 +111,23 @@ Absorb::Absorb(BuffType type) : Buff(type) {
 } 
 
 void Absorb::effect(){
-    if(used) return;
+    if(!used){
+        DataCenter *DC = DataCenter::get_instance();
+        DC->hero->gain_shield(shield_amount);
+        used = true;
+    }
+}
 
-    DataCenter *DC = DataCenter::get_instance();
-    DC->hero->gain_shield(shield_amount);
-    used = true;
+void Absorb::reset_duration(){
+    used = false;
+    duration = init_duration;
 }
 
 void Absorb::clear_effect(){
     DataCenter *DC = DataCenter::get_instance();
     DC->hero->shield = 0.0;
+    DC->hero->max_shield = 0.0;
+    used = false;
 }
 //new buff write here
 

@@ -12,6 +12,7 @@ class Weapon : public Object{
         virtual ~Weapon() {}  
         virtual void update(const Hero &hero, float dt);
         virtual float get_dmg() {return dmg;}
+        void set_angle(float a) {angle = a;}
         //bool can_hit() const {return cooldown <= 0.0;}
         //void reset_cooldown() {cooldown = hit_interval;}
     
