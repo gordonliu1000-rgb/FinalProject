@@ -65,6 +65,11 @@ public :
 private :
     MobType type;
     void dropItem();
+    void chase_hero();
+    void calculate_distance();
+    float distance;
+    int update_distance_cooldown = 5;
+    int update_distance_counter = 0;
 protected :
     MobState state = MobState::WALK;
     std::unique_ptr<Circle> atk_range;
@@ -79,8 +84,10 @@ protected :
     int attack_frame_id;
     int hurt_init_cooldown = 30;
     int hurt_cooldown = 0;
+    
     virtual ALLEGRO_BITMAP* get_bitmap(int bitmap_id) = 0;
     virtual int get_bitmaps_last_idx(MobState state) = 0;
+    
 };
 
 

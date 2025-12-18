@@ -89,10 +89,40 @@ void Mob::hurt(float dmg){
     state = MobState::HURT;
 }
 
-void Mob::update(){
-    if(die) return;
+void Mob::chase_hero(){
     DataCenter *DC = DataCenter::get_instance();
     Hero *hero = DC->hero;
+    float fspeed = speed * 1/DC->FPS;
+    float dx = hero->shape->center_x() - shape->center_x();
+    float dy = hero->shape->center_y() - shape->center_y();
+    float new_x = shape->center_x() + dx/distance * fspeed;
+    float new_y = shape->center_y() + dy/distance * fspeed;//將方向正規化後乘以速度計算步數
+    shape->update_center_x(new_x);
+    shape->update_center_y(new_y);// 走動
+    atk_range->update_center_x(new_x);
+    atk_range->update_center_y(new_y);// 更新攻擊範圍位置
+
+    if (std::abs(dx) >= std::abs(dy)) {
+        dir = (dx >= 0 ? MobDir::RIGHT : MobDir::LEFT);
+    } else {
+        dir = (dy >= 0 ? MobDir::DOWN : MobDir::UP);
+    }
+}
+
+void Mob::calculate_distance(){
+    Hero *hero = DataCenter::get_instance()->hero;
+    float dx = hero->shape->center_x() - shape->center_x();
+    float dy = hero->shape->center_y() - shape->center_y();
+    if(dx==0 && dy==0) {
+        distance = 1;
+        return;
+    }
+    distance = sqrt(dx*dx + dy*dy);
+}
+
+void Mob::update(){
+    if(die) return;
+    Hero *hero = DataCenter::get_instance()->hero;
     
 
     if(bitmap_switch_counter > 0) //一張圖要持續多久
@@ -105,8 +135,13 @@ void Mob::update(){
 
     if (atk_cool_down > 0) --atk_cool_down; //防止冷卻小於0
     if (hurt_cooldown > 0) --hurt_cooldown; //受傷無敵時間
-        
-
+    if (update_distance_counter > 0)
+        update_distance_counter--;
+    else{
+        update_distance_counter = update_distance_cooldown;
+        calculate_distance();
+    }
+       
     switch(state){
         case MobState::WALK:{
             if(bitmap_switch_counter == 0 && bitmap_img_id==get_bitmaps_last_idx(MobState::WALK) && 
@@ -117,23 +152,7 @@ void Mob::update(){
                 break;
             }
             // walk
-            float fspeed = speed * 1/DC->FPS;
-            float dx = hero->shape->center_x() - shape->center_x();
-            float dy = hero->shape->center_y() - shape->center_y();
-            float length = sqrt(dx*dx + dy*dy);
-            float new_x = shape->center_x() + dx/length * fspeed;
-            float new_y = shape->center_y() + dy/length * fspeed;//將方向正規化後乘以速度計算步數
-            shape->update_center_x(new_x);
-            shape->update_center_y(new_y);// 走動
-            atk_range->update_center_x(new_x);
-            atk_range->update_center_y(new_y);// 更新攻擊範圍位置
-            
-
-            if (std::abs(dx) >= std::abs(dy)) {
-                dir = (dx >= 0 ? MobDir::RIGHT : MobDir::LEFT);
-            } else {
-                dir = (dy >= 0 ? MobDir::DOWN : MobDir::UP);
-            }
+            chase_hero();
             break;
         }
         case MobState::ATK:{
@@ -156,24 +175,7 @@ void Mob::update(){
                 bitmap_switch_counter = bitmap_switch_freq;
             }
 
-            // walk
-            float fspeed = speed * 1/DC->FPS;
-            float dx = hero->shape->center_x() - shape->center_x();
-            float dy = hero->shape->center_y() - shape->center_y();
-            float length = sqrt(dx*dx + dy*dy);
-            float new_x = shape->center_x() + dx/length * fspeed;
-            float new_y = shape->center_y() + dy/length * fspeed;//將方向正規化後乘以速度計算步數
-            shape->update_center_x(new_x);
-            shape->update_center_y(new_y);// 走動
-            atk_range->update_center_x(new_x);
-            atk_range->update_center_y(new_y);// 更新攻擊範圍位置
-            
-
-            if (std::abs(dx) >= std::abs(dy)) {
-                dir = (dx >= 0 ? MobDir::RIGHT : MobDir::LEFT);
-            } else {
-                dir = (dy >= 0 ? MobDir::DOWN : MobDir::UP);
-            }
+            chase_hero();
                 
             break;
         }
