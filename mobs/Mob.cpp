@@ -237,8 +237,8 @@ void Vampire::atk_hero(){
 
 
 void Mob::dropItem(){
-    //bool drop = Random::range(1, 100) <= 10;// 10%掉落率
-    bool drop = 100;
+    bool drop = Random::range(1, 100) <= 10;// 10%掉落率
+    //bool drop = 100;
     if(drop){
         DataCenter *DC = DataCenter::get_instance();
         BuffType type = static_cast<BuffType>(Random::range(0, 3));
