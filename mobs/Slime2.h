@@ -1,9 +1,11 @@
-#ifndef SLIME_H_INCLUDED
-#define SLIME_H_INCLUDED
+#ifndef SLIME2_H_INCLUDED
+#define SLIME2_H_INCLUDED
 #include "Mob.h"
+#include "../shapes/Rectangle.h"
+#include "../Utils.h"
 #include <memory>
 
-class Slime : public Mob
+class Slime2 : public Mob
 {
 public:
     static std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> img;
@@ -16,7 +18,7 @@ public:
             for(int j=0;j<8;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/slime1",
+                MobSetting::mob_imgs_root_path[static_cast<size_t>(MobType::SLIME2)],
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -27,10 +29,10 @@ public:
 
         state = MobState::ATK;
         for(int i=0;i<4;i++){
-            for(int j=0;j<10;j++){
+            for(int j=0;j<9;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/slime1",
+                MobSetting::mob_imgs_root_path[static_cast<size_t>(MobType::SLIME2)],
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -40,10 +42,10 @@ public:
 
         state = MobState::DIE;
         for(int i=0;i<4;i++){
-            for(int j=0;j<10;j++){
+            for(int j=0;j<8;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/slime1",
+                MobSetting::mob_imgs_root_path[static_cast<size_t>(MobType::SLIME2)],
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -57,7 +59,7 @@ public:
             for(int j=0;j<5;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/slime1",
+                MobSetting::mob_imgs_root_path[static_cast<size_t>(MobType::SLIME2)],
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -71,7 +73,7 @@ public:
             for(int j=0;j<6;j++){
                 sprintf(
                 buffer, "%s/%s/%s/%d.png",
-                "./assets/image/mob/slime1",
+                MobSetting::mob_imgs_root_path[static_cast<size_t>(MobType::SLIME2)],
                 MobSetting::state_path_prefix[static_cast<int>(state)],
                 MobSetting::dir_path_prefix[i],
                 j);
@@ -90,10 +92,11 @@ public :
         return img[state][dir].size() - 1;
     }
 
-    Slime(MobType type) : Mob{type}{
+    Slime2(MobType type) : Mob{type}{
         hp = 20;
-        atk = 10;
-        speed = 20;
+        atk = 40;
+        speed = 70;
+        explosive = true;
         atk_range_radius = 40;
         init_atk_cool_down = 180;
         atk_cool_down = 20;
@@ -110,7 +113,7 @@ public :
         atk_range.reset(new Circle{shape->center_x(), 
             shape->center_y(), 
             this->atk_range_radius});
-        bitmap_switch_freq = 7;
+        bitmap_switch_freq = 5;
 
         debug_log("mob spawn at x=%f y=%f\n", shape->center_x(), shape->center_y());
     }

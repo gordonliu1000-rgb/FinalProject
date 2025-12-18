@@ -19,7 +19,7 @@ public:
     FireBall(Object *shooter, const double &atk, EnemySpellType type);
     void update();
     void draw();
-    double speed = 100;
+    double speed = 150;
     double bitmap_angle = 0;
     float dir_x, dir_y; 
     std::unique_ptr<Point> des;

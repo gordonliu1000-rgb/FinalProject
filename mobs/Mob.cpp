@@ -9,7 +9,8 @@
 #include "../shapes/Circle.h"
 #include "../shapes/Rectangle.h"
 #include <cmath>
-#include "Slime.h"
+#include "Slime1.h"
+#include "Slime2.h"
 #include "Flower.h"
 #include "Vampire.h"
 #include "../buffs/Buff.h"
@@ -27,20 +28,25 @@ enum class MobGenPos {
 
 
 void Mob::init(){
-    Slime::init_img();
+    Slime1::init_img();
     Flower::init_img();
     Vampire::init_img();
+    Slime2::init_img();
 }
 
 
-std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime::img;
+std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime1::img;
+std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime2::img;
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Flower::img;
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Vampire::img;
 
 std::unique_ptr<Mob> Mob::create_mob(MobType type){
     switch(type){
-        case MobType::SLIME : {
-            return std::make_unique<Slime>(type);
+        case MobType::SLIME1 : {
+            return std::make_unique<Slime1>(type);
+        }
+        case MobType::SLIME2 : {
+            return std::make_unique<Slime2>(type);
         }
         case MobType::FLOWER : {
             return std::make_unique<Flower>(type);
@@ -159,10 +165,10 @@ void Mob::update(){
         case MobState::ATK:{
             if(bitmap_switch_counter==0 && bitmap_img_id == attack_frame_id){
                 atk_hero();
-                break;
             }
 
             if(bitmap_switch_counter == 0 && bitmap_img_id==get_bitmaps_last_idx(MobState::ATK)){//攻擊完後(image id == end id)才能切成閒置
+                if(explosive) {bitmap_img_id=0;state = MobState::DIE;bitmap_switch_counter = bitmap_switch_freq;break;}
                 state = MobState::IDLE;
                 bitmap_img_id = 0;
                 bitmap_switch_counter = bitmap_switch_freq;
@@ -213,7 +219,15 @@ void Mob::update(){
     
 }
 
-void Slime::atk_hero(){
+void Slime1::atk_hero(){
+    DataCenter *DC = DataCenter::get_instance();
+    if(atk_range->overlap(*(DC->hero->shape))){ 
+        DC->hero->hurt(atk);
+        atk_cool_down = init_atk_cool_down;//重置冷卻
+    }
+}
+
+void Slime2::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
     if(atk_range->overlap(*(DC->hero->shape))){ 
         DC->hero->hurt(atk);
@@ -238,8 +252,8 @@ void Vampire::atk_hero(){
 
 
 void Mob::dropItem(){
-    //bool drop = Random::range(1, 100) <= 10;// 10%掉落率
-    bool drop = 100;
+    bool drop = Random::range(1, 100) <= 10;// 10%掉落率
+    //bool drop = 100;
     if(drop){
         DataCenter *DC = DataCenter::get_instance();
         BuffType type = static_cast<BuffType>(Random::range(0, 3));

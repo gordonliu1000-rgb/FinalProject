@@ -106,7 +106,7 @@ void OperationCenter::_update_bump_dmg(){
 		grid_y = hero->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
 		if(DC->grid_inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
 			for(auto &mob:DC->grids[grid_y][grid_x].mobs){
-				if(hero->shape->overlap(*(mob->shape))){
+				if(hero->shape->overlap(*(mob->shape)) && !mob->explosive){
 					hero->hurt(mob->atk);
 				}
 			}
@@ -153,7 +153,8 @@ void OperationCenter::_update_buffitem_pickup(){
 				}
 			}
 			debug_log("hero picked buff type=%d\n", (int)type);
-			items.erase(items.begin() + i);
+			std::swap(items.back(), items[i]);
+			items.pop_back();
 		} else{
 			++i;
 		}

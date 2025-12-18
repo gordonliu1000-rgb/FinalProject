@@ -11,7 +11,7 @@ std::map<FireBall::State, std::vector<ALLEGRO_BITMAP*>> FireBall::img;
 void FireBall::init_img(){
     ImageCenter *IC = ImageCenter::get_instance();
     char buffer[60];
-    for(int i=0;i<4;i++){
+    for(int i=0;i<3;i++){
         sprintf(
             buffer,
             "./assets/image/enemy_spell/fire_ball/%d.png",
@@ -58,10 +58,11 @@ FireBall::FireBall(Object *shooter, const double &atk, EnemySpellType type) : En
         dir_y = 0;
     }
 
-    bitmap_switch_freq = 20;
+    bitmap_switch_freq = 10;
     bitmap_switch_counter = bitmap_switch_freq;
     bitmap_img_id = 0;
 }
+
 
 void FireBall::update(){
     if(end) return;
@@ -88,6 +89,7 @@ void FireBall::update(){
                     y + h/2
                 });
                 bitmap_switch_counter = 0;
+                bitmap_img_id = 0;
                 break;
             }
 

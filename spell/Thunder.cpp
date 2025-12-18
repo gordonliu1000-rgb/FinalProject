@@ -28,7 +28,7 @@ void Thunder::init_img(){
 Thunder::Thunder(SpellType type) : Spell{type}{
     GAME_ASSERT(!img.empty(), "Thunder img haven't init!\n");
     DataCenter *DC = DataCenter::get_instance();
-    init_cooldown = 100;// 幀
+    init_cooldown = 300;// 幀
     level = 1;
     atk = (DC->hero->atk)*2;
     num_of_strikes = 3 + level*2;
