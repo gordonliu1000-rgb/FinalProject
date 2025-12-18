@@ -11,6 +11,7 @@ class Weapon : public Object{
             radius(radius), angular_speed(angular_speed), angle(0.0f) {}
         virtual ~Weapon() {}  
         virtual void update(const Hero &hero, float dt);
+        virtual void draw() = 0;
         virtual float get_dmg() {return dmg;}
         void set_angle(float a) {angle = a;}
         //bool can_hit() const {return cooldown <= 0.0;}

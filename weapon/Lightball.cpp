@@ -15,9 +15,7 @@ Lightball::Lightball(float radius, float angular_speed) : Weapon(radius, angular
 }
 
 void Lightball::draw(){
-    if (!gif || !shape) return;
-
-    // 每幀都改這個中心點的位置 光球就在hero周圍繞圈
+    if(!gif) return;
     float cx = shape->center_x();
     float cy = shape->center_y();
     algif_draw_gif(gif, cx - gif->width / 2, cy - gif->height / 2, 0);

@@ -6,11 +6,10 @@
 #include "../Utils.h"
 
 void Weapon::update(const Hero &hero, float dt){
-    GAME_ASSERT(shape != nullptr, "Weapon shape is null");
     angle += angular_speed * dt;
     dmg = hero.atk;
     
-
+    
     float hx = hero.x();
     float hy = hero.y();
     float wx = hx + radius * std::cos(angle);
