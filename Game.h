@@ -24,6 +24,7 @@ public:
 	Button start_btn;
 	Button help_btn;
 	Button quit_btn;
+	Button pulse_btn;
 private:
 	/**
 	 * @brief States of the game process in game_update.
@@ -39,6 +40,8 @@ private:
 	ALLEGRO_EVENT event;
 	ALLEGRO_BITMAP *game_icon;
 	ALLEGRO_BITMAP *background;
+	ALLEGRO_BITMAP *help;
+	ALLEGRO_BITMAP *pulse;
 private:
 	ALLEGRO_DISPLAY *display;
 	ALLEGRO_TIMER *timer;

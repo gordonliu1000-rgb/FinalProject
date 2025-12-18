@@ -27,7 +27,8 @@ constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/BackGroundSound.mp3";
-
+constexpr char help_img_path[] = "./assets/image/help.jpg";
+constexpr char pulse_image[] = "./assets/image/pulse.png";
 /**
  * @brief Game entry.
  * @details The function processes all allegro events and update the event state to a generic data storage (i.e. DataCenter).
@@ -165,6 +166,7 @@ Game::game_init() {
 	start_btn = Button{ cx - bw/2, cy - bh - gap, bw, bh, "Start"};
 	help_btn = Button{ cx - bw/2, cy, bw, bh, "Help"};
 	quit_btn = Button{ cx - bw/2, cy + bh + gap, bw, bh, "Quit"};
+	pulse_btn = Button{static_cast<float>(DC->window_width) - 60, 10, 50, 50, ""};
 
 	// game start
 	background = IC->get(background_img_path);
@@ -185,7 +187,9 @@ Game::game_update() {
 	OperationCenter *OC = OperationCenter::get_instance();
 	SoundCenter *SC = SoundCenter::get_instance();
 	static ALLEGRO_SAMPLE_INSTANCE *background = nullptr;
-
+	bool mouse_down = DC->mouse_state[1];
+	bool mouse_prev = DC->prev_mouse_state[1];
+	const Point &mouse = DC->mouse;
 	switch(state) {
 		case STATE::START: {
 			static bool is_played = false;
@@ -193,11 +197,6 @@ Game::game_update() {
 				SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.3);
 				is_played = true;
 			}
-
-			bool mouse_down = DC->mouse_state[1];
-			bool mouse_prev = DC->prev_mouse_state[1];
-			const Point &mouse = DC->mouse;
-
 			if(show_help_menu){
 				if(mouse_down && !mouse_prev){
 					show_help_menu = false;
@@ -223,7 +222,7 @@ Game::game_update() {
 				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP, 0.1);
 				BGM_played = true;
 			}
-			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
+			if(pulse_btn.update(mouse, mouse_down, mouse_prev)) {
 				SC->toggle_playing(background);
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
@@ -234,7 +233,7 @@ Game::game_update() {
 			}
 			break;
 		} case STATE::PAUSE: {
-			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
+			if(mouse_down && !mouse_prev) {
 				SC->toggle_playing(background);
 				debug_log("<Game> state: change to LEVEL\n");
 				state = STATE::LEVEL;
@@ -270,6 +269,7 @@ Game::game_draw() {
     DataCenter *DC = DataCenter::get_instance();
     OperationCenter *OC = OperationCenter::get_instance();
     FontCenter *FC = FontCenter::get_instance();
+	ImageCenter *IC = ImageCenter::get_instance();
 
     // 清畫面
     al_clear_to_color(al_map_rgb(100, 100, 100));
@@ -302,18 +302,14 @@ Game::game_draw() {
     switch (state) {
         case STATE::START: {
 			if(show_help_menu){
-				al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(0, 0, 0, 150));
-
-				float w = DC->window_width * 0.6f;
-				float h = DC->window_height * 0.6f;
-				//半透明左上角標
-				float x = (DC->window_width - w) / 2.0f; 
-				float y = (DC->window_height - h) / 2.0f;
-				al_draw_filled_rectangle(x, y, x + w, y + h, al_map_rgb(230, 230, 230));
-				al_draw_rectangle(x, y, x + w, y + h, al_map_rgb(255, 255, 255), 2);
-
-				al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0), x + w/2.0f, y + 20.0f,
-					ALLEGRO_ALIGN_CENTRE, "HELP");
+				ImageCenter *IC = ImageCenter::get_instance();
+				help = IC->get(help_img_path);
+				al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_premul_rgba(0, 0, 0, 150));
+				float w = DC->window_width;
+				float h = DC->window_height;
+				float bw = al_get_bitmap_width(help);
+				float bh = al_get_bitmap_height(help);
+				al_draw_scaled_bitmap(help, 0, 0, bw, bh, 0, 0, w, h, 0);
 				break;
 			}
 
@@ -331,6 +327,8 @@ Game::game_draw() {
             break;
         }
         case STATE::LEVEL: {
+			pulse = IC->get(pulse_image);
+			pulse_btn.draw_bitmap(pulse, DC->mouse, 0.7);
             break;
         }
         case STATE::PAUSE: {
@@ -345,7 +343,7 @@ Game::game_draw() {
                 al_map_rgb(255, 255, 255),
                 DC->window_width / 2.0, DC->window_height / 2.0,
                 ALLEGRO_ALIGN_CENTRE,
-                "GAME PAUSED"
+                "GAME PAUSED press anywhere to continue"
             );
             break;
         }

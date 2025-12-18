@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
 #include "Player.h"
@@ -14,7 +15,6 @@
 #include "Hero.h"
 
 // fixed settings
-constexpr char love_img_path[] = "./assets/image/love.png";
 constexpr int love_img_padding = 5;
 constexpr int tower_img_left_padding = 20;
 constexpr int tower_img_top_padding = 30;
@@ -25,10 +25,6 @@ constexpr int buff_icon_left_padding = 20;
 
 void
 UI::init() {
-	//DataCenter *DC = DataCenter::get_instance();
-	ImageCenter *IC = ImageCenter::get_instance();
-	love = IC->get(love_img_path);
-	
 	debug_log("<UI> state: change to HALT\n");
 	state = STATE::HALT;
 	on_item = -1;
@@ -118,4 +114,30 @@ UI::draw() {
 		al_draw_rectangle(Shildbar_x, Shildbar_y, 
 				Shildbar_x + Shildbar_w, Shildbar_y + Shildbar_h, al_map_rgb(255, 255, 255), 2);
 	}
+
+	//score
+	sprintf(buf, "Kills:%d", DC->hero->score);
+	al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255),
+					DC->window_width / 2.0, 10.0, ALLEGRO_ALIGN_CENTRE, buf);
+
+	//Hero damage
+	if(hero->damage_hp > 0) {
+		float t = hero->damage_hp / 18.0;
+		float a = 0.25 * t;
+		al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, 
+							al_premul_rgba_f(1.0, 0.0, 0.0, a));
+		hero->damage_hp--;
+	}
+
+	//Hero Hp Low
+	if(hero->hp <= hero->max_hp * 0.2) {
+		float a = 0.35;
+		float b = 20;
+		ALLEGRO_COLOR c = al_premul_rgba_f(1, 0, 0, a);
+		al_draw_filled_rectangle(0, 0, DC->window_width, b, c);
+		al_draw_filled_rectangle(0, DC->window_height - b, DC->window_width, DC->window_height, c);
+		al_draw_filled_rectangle(0, 0, b, DC->window_height, c);
+		al_draw_filled_rectangle(DC->window_width - b, 0, DC->window_width, DC->window_height, c);
+	}
+	
 }

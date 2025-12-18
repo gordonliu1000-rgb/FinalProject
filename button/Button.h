@@ -14,6 +14,7 @@ class Button{
         bool update(const Point &mouse, bool mouse_down, bool mouse_prev);
         void draw(ALLEGRO_FONT *font, ALLEGRO_COLOR normal_color, ALLEGRO_COLOR hover_color,
                     ALLEGRO_COLOR border_color, ALLEGRO_COLOR text_color, const Point &mouse) const;
+        void draw_bitmap(ALLEGRO_BITMAP *bitmap, const Point &mouse, float hover) const;
                     
     private:
         float x, y, w, h;

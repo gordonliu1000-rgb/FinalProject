@@ -41,6 +41,8 @@ class Hero : public Creature{
         std::map<HeroState, std::string> gifPath;
     public:
         std::vector<Buff*>buffs;
+        unsigned int score = 0;
+        int damage_hp;
         float hp; //目前血量
         float max_hp; //最大血量
         int level;

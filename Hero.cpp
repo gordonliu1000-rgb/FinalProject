@@ -149,6 +149,7 @@ void Hero::hurt(float dmg){
     if(dmg > 0){
         hp -= dmg;
         if(hp < 0) hp = 0;
+        damage_hp = 18;
     }
 
     hurt_cooldown = 120;

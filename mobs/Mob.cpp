@@ -84,6 +84,7 @@ void Mob::hurt(float dmg){
         DataCenter *DC = DataCenter::get_instance();
         Hero *hero = DC->hero;
         hero->gain_exp(20);
+        hero->score++;
         return;
     }
     state = MobState::HURT;
