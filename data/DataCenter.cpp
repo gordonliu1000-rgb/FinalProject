@@ -2,9 +2,6 @@
 #include <cstring>
 #include "../Level.h"
 #include "../Player.h"
-#include "../monsters/Monster.h"
-#include "../towers/Tower.h"
-#include "../towers/Bullet.h"
 #include "../Hero.h"
 #include "../Camera.h"
 
@@ -47,13 +44,4 @@ DataCenter::DataCenter() {
 DataCenter::~DataCenter() {
 	delete player;
 	delete level;
-	for(Monster *&m : monsters) {
-		delete m;
-	}
-	for(Tower *&t : towers) {
-		delete t;
-	}
-	for(Bullet *&b : towerBullets) {
-		delete b;
-	}
 }

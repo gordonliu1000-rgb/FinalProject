@@ -31,12 +31,11 @@ private:
 	void _update_mob();
 	void _update_mob_weapon();
 	void _update_bump_dmg();
+	void _update_enemy_spell();
 private:
-	void _draw_monster();
-	void _draw_tower();
-	void _draw_towerBullet();
 	void _draw_buffitem();
 	void _draw_mob();
+	void _draw_enemy_spell();
 };
 
 #endif

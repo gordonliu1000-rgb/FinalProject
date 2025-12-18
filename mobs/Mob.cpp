@@ -228,12 +228,10 @@ void Flower::atk_hero(){
     }
 }
 
-void Vampire::atk_hero(){// to do
+void Vampire::atk_hero(){
     DataCenter *DC = DataCenter::get_instance();
-    if(atk_range->overlap(*(DC->hero->shape))){ 
-        DC->hero->hurt(atk);
-        atk_cool_down = init_atk_cool_down;//重置冷卻
-    }
+    DC->enemy_spells.emplace_back(EnemySpell::create_spell(this, atk, EnemySpellType::FIREBALL)); 
+    atk_cool_down = init_atk_cool_down;//重置冷卻
 }
 
 

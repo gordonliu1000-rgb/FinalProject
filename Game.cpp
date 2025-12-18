@@ -9,6 +9,7 @@
 #include "Level.h"
 #include "Hero.h"
 #include "./mobs/Mob.h"
+#include "./enemy_spell/EnemySpell.h"
 #include "Camera.h"
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -19,6 +20,7 @@
 #include <cstring>
 #include "WorldCoordinate.h"
 #include "Random.h"
+
 
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
@@ -149,6 +151,7 @@ Game::game_init() {
 	DC->hero->init();
 	DC->camera->init();
 	Mob::init();
+	EnemySpell::init();
 
 
 	show_help_menu = false;

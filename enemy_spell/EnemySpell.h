@@ -1,24 +1,24 @@
-#ifndef ENERMY_SPELL_H_INCLUDED
-#define ENERMY_SPELL_H_INCLUDED
+#ifndef ENEMY_SPELL_H_INCLUDED
+#define ENEMY_SPELL_H_INCLUDED
 
 #include "../Object.h"
 
-enum class EnermySpellType{
+enum class EnemySpellType{
     FIREBALL, LASER
 };
 
-class EnermySpell : public Object{
+class EnemySpell : public Object{
 public:
     // 有不同的type，激光、火球...  
-    static std::unique_ptr<EnermySpell> create_spell(Object *shooter, const double &atk, EnermySpellType type);
+    static std::unique_ptr<EnemySpell> create_spell(Object *shooter, const double &atk, EnemySpellType type);
     static void init();
 public:
     Object *shooter;
     double atk;
-    EnermySpellType type;
+    EnemySpellType type;
     bool end = false;
     virtual void update() = 0;
-    EnermySpell(Object *shooter, const double &atk, EnermySpellType type) 
+    EnemySpell(Object *shooter, const double &atk, EnemySpellType type) 
     : shooter{shooter}, atk{atk}, type{type} {};
 protected:
     int bitmap_switch_counter;

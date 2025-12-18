@@ -5,6 +5,7 @@
 #include "FireBall.h"
 #include "../Hero.h"
 
+
 std::map<FireBall::State, std::vector<ALLEGRO_BITMAP*>> FireBall::img;
 // 初始化照片
 void FireBall::init_img(){
@@ -13,7 +14,7 @@ void FireBall::init_img(){
     for(int i=0;i<4;i++){
         sprintf(
             buffer,
-            "./assets/image/enermy_spell/fire_ball/%d.png",
+            "./assets/image/enemy_spell/fire_ball/%d.png",
             i
         );
         img[State::FLYING].emplace_back(IC->get(buffer));
@@ -22,23 +23,23 @@ void FireBall::init_img(){
     for(int i=0;i<4;i++){
         sprintf(
             buffer,
-            "./assets/image/enermy_spell/fire_ball/ex%d.png",
+            "./assets/image/enemy_spell/fire_ball/ex%d.png",
             i
         );
         img[State::EXPLODE].emplace_back(IC->get(buffer));
     }
 }
 
-FireBall::FireBall(Object *shooter, const double &atk, EnermySpellType type) : EnermySpell(shooter, atk, type){
+FireBall::FireBall(Object *shooter, const double &atk, EnemySpellType type) : EnemySpell(shooter, atk, type){
     const static DataCenter *DC = DataCenter::get_instance();
     const float &des_x = DC->hero->shape->center_x();
     const float &des_y = DC->hero->shape->center_y();
     des.reset(new Point{des_x, des_y});
     const double &start_x = shooter->shape->center_x();
     const double &start_y = shooter->shape->center_y(); 
-    const float &h = al_get_bitmap_width(img[state][0]) * 0.8;
-    const float &w = al_get_bitmap_height(img[state][0]) * 0.8;
-    bitmap_angle = std::atan2(des_y - start_y, des_x - start_x) + ALLEGRO_PI/2;// 初始化火球面對方向
+    const float &w = al_get_bitmap_width(img[state][0]) * 0.8;
+    const float &h = al_get_bitmap_height(img[state][0]) * 0.8;
+    bitmap_angle = std::atan2(des_y - start_y, des_x - start_x);// 初始化火球面對方向
     shape.reset(new Rectangle{
         start_x - w/2,
         start_y - h/2,
@@ -46,10 +47,20 @@ FireBall::FireBall(Object *shooter, const double &atk, EnermySpellType type) : E
         start_y + h/2
     });
     const float &dx = des_x - start_x;
-    const float &dy = des_y - start_x;
+    const float &dy = des_y - start_y;
+    
     const double &distance = std::sqrt(dx*dx + dy*dy);
-    dir_x = dx / distance;
-    dir_y = dy/ distance;
+    if(distance != 0){
+        dir_x = dx / distance;
+        dir_y = dy / distance;
+    }else{
+        dir_x = 0;
+        dir_y = 0;
+    }
+
+    bitmap_switch_freq = 20;
+    bitmap_switch_counter = bitmap_switch_freq;
+    bitmap_img_id = 0;
 }
 
 void FireBall::update(){
@@ -58,6 +69,7 @@ void FireBall::update(){
         bitmap_switch_counter--;
     }
     else{
+        bitmap_switch_counter = bitmap_switch_freq;
         bitmap_img_id = (bitmap_img_id + 1) % (img[state].size());
     }
     const static DataCenter *DC = DataCenter::get_instance();
@@ -80,7 +92,7 @@ void FireBall::update(){
             }
 
             // 更新位置
-            float fspeed = speed * 1/DC->FPS;
+            float fspeed = speed / DC->FPS;
             float new_x = shape->center_x() + dir_x * fspeed;
             float new_y = shape->center_y() + dir_y * fspeed;
             shape->update_center_x(new_x);
@@ -105,8 +117,8 @@ void FireBall::update(){
 
 void FireBall::draw(){
     if(end) return;
-    static const float &h = al_get_bitmap_width(img[state][0]);
-    static const float &w = al_get_bitmap_height(img[state][0]);
+    static const float &w = al_get_bitmap_width(img[state][0]);
+    static const float &h = al_get_bitmap_height(img[state][0]);
     switch(state){
         case State::FLYING:{
             al_draw_rotated_bitmap(
@@ -116,6 +128,7 @@ void FireBall::draw(){
                 bitmap_angle,
                 0
             );
+            break;
         }
         case State::EXPLODE:{
             al_draw_bitmap(
@@ -124,6 +137,7 @@ void FireBall::draw(){
                 shape->center_y() - h/2,
                 0
             );
+            break;
         }
         default :{
             GAME_ASSERT(0, "Unknown FireBall state\n");

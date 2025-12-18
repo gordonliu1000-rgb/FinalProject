@@ -9,6 +9,7 @@
 #include "../shapes/Point.h"
 #include "../buffs/Buffitem.h" 
 #include "../mobs/Mob.h"
+#include "../enemy_spell/EnemySpell.h"
 
 class Player;
 class Level;
@@ -113,23 +114,27 @@ public:
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
 	 */
-	std::vector<Monster*> monsters;
+	//std::vector<Monster*> monsters;
 	/**
 	 * @brief Raw list of Tower objects.
 	 * @see Tower
 	 */
-	std::vector<Tower*> towers;
+	//std::vector<Tower*> towers;
 	/**
 	 * @brief Raw list of Bullet objects.
 	 * @see Bullet
 	 */
-	std::vector<Bullet*> towerBullets;
+	//std::vector<Bullet*> towerBullets;
 
 	std::vector<std::unique_ptr<Buffitem>> buff_items;
 
 	std::vector<std::unique_ptr<Mob>> mobs;
 
+	std::vector<std::unique_ptr<EnemySpell>> enemy_spells;
+
 	std::vector<std::vector<Cell>> grids;
+
+	
 private:
 	
 

@@ -69,9 +69,6 @@ void Speed::clear_effect(){
 }
 
 Power::Power(BuffType type) : Buff(type){
-
-    DataCenter *DC = DataCenter::get_instance();
-
     init_duration = 600;
     duration = 0;
 }

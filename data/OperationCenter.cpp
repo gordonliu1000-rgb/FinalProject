@@ -4,9 +4,6 @@
 #include "../weapon/Weapon.h"
 #include "../buffs/Buffitem.h"
 #include "../Random.h"
-#include "../monsters/Monster.h"
-#include "../towers/Tower.h"
-#include "../towers/Bullet.h"
 #include "../Player.h"
 #include "../Hero.h"
 #include "../Utils.h"
@@ -20,6 +17,7 @@ void OperationCenter::update() {
 	_update_mob();
 	_update_mob_weapon();
 	_update_bump_dmg();
+	_update_enemy_spell();
 }
 
 bool inbounds(int x, int y, int cols, int rows){
@@ -40,7 +38,7 @@ void OperationCenter::_update_mob_weapon(){
 		for(int i=0;i<8;i++){
 			grid_x = weapon->shape->center_x()/DC->cell_width + dx[i];
 			grid_y = weapon->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
-			if(inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
+			if(DataCenter::grid_inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
 				for(auto &mob:DC->grids[grid_y][grid_x].mobs){
 					if(mob->shape->overlap(*(weapon->shape))){
 						//debug_log("mob hurt1\n");
@@ -57,70 +55,10 @@ void OperationCenter::_update_mob_weapon(){
 	}
 }
 
-
-/*
-std::vector<std::unique_ptr<Weapon>> &weapons = DC->hero->weapons;
-	static int grid_x = 0, grid_y = 0;
-	static const int dx[9] = {1, -1, 0,  0,  0, 1,  1, -1, -1};
-	static const int dy[9] = {0,  0, 1, -1,  0, 1, -1,  1, -1};
-	for(auto &weapon:weapons){
-		for(int i=0;i<9;i++){
-			grid_x = weapon->shape->center_x()/DC->cell_width + dx[i];
-			grid_y = weapon->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
-			if(DC->grid_inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
-				for(auto &mob:DC->grids[grid_y][grid_x].mobs){
-					if(mob->shape->overlap(*(weapon->shape))){
-						mob->hurt(weapon->get_dmg());
-					}
-				}
-			}
-		}
-	}
-<<<<<<< HEAD
-*/
-
-/*void OperationCenter::_update_mob_weapon() {
-    DataCenter *DC = DataCenter::get_instance();
-    debug_log("weapon\n");
-
-    // 1. 先複製一份當前武器指標（snapshot）
-    std::vector<Weapon*> current_weapons;
-    current_weapons.reserve(DC->hero->weapons.size());
-    for (auto &w : DC->hero->weapons) {
-        if (w) current_weapons.push_back(w.get());
-    }
-
-    static int grid_x = 0, grid_y = 0;
-    static const int dx[8] = {1, -1, 0,  0,  1,  1, -1, -1};
-    static const int dy[8] = {0,  0, 1, -1,  1, -1,  1, -1};
-
-    // 2. 用 snapshot 來做碰撞，不再直接遍歷 hero->weapons
-    for (Weapon *weapon : current_weapons) {
-        if (!weapon || !weapon->shape) continue;
-
-        for (int i = 0; i < 8; ++i) {
-            grid_x = weapon->shape->center_x() / DC->cell_width + dx[i];
-            grid_y = weapon->shape->center_y() / DC->cell_width + dy[i];
-
-            if (inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())) {
-                for (auto &mob : DC->grids[grid_y][grid_x].mobs) {
-                    if (mob && mob->shape &&
-                        mob->shape->overlap(*(weapon->shape))) {
-                        mob->hurt(weapon->get_dmg());
-                    }
-                }
-            }
-        }
-    }
-=======
->>>>>>> a6edc0fbf093f1443f43641e6ee3140de2a32266
-}
-*/
-
 void OperationCenter:: _update_mob_spawn(){
 	DataCenter *DC = DataCenter::get_instance();
-	if(DC->mobs.size() == 200) return;
-	const int init_timer = 120;
+	if(DC->mobs.size() == 300) return;
+	const int init_timer = 60;
 	static int timer = init_timer;
 	if(timer > 0) timer--;
 	else {
@@ -155,23 +93,6 @@ void OperationCenter::_update_mob(){
 		}
 
 	}
-
-
-	/*
-	for(auto m=mobs.begin();m!=mobs.end();){
-		if((*m)->die){
-			m = mobs.erase(m);
-		}
-		else{
-			(*m)->update();
-			gird_x = (*m)->shape->center_x()/DC->cell_width;
-			grid_y = (*m)->shape->center_y()/DC->cell_width;
-			DC->grids[grid_y][gird_x].mobs.push_back((*m).get());
-			m++;
-		}
-
-	}
-	*/
 }
 
 void OperationCenter::_update_bump_dmg(){
@@ -189,6 +110,20 @@ void OperationCenter::_update_bump_dmg(){
 					hero->hurt(mob->atk);
 				}
 			}
+		}
+	}
+}
+
+void OperationCenter::_update_enemy_spell(){
+	std::vector<std::unique_ptr<EnemySpell>> &spells = DataCenter::get_instance()->enemy_spells;
+	for(size_t i=0;i<spells.size();){
+		if(spells[i]->end){
+			std::swap(spells[i], spells.back());
+			spells.pop_back();
+		}
+		else{
+			spells[i]->update();
+			i++;
 		}
 	}
 }
@@ -253,24 +188,7 @@ void OperationCenter::_update_buffitem_spawn(){
 void OperationCenter::draw() {
 	_draw_buffitem();
 	_draw_mob();
-}
-
-void OperationCenter::_draw_monster() {
-	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
-	for(Monster *monster : monsters)
-		monster->draw();
-}
-
-void OperationCenter::_draw_tower() {
-	std::vector<Tower*> &towers = DataCenter::get_instance()->towers;
-	for(Tower *tower : towers)
-		tower->draw();
-}
-
-void OperationCenter::_draw_towerBullet() {
-	std::vector<Bullet*> &towerBullets = DataCenter::get_instance()->towerBullets;
-	for(Bullet *towerBullet : towerBullets)
-		towerBullet->draw();
+	_draw_enemy_spell();
 }
 
 void OperationCenter::_draw_buffitem(){
@@ -284,6 +202,13 @@ void OperationCenter::_draw_mob(){
 	std::vector<std::unique_ptr<Mob>> &mobs = DataCenter::get_instance()->mobs;
 	for(auto &mob:mobs){
 		mob->draw();
+	}
+}
+
+void OperationCenter::_draw_enemy_spell(){
+	std::vector<std::unique_ptr<EnemySpell>> &spells = DataCenter::get_instance()->enemy_spells;
+	for(auto &spell:spells){
+		spell->draw();
 	}
 }
 
