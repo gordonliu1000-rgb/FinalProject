@@ -9,7 +9,6 @@
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
 #include "Player.h"
-#include "towers/Tower.h"
 #include "Level.h"
 #include "buffs/Buff.h"
 #include "Hero.h"
@@ -26,26 +25,10 @@ constexpr int buff_icon_left_padding = 20;
 
 void
 UI::init() {
-	DataCenter *DC = DataCenter::get_instance();
+	//DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	love = IC->get(love_img_path);
-	int tl_x = DC->game_field_height + tower_img_left_padding;
-	int tl_y = tower_img_top_padding;
-	int max_height = 0;
-	// arrange tower shop
-	for(size_t i = 0; i < (size_t)(TowerType::TOWERTYPE_MAX); ++i) {
-		ALLEGRO_BITMAP *bitmap = IC->get(TowerSetting::tower_menu_img_path[i]);
-		int w = al_get_bitmap_width(bitmap);
-		int h = al_get_bitmap_height(bitmap);
-		if(tl_x + w > DC->window_width) {
-			tl_x = DC->game_field_height + tower_img_left_padding;
-			tl_y += max_height + tower_img_top_padding;
-			max_height = 0;
-		}
-		tower_items.emplace_back(bitmap, Point{tl_x, tl_y}, TowerSetting::tower_price[i]);
-		tl_x += w + tower_img_left_padding;
-		max_height = std::max(max_height, h);
-	}
+	
 	debug_log("<UI> state: change to HALT\n");
 	state = STATE::HALT;
 	on_item = -1;
