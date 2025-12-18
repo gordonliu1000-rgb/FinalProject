@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Hero.h"
+#include "Exp.h"
 #include "./mobs/Mob.h"
 #include "./enemy_spell/EnemySpell.h"
 #include "Camera.h"
@@ -20,6 +21,7 @@
 #include <cstring>
 #include "WorldCoordinate.h"
 #include "Random.h"
+
 
 
 // fixed settings
@@ -138,8 +140,6 @@ Game::game_init() {
     al_register_event_source(event_queue, al_get_mouse_event_source());
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
-	//消費亂數
-	Random::range(0, 99999);
 	// init sound setting
 	SC->init();
 
@@ -153,6 +153,7 @@ Game::game_init() {
 	DC->camera->init();
 	Mob::init();
 	EnemySpell::init();
+	Exp::init_img();
 
 
 	show_help_menu = false;
