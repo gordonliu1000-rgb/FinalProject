@@ -12,7 +12,7 @@
 
 void OperationCenter::update() {
 	_update_buffitem_pickup();
-	_update_buffitem_spawn();
+	//_update_buffitem_spawn();
 	_update_mob_spawn();
 	_update_mob();
 	_update_mob_weapon();

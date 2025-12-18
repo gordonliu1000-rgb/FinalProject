@@ -122,6 +122,7 @@ void Hero::update(){
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){
         w -> update(*this, dt);
+        //debug_log("the weapon attack is %.2f\n", w->get_dmg());
     }
 
     for(auto &buff:buffs){

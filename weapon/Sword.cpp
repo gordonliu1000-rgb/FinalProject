@@ -31,7 +31,8 @@ void Sword::draw(){
     float bmp_cy = h / 2.0f;
     float scale = 1.5;
 
-
+    //以圖片內座標旋轉 等比例縮放 旋轉angle
+    //對齊畫到螢幕座標 
     al_draw_scaled_rotated_bitmap(bitmap, bmp_cx, bmp_cy, cx, cy, scale, scale, angle, 0);
 }
 
