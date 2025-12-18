@@ -149,7 +149,7 @@ void OperationCenter::_update_buffitem_pickup(){
 				Buff *buff = Buff::create_buff(item->get_type());
 				if(buff){
 					buff->reset_duration();
-					hero->buffs.emplace_back(Buff::create_buff(item->get_type()));
+					hero->buffs.emplace_back(buff);
 				}
 			}
 			debug_log("hero picked buff type=%d\n", (int)type);
