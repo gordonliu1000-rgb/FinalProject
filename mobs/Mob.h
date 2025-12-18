@@ -10,12 +10,13 @@
 #include "../Creature.h"
 
 enum class MobType {
-    SLIME, FLOWER, VAMPIRE, MOBTYPE_MAX
+    SLIME1, SLIME2, FLOWER, VAMPIRE, MOBTYPE_MAX
 };
 
 namespace MobSetting {
     static constexpr char mob_imgs_root_path[static_cast<size_t>(MobType::MOBTYPE_MAX)][50] = {
         "./assets/image/mob/slime1",
+        "./assets/image/mob/slime2",
         "./assets/image/mob/flower1",
         "./assets/image/mob/vampire1"
     };
@@ -62,6 +63,7 @@ public :
     virtual void atk_hero() = 0;
     void hurt(float dmg);
     bool die = false;
+    bool explosive = false;
 private :
     MobType type;
     void dropItem();

@@ -106,7 +106,7 @@ void OperationCenter::_update_bump_dmg(){
 		grid_y = hero->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
 		if(DC->grid_inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
 			for(auto &mob:DC->grids[grid_y][grid_x].mobs){
-				if(hero->shape->overlap(*(mob->shape))){
+				if(hero->shape->overlap(*(mob->shape)) && !mob->explosive){
 					hero->hurt(mob->atk);
 				}
 			}

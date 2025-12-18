@@ -63,6 +63,7 @@ FireBall::FireBall(Object *shooter, const double &atk, EnemySpellType type) : En
     bitmap_img_id = 0;
 }
 
+
 void FireBall::update(){
     if(end) return;
     if(bitmap_switch_counter!=0){
