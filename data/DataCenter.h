@@ -46,7 +46,9 @@ public:
 	~DataCenter();
 public:
 	double FPS;
-
+	unsigned int timer_t = 0;
+	double play_time = 0;
+	double last_time = 0;
 	int window_width, window_height;
 	int wall_width;
 	int cell_width;

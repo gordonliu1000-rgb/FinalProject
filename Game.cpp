@@ -44,8 +44,10 @@ void Game::reset_game(){
 	DC->camera->init();
 	DC->hero->reset();
 	//OP->reset();
+	DC->timer_t = al_get_timer_count(timer);
+	DC->play_time = 0;
+	DC->last_time = al_get_time();
 }
-
 void
 Game::execute() {
 	DataCenter *DC = DataCenter::get_instance();
@@ -219,6 +221,7 @@ Game::game_update() {
 
 			if(start_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to LEVEL\n");
+				DC->timer_t = al_get_timer_count(timer);
 				state = STATE::LEVEL;
 			}
 			else if(help_btn.update(mouse, mouse_down, mouse_prev)){
@@ -244,6 +247,7 @@ Game::game_update() {
 				debug_log("<Game> state: change to GAMEOVER\n");
 				if(background) al_stop_sample_instance(background);
 				state = STATE::GAMEOVER;
+			}
 			break;
 		} case STATE::PAUSE: {
 			if(mouse_down && !mouse_prev) {
@@ -267,7 +271,6 @@ Game::game_update() {
 	}
 	// If the game is not paused, we should progress update.
 	if(state != STATE::PAUSE && state != STATE::GAMEOVER) {
-		debug_log("STATE_1 = %d\n",static_cast<int>(state));
 		SC->update();
 		DC->camera->update();
 		if(state != STATE::START) {
@@ -275,12 +278,15 @@ Game::game_update() {
 			OC->update();
 		}
 	}
-	debug_log("STATE_2 = %d\n",static_cast<int>(state));
+	double dt = al_get_time() - DC->last_time;
+	DC->last_time = al_get_time();
+	if(state == STATE::LEVEL) {
+		DC->play_time += dt;
+	}
 	// game_update is finished. The states of current frame will be previous states of the next frame.
 	memcpy(DC->prev_key_state, DC->key_state, sizeof(DC->key_state));
 	memcpy(DC->prev_mouse_state, DC->mouse_state, sizeof(DC->mouse_state));
 	return true;
-	}
 }
 
 /**
@@ -314,6 +320,16 @@ Game::game_draw() {
 
 		// 4. 畫 UI：改回「螢幕座標」，不跟鏡頭動
 		WorldCoordinate::switch_to_camera_coordinate();
+
+		if(state == STATE::LEVEL || state == STATE::PAUSE || state == STATE::GAMEOVER) {
+			unsigned int sec = (int)(DC->play_time);
+			int mm = (int)(sec / 60);
+			int ss = (int)(sec % 60);
+			char t[32];
+			sprintf(t, "%02d : %02d", mm, ss);
+			al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255),
+							DC->window_width - 20, DC->window_height - 30, ALLEGRO_ALIGN_RIGHT, t);
+		}
 
 		if (state != STATE::START) {
 			ui->draw();          // UI 用視窗座標，例如 (10,10)
@@ -365,7 +381,7 @@ Game::game_draw() {
                 al_map_rgb(255, 255, 255),
                 DC->window_width / 2.0, DC->window_height / 2.0,
                 ALLEGRO_ALIGN_CENTRE,
-                "GAME PAUSED press anywhere to continue"
+                "press anywhere to continue"
             );
             break;
         }
