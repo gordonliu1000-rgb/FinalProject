@@ -99,7 +99,9 @@ public:
 	std::vector<std::unique_ptr<Buffitem>> buff_items;
 
 	std::size_t next_mob_idx = 0;
+	double next_mob_levelup_time = 30;
 	std::vector<std::unique_ptr<Mob>> mobs;
+	
 
 	std::size_t next_exp_idx = 0;
 	std::vector<std::unique_ptr<Exp>> exps;
