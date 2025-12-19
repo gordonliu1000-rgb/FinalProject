@@ -51,6 +51,9 @@ private:
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_EVENT_QUEUE *event_queue;
 	UI *ui;
+	bool bgm_played = false;
+	ALLEGRO_SAMPLE_INSTANCE *bgm_instance = nullptr;
+	
 };
 
 #endif
