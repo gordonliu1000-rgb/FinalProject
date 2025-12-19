@@ -211,19 +211,16 @@ Game::game_update() {
 	const Point &mouse = DC->mouse;
 	switch(state) {
 		case STATE::START: {
-			//static bool is_played = false;
-			//ALLEGRO_SAMPLE_INSTANCE *start = nullptr;
-			/*if(!is_played) {
-				//start = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.5);
-				is_played = true;
-			}*/
+			if(!gamestart_played) {
+				game_start = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.5);
+				gamestart_played = true;
+			}
 			if(show_help_menu){
 				if(mouse_down && !mouse_prev){
 					show_help_menu = false;
 				}
 				break;
 			}
-
 			if(start_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to LEVEL\n");
 				//al_stop_sample_instance(start);
@@ -238,6 +235,11 @@ Game::game_update() {
 			}
 			break;
 		} case STATE::LEVEL: {
+			if(game_start) {
+				al_stop_sample_instance(game_start);
+			}
+				game_start = nullptr;
+				gamestart_played = false;
 			if(!bgm_played) {
 				bgm_instance = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP, 0.1);
 				bgm_played = true;
@@ -369,6 +371,10 @@ Game::game_draw() {
 			start_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
 			help_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
 			quit_btn.draw(font, btn_color, btn_hover, border, text_color, mouse);
+			char word[26];
+			sprintf(word, "DUNGEON CROWN");
+			al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255), 
+							DC->window_width/2, 150, ALLEGRO_ALIGN_CENTRE, word);
 
             break;
         }
