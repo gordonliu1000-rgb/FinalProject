@@ -228,7 +228,7 @@ Game::game_update() {
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
 			}
-			if(DC->hero->hp == 0) {
+			if(DC->hero->hp < 1) {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
 			}

@@ -60,7 +60,7 @@ void OperationCenter::_update_mob_weapon(){
 
 void OperationCenter:: _update_mob_spawn(){
 	DataCenter *DC = DataCenter::get_instance();
-	if(DC->mobs.size() == 300) return;
+	if(DC->mobs.size() >= 300) return;
 	const int init_timer = 30;
 	static int timer = init_timer;
 	if(timer > 0) timer--;
@@ -208,26 +208,6 @@ void OperationCenter::_update_buffitem_pickup(){
 		}
 	}
 }
-
-// void OperationCenter::_update_buffitem_spawn(){
-// 	DataCenter *DC = DataCenter::get_instance();
-// 	static int spawn_counter = 0;
-// 	spawn_counter++;
-
-// 	if(spawn_counter >= 300){
-// 		spawn_counter = 0;
-		
-// 		int t = Random::range(0, 1);
-// 		BuffType type = (t == 0 ? BuffType::SPEED : BuffType::POWER);
-
-// 		float x = Random::range(0.0, (float)DC->game_field_height);
-// 		float y = Random::range(0.0, (float)DC->game_field_width);
-
-// 		DC->buff_items.emplace_back(std::make_unique<Buffitem>(type, Point{x, y}));
-// 		debug_log("spawn buff at x=%.1f y=%.1f type=%d\n", x, y, (int)type);
-// 	}
-	
-// }
 
 
 
