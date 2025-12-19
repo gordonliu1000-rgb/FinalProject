@@ -51,6 +51,7 @@ void Game::reset_game(){
 		al_stop_sample_instance(game_over_sound);
 	}
 	game_over_sound = nullptr;
+	gameover_played = false;
 }
 void
 Game::execute() {
