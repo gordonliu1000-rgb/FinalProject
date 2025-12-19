@@ -209,6 +209,31 @@ void Hero::level_up(){
     }
 }
 
+void Hero::reset() {
+    for(auto *buff : buffs) {
+        if(buff) {
+            buff->clear_effect();
+            delete buff;
+        }
+    }
+    buffs.clear(); weapons.clear(); spells.clear();
+    shield = 0; hurt_cooldown = 0; damage_hp = 0;
+    max_hp = 100; level = 1; exp = 0;
+    exp_to_next = 100; init_atk = HeroSetting::init_ATK;
+    atk = init_atk; speed = HeroSetting::init_SPEED;
+    score = 0; levelup = false;
+
+    DataCenter *DC = DataCenter::get_instance();
+    GIFCenter *GIF = GIFCenter::get_instance();
+    ALGIF_ANIMATION *gif = GIF->get(gifPath[state]);
+    float start_x = DC->game_field_height / 2;
+    float start_y = DC->game_field_height / 2;
+    shape.reset(new Rectangle{start_x, start_y, start_x + gif->width, start_y + gif->height});
+
+    weapons.emplace_back(std::make_unique<Sword>(80, 4));
+    spells.emplace_back(Spell::create_spell(SpellType::THUNDER));
+}
+
 Hero::~Hero(){
     for(auto &buff:buffs){
         buff->clear_effect(); // 清除buff效果

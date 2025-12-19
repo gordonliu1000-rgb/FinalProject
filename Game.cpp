@@ -35,6 +35,18 @@ constexpr char pulse_image[] = "./assets/image/pulse.png";
  * @details The function processes all allegro events and update the event state to a generic data storage (i.e. DataCenter).
  * For timer event, the game_update and game_draw function will be called if and only if the current is timer.
  */
+
+void Game::reset_game(){
+	DataCenter *DC = DataCenter::get_instance();
+	//OperationCenter *OP = OperationCenter::get_instance();
+	DC->reset_object();
+	DC->camera->init();
+	DC->hero->reset();
+	//OP->reset();
+	DC->timer_t = al_get_timer_count(timer);
+	DC->play_time = 0;
+	DC->last_time = al_get_time();
+}
 void
 Game::execute() {
 	DataCenter *DC = DataCenter::get_instance();
@@ -167,6 +179,8 @@ Game::game_init() {
 	help_btn = Button{ cx - bw/2, cy, bw, bh, "Help"};
 	quit_btn = Button{ cx - bw/2, cy + bh + gap, bw, bh, "Quit"};
 	pulse_btn = Button{static_cast<float>(DC->window_width) - 60, 10, 50, 50, ""};
+	restart_btn = Button{cx - bw/2, cy + 80, bw, bh, "Restart"};
+	end_btn = Button{cx - bw/2, cy + 80 + bh, bw, bh, "Quit"};
 
 	// game start
 	background = IC->get(background_img_path);
@@ -206,6 +220,7 @@ Game::game_update() {
 
 			if(start_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to LEVEL\n");
+				DC->timer_t = al_get_timer_count(timer);
 				state = STATE::LEVEL;
 			}
 			else if(help_btn.update(mouse, mouse_down, mouse_prev)){
@@ -228,8 +243,9 @@ Game::game_update() {
 				state = STATE::PAUSE;
 			}
 			if(DC->hero->hp < 1) {
-				debug_log("<Game> state: change to END\n");
-				state = STATE::END;
+				debug_log("<Game> state: change to GAMEOVER\n");
+				if(background) al_stop_sample_instance(background);
+				state = STATE::GAMEOVER;
 			}
 			break;
 		} case STATE::PAUSE: {
@@ -239,20 +255,32 @@ Game::game_update() {
 				state = STATE::LEVEL;
 			}
 			break;
+		}case STATE::GAMEOVER: {
+			if(restart_btn.update(mouse, mouse_down, mouse_prev)) {
+				reset_game();
+				state = STATE::START;
+			}
+			else if (end_btn.update(mouse, mouse_down, mouse_prev)) {
+				state = STATE::END;
+			}	
+			break;		
 		} case STATE::END: {
 			return false;
 		}
 	}
 	// If the game is not paused, we should progress update.
-	if(state != STATE::PAUSE) {
+	if(state != STATE::PAUSE && state != STATE::GAMEOVER) {
 		SC->update();
 		DC->camera->update();
 		if(state != STATE::START) {
-			//debug_log("update hero\n");
 			DC->hero->update();
-			//debug_log("update OC\n");
 			OC->update();
 		}
+	}
+	double dt = al_get_time() - DC->last_time;
+	DC->last_time = al_get_time();
+	if(state == STATE::LEVEL) {
+		DC->play_time += dt;
 	}
 	// game_update is finished. The states of current frame will be previous states of the next frame.
 	memcpy(DC->prev_key_state, DC->key_state, sizeof(DC->key_state));
@@ -291,6 +319,16 @@ Game::game_draw() {
 
 		// 4. 畫 UI：改回「螢幕座標」，不跟鏡頭動
 		WorldCoordinate::switch_to_camera_coordinate();
+
+		if(state == STATE::LEVEL || state == STATE::PAUSE || state == STATE::GAMEOVER) {
+			unsigned int sec = (int)(DC->play_time);
+			int mm = (int)(sec / 60);
+			int ss = (int)(sec % 60);
+			char t[32];
+			sprintf(t, "%02d : %02d", mm, ss);
+			al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255),
+							DC->window_width - 20, DC->window_height - 30, ALLEGRO_ALIGN_RIGHT, t);
+		}
 
 		if (state != STATE::START) {
 			ui->draw();          // UI 用視窗座標，例如 (10,10)
@@ -342,10 +380,37 @@ Game::game_draw() {
                 al_map_rgb(255, 255, 255),
                 DC->window_width / 2.0, DC->window_height / 2.0,
                 ALLEGRO_ALIGN_CENTRE,
-                "GAME PAUSED press anywhere to continue"
+                "press anywhere to continue"
             );
             break;
         }
+		case STATE::GAMEOVER: {
+			const Point &mouse = DC->mouse;
+			al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_premul_rgba(0, 0, 0, 160));
+			float w = DC->window_width * 0.8;
+			float h = DC->window_height * 0.5;
+			float x = (DC->window_width - w) / 2;
+			float y = (DC->window_height - h) / 2;
+			al_draw_filled_rectangle(x, y, x + w, y + h, al_map_rgb(30, 30, 30));
+			al_draw_rectangle(x, y, x + w, y + h, al_map_rgb(255, 255, 255), 2);
+
+			char word[128];
+			al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+							DC->window_width / 2, y + 30, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
+			sprintf(word, "Level: %d", DC->hero->level);
+			al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255), 
+							DC->window_width / 2, y + 120, ALLEGRO_ALIGN_CENTRE, word);
+			sprintf(word, "Kills: %d", DC->hero->score);
+			al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255),
+							DC->window_width / 2, y + 160, ALLEGRO_ALIGN_CENTRE, word);
+
+			ALLEGRO_COLOR btn_color = al_map_rgb(50, 50, 50);
+			ALLEGRO_COLOR btn_hover = al_map_rgb(80, 80, 80);
+			ALLEGRO_COLOR border = al_map_rgb(255, 255, 255);
+			restart_btn.draw(FC->caviar_dreams[FontSize::MEDIUM], btn_color, btn_hover, border, border, mouse);
+			end_btn.draw(FC->caviar_dreams[FontSize::MEDIUM], btn_color, btn_hover, border, border, mouse);
+			break;
+		}
         case STATE::END: {
             break;
         }

@@ -35,10 +35,13 @@ public:
 	~DataCenter();
 public:
 	double FPS;
-
+	unsigned int timer_t = 0;
+	double play_time = 0;
+	double last_time = 0;
 	int window_width, window_height;
 	int wall_width;
 	int cell_width;
+	void reset_object();
 	/**
 	 * @brief The width and height of game area (not window size). That is, the region excludes menu region.
 	 * @details The game area is sticked to the top-left of the display window.
