@@ -84,6 +84,7 @@ void OperationCenter:: _update_mob_spawn(){
 
 void OperationCenter::_update_mob(){
 	DataCenter *DC = DataCenter::get_instance();
+	if((int)DC->play_time >= 1800 && (int)(DC->play_time) % 1800 == 0) {Mob::mob_level_up();debug_log("mob lvl up!\n");}
 	std::vector<std::unique_ptr<Mob>> &mobs = DataCenter::get_instance()->mobs;
 	
 	for (auto& m : mobs) m->update();

@@ -43,7 +43,7 @@ void Game::reset_game(){
 	DC->camera->init();
 	DC->hero->reset();
 	//OP->reset();
-	DC->timer_t = al_get_timer_count(timer);
+	// DC->timer_t = al_get_timer_count(timer);
 	DC->play_time = 0;
 	DC->last_time = al_get_time();
 }
@@ -220,7 +220,7 @@ Game::game_update() {
 
 			if(start_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to LEVEL\n");
-				DC->timer_t = al_get_timer_count(timer);
+				// DC->timer_t = al_get_timer_count(timer);
 				state = STATE::LEVEL;
 			}
 			else if(help_btn.update(mouse, mouse_down, mouse_prev)){
