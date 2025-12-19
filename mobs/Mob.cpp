@@ -2,6 +2,7 @@
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 #include "../data/SoundCenter.h"
+#include "../data/OperationCenter.h"
 #include "../Camera.h"
 #include "../Hero.h"
 #include "../Random.h"
@@ -281,15 +282,17 @@ void Mob::dropItem(){
             Point{shape->center_x(), shape->center_y()}));
         debug_log("spawn buff at x=%.1f y=%.1f type=%d\n", shape->center_x(), shape->center_y(), (int)type);
     }
-    DataCenter *DC = DataCenter::get_instance();
-    if(DC->exps.size() >= 300) return;
-    for(auto &exp:DC->exps){
-        if(exp->picked){
-            exp = std::make_unique<Exp>(shape->center_x(), shape->center_y());
-            return;
-        }
-    }
-    DC->exps.emplace_back(std::make_unique<Exp>(shape->center_x(), shape->center_y()));
+    OperationCenter::get_instance()->drop_exp(shape->center_x(), shape->center_y());
+    // DataCenter *DC = DataCenter::get_instance();
+    // if(DC->exps.size() >= 300) return;
+    // for(auto &exp:DC->exps){
+    //     if(exp->picked){
+    //         exp = std::make_unique<Exp>(shape->center_x(), shape->center_y());
+    //         return;
+    //     }
+    // }
+    // DC->exps.emplace_back(std::make_unique<Exp>(shape->center_x(), shape->center_y()));
+    
 }
 
 void Mob::draw(){

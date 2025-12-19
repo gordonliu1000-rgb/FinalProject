@@ -98,28 +98,12 @@ public:
 
 	Camera *camera;
 
-	/**
-	 * @brief Raw list of Monster objects.
-	 * @see Monster
-	 */
-	//std::vector<Monster*> monsters;
-	/**
-	 * @brief Raw list of Tower objects.
-	 * @see Tower
-	 */
-	//std::vector<Tower*> towers;
-	/**
-	 * @brief Raw list of Bullet objects.
-	 * @see Bullet
-	 */
-	//std::vector<Bullet*> towerBullets;
-
 	std::vector<std::unique_ptr<Buffitem>> buff_items;
 
-	std::size_t last_mob_idx;
+	std::size_t next_mob_idx = 0;
 	std::vector<std::unique_ptr<Mob>> mobs;
 
-	std::size_t last_exp_idx;
+	std::size_t next_exp_idx = 0;
 	std::vector<std::unique_ptr<Exp>> exps;
 
 	std::vector<std::unique_ptr<EnemySpell>> enemy_spells;

@@ -67,13 +67,18 @@ void OperationCenter:: _update_mob_spawn(){
 		timer = init_timer;
 		int rn = Random::range(0, static_cast<int>(MobType::MOBTYPE_MAX)-1);
 		MobType type = static_cast<MobType>(rn);
-		for(size_t i=0;i<DC->mobs.size();i++){
-			if(DC->mobs[i]->die){
-				DC->mobs[i] = Mob::create_mob(type);
-				return;
-			}
+		if(DC->next_mob_idx >= DC->mobs.size()) DC->mobs.emplace_back(Mob::create_mob(type));
+		else {
+			DC->mobs[DC->next_mob_idx] = Mob::create_mob(type);
 		}
-		DC->mobs.emplace_back(Mob::create_mob(type));
+		DC->next_mob_idx++;
+		// for(size_t i=0;i<DC->mobs.size();i++){
+		// 	if(DC->mobs[i]->die){
+		// 		DC->mobs[i] = Mob::create_mob(type);
+		// 		return;
+		// 	}
+		// }
+		
 	}
 }
 
@@ -89,14 +94,22 @@ void OperationCenter::_update_mob(){
 		}
 	}
 
-	for(size_t i=0;i<mobs.size();i++){
-		if(mobs[i]->die) continue;
+	for(size_t i=0;i<DC->next_mob_idx;){
+		if(mobs[i]->die){
+			if(!mobs[i]->swapped){
+				mobs[i]->swapped = true;
+				std::swap(mobs[DC->next_mob_idx-1], mobs[i]);
+				DC->next_mob_idx--;
+			}
+			continue;
+		}
 		static int grid_x = 0, grid_y = 0;
 		grid_x = mobs[i]->shape->center_x()/DC->cell_width;
 		grid_y = mobs[i]->shape->center_y()/DC->cell_width;
 		if(grid_x < 0) grid_x = 0;
 		if(grid_y < 0) grid_y = 0;
 		DC->grids[grid_y][grid_x].mobs.push_back(i);
+		i++;
 	}
 
 }
@@ -135,18 +148,19 @@ void OperationCenter::_update_enemy_spell(){
 }
 
 void OperationCenter::drop_exp(const double &x, const double &y){
-	// DataCenter *DC = DataCenter::get_instance();
-	// if(DC->last_exp_idx >= 300) return;
-	// std::size_t &last_idx = DC->last_exp_idx;
-	// if(last_idx >= DC->exps.size()-1){
-	// 	DC->exps.emplace_back(std::make_unique<Exp>(x, y));
-	// 	last_idx ++;
-	// 	return;
-	// }
-	// while(!DC->exps[last_idx].get()->picked){
-	// 	last_idx++;
-	// }
-	// DC->exps[last_idx] = std::make_unique<Exp>(x, y);
+	DataCenter *DC = DataCenter::get_instance();
+	if(DC->next_exp_idx >= 300) return;
+	std::size_t &next_idx = DC->next_exp_idx;
+	if(next_idx >= DC->exps.size()){
+		DC->exps.emplace_back(std::make_unique<Exp>(x, y));
+		next_idx ++;
+		return;
+	}
+	while(!DC->exps[next_idx].get()->picked){
+		next_idx++;
+	}
+	DC->exps[next_idx] = std::make_unique<Exp>(x, y);
+	next_idx++;
 }	
 
 void OperationCenter::_update_exp_to_grid(){
@@ -157,7 +171,7 @@ void OperationCenter::_update_exp_to_grid(){
 		}
 	}
 
-	for(std::size_t i=0;i<DC->exps.size();i++){
+	for(std::size_t i=0;i<DC->next_exp_idx;i++){
 		if(DC->exps[i]->picked) continue;
 		static int grid_x = 0, grid_y = 0;
 		grid_x = DC->exps[i]->shape->center_x()/DC->cell_width;
@@ -191,19 +205,21 @@ void OperationCenter::_update_exp_pickup(){
 	}
 
 	static const float exp_speed_factor = 0.2;
-	for(auto &exp:exps){
-		if(exp.get()->picked) continue;
-		if(!exp.get()->chasing) continue;
-		if(hero->shape->overlap(*(exp.get()->shape))) {
-			hero->gain_exp(exp.get()->get_val());
-			exp.get()->picked = true;
-			exp.get()->chasing = false;
+	for(std::size_t idx=0;idx < DC->next_exp_idx;idx++){
+		if(exps[idx].get()->picked) continue;
+		if(!exps[idx].get()->chasing) continue;
+		if(hero->shape->overlap(*(exps[idx].get()->shape))) {
+			hero->gain_exp(exps[idx].get()->get_val());
+			exps[idx].get()->picked = true;
+			exps[idx].get()->chasing = false;
+			std::swap(exps[idx], exps[DC->next_exp_idx-1]);
+			DC->next_exp_idx--;
 			continue;
 		}
-		float dx = hero->shape->center_x() - exp.get()->shape->center_x();
-		float dy = hero->shape->center_y() - exp.get()->shape->center_y();
-		exp.get()->shape->update_center_x(exp.get()->shape->center_x() + dx*exp_speed_factor);
-		exp.get()->shape->update_center_y(exp.get()->shape->center_y() + dy*exp_speed_factor);
+		float dx = hero->shape->center_x() - exps[idx].get()->shape->center_x();
+		float dy = hero->shape->center_y() - exps[idx].get()->shape->center_y();
+		exps[idx].get()->shape->update_center_x(exps[idx].get()->shape->center_x() + dx*exp_speed_factor);
+		exps[idx].get()->shape->update_center_y(exps[idx].get()->shape->center_y() + dy*exp_speed_factor);
 	}
 }
 

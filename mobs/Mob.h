@@ -65,6 +65,7 @@ public :
     virtual void atk_hero() = 0;
     void hurt(float dmg);
     bool die = false;
+    bool swapped = false;
     bool explosive = false;
 private :
     MobType type;
