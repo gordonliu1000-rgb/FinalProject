@@ -8,6 +8,7 @@ public:
     static void init_img();
 public:
     bool picked = false;
+    bool chasing = false;
     Exp(double x, double y);
     const int get_val() const{return val;}
     void draw();

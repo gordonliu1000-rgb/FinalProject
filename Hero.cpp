@@ -20,6 +20,7 @@ namespace HeroSetting{
     };
     static constexpr float init_ATK = 5.0;
     static constexpr double init_SPEED = 5;
+    static constexpr double init_exp_pickup_radius = 128;
 
 } 
 
@@ -53,6 +54,9 @@ void Hero::init() {
     speed = HeroSetting::init_SPEED;
 
     weapons.emplace_back(std::make_unique<Sword>(80.0f, 4.0f));
+
+    exp_pickup_radius = HeroSetting::init_exp_pickup_radius;
+    exp_pickup_range.reset(new Circle{start_x, start_y, exp_pickup_radius});
 
     Spell::init();
     spells.emplace_back(Spell::create_spell(SpellType::THUNDER));
@@ -118,6 +122,8 @@ void Hero::update(){
         
         shape->update_center_x(new_x);
         shape->update_center_y(new_y);
+        exp_pickup_range->update_center_x(new_x);
+        exp_pickup_range->update_center_y(new_y);
     }
     float dt = 1.0f / DC->FPS;
     for(auto &w : weapons){

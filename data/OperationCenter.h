@@ -25,7 +25,6 @@ public:
 private:
 	OperationCenter() {}
 private:
-	void _update_buffitem_spawn();
 	void _update_buffitem_pickup();
 	void _update_mob_spawn();
 	void _update_mob();
@@ -34,6 +33,8 @@ private:
 	void _update_enemy_spell();
 	void _update_exp_pickup();
 	void _update_exp_to_grid();
+public:
+	void drop_exp(const double &x, const double &y);
 private:
 	void _draw_exp();
 	void _draw_buffitem();

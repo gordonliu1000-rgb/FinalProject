@@ -1,7 +1,6 @@
 #include "DataCenter.h"
 #include <cstring>
 #include "../Level.h"
-#include "../Player.h"
 #include "../Hero.h"
 #include "../Camera.h"
 
@@ -34,7 +33,6 @@ DataCenter::DataCenter() {
 	memset(prev_mouse_state, false, sizeof(prev_mouse_state));
 	grids.assign(this->game_field_height/DataSetting::cell_width,
 		std::vector<Cell>(this->game_field_width/DataSetting::cell_width, Cell()));
-	player = new Player();
 	level = new Level();
 	hero = new Hero();
 	camera = Camera::get_instance();
@@ -42,6 +40,5 @@ DataCenter::DataCenter() {
 }
 
 DataCenter::~DataCenter() {
-	delete player;
 	delete level;
 }

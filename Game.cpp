@@ -5,7 +5,6 @@
 #include "data/SoundCenter.h"
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
-#include "Player.h"
 #include "Level.h"
 #include "Hero.h"
 #include "Exp.h"
@@ -246,7 +245,6 @@ Game::game_update() {
 	}
 	// If the game is not paused, we should progress update.
 	if(state != STATE::PAUSE) {
-		//DC->player->update();
 		SC->update();
 		DC->camera->update();
 		if(state != STATE::START) {

@@ -9,7 +9,6 @@
 #include <allegro5/allegro_font.h>
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
-#include "Player.h"
 #include "Level.h"
 #include "buffs/Buff.h"
 #include "Hero.h"

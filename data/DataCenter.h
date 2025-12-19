@@ -11,8 +11,8 @@
 #include "../mobs/Mob.h"
 #include "../enemy_spell/EnemySpell.h"
 #include "../Exp.h"
+#include <queue>
 
-class Player;
 class Level;
 class Monster;
 class Tower;
@@ -20,17 +20,6 @@ class Bullet;
 class Hero;
 class Camera;
 class Buffitem;
-
-
-
-
-/**
- * @brief Stores generic global data and relatively small data structures.
- * @details The globally used data such as FPS (frames per second), windows size, game region, and states of input devices (mouse and keyboard).
- * Player and Level are stored here mainly because the objects are small enough that do not require complex management.
- * Other specific data like game objects (towers, monsters ... etc) or ALLEGRO_BITMAP will be managed by other center objects.
- */
-
 
 
 
@@ -97,12 +86,6 @@ public:
 	}
 public:
 	/**
-	 * @brief Stores the basic information that a player should have.
-	 * @details For a tower-defense game, coin and health point is enough to represent a player.
-	 * @see Player
-	 */
-	Player *player;
-	/**
 	 * @brief Loads and stores the information of a level.
 	 * @see Level
 	 */
@@ -130,8 +113,10 @@ public:
 
 	std::vector<std::unique_ptr<Buffitem>> buff_items;
 
+	std::size_t last_mob_idx;
 	std::vector<std::unique_ptr<Mob>> mobs;
 
+	std::size_t last_exp_idx;
 	std::vector<std::unique_ptr<Exp>> exps;
 
 	std::vector<std::unique_ptr<EnemySpell>> enemy_spells;
