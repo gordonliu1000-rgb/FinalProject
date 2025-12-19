@@ -39,7 +39,6 @@ constexpr char pulse_image[] = "./assets/image/pulse.png";
 
 void Game::reset_game(){
 	DataCenter *DC = DataCenter::get_instance();
-	SoundCenter *SC = SoundCenter::get_instance();
 	DC->reset_object();
 	DC->camera->init();
 	DC->hero->reset();
