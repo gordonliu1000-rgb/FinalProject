@@ -78,7 +78,7 @@ void Thunder::update(){
     int max_grid_y = std::min((int)(hero->shape->center_y() + atk_radius)/cell_width, (int)DC->grids.size()-1);
 
     struct MobInfo {
-        Mob* mob;
+        std::size_t mob;
         int weight;
     }; 
     std::vector<MobInfo> pool;
@@ -87,7 +87,7 @@ void Thunder::update(){
         for(int x=min_grid_x;x<=max_grid_x;x++){
             int count = DC->grids[y][x].mobs.size();
             for (auto& mob : DC->grids[y][x].mobs) {
-                pool.push_back({ mob, count });
+                pool.push_back({mob, count });
             }
         }
     }
@@ -95,15 +95,15 @@ void Thunder::update(){
     std::shuffle(pool.begin(), pool.end(), Random::rng);// 決定落雷位置(怪密度較高較易選中)
 
     for (std::size_t i = 0; i < (std::size_t)num_of_strikes && i < pool.size(); ++i) {
-        auto *m = pool[i].mob;
+        auto &m = pool[i].mob;
         // 決定落雷偏移量
         double offset_x = Random::range(-static_cast<float>(strike_radius) * 0.3f, static_cast<float>(strike_radius) * 0.3f);
         double offset_y = Random::range(-static_cast<float>(strike_radius) * 0.3f, static_cast<float>(strike_radius) * 0.3f);
 
         strikes.emplace_back(
             std::make_unique<Strike>(
-                m->shape->center_x() + offset_x,
-                m->shape->center_y() + offset_y,
+                DC->mobs[m].get()->shape->center_x() + offset_x,
+                DC->mobs[m].get()->shape->center_y() + offset_y,
                 strike_radius,
                 i * 20,
                 this->atk
@@ -146,9 +146,9 @@ void Strike::update(){
 			grid_x = shape->center_x()/DC->cell_width + dx[i];
 			grid_y = shape->center_y()/DC->cell_width + dy[i];
 			if(DC->grid_inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
-				for(auto &mob:DC->grids[grid_y][grid_x].mobs){
-					if(mob->shape->overlap(*shape)){
-						mob->hurt(atk);
+				for(auto &idx:DC->grids[grid_y][grid_x].mobs){
+					if(DC->mobs[idx].get()->shape->overlap(*shape)){
+						DC->mobs[idx].get()->hurt(atk);
 					}
 				}
 			}

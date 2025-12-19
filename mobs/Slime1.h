@@ -6,6 +6,7 @@
 class Slime1 : public Mob
 {
 public:
+    static float init_atk, init_hp;
     static std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> img;
     static void init_img(){
         ImageCenter *IC = ImageCenter::get_instance();
@@ -87,12 +88,13 @@ public :
     }
 
     int get_bitmaps_last_idx(MobState state){
+        GAME_ASSERT(img[state][dir].size() > 0, "No bitmap for this state");
         return img[state][dir].size() - 1;
     }
 
     Slime1(MobType type) : Mob{type}{
-        hp = 20;
-        atk = 10;
+        hp = init_hp;
+        atk = init_atk;
         speed = 20;
         atk_range_radius = 40;
         init_atk_cool_down = 180;

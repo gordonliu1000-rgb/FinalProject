@@ -33,7 +33,10 @@ private:
 	void _update_mob_weapon();
 	void _update_bump_dmg();
 	void _update_enemy_spell();
+	void _update_exp_pickup();
+	void _update_exp_to_grid();
 private:
+	void _draw_exp();
 	void _draw_buffitem();
 	void _draw_mob();
 	void _draw_enemy_spell();

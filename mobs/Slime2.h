@@ -8,6 +8,7 @@
 class Slime2 : public Mob
 {
 public:
+    static float init_atk, init_hp;
     static std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> img;
     static void init_img(){
         ImageCenter *IC = ImageCenter::get_instance();
@@ -89,18 +90,19 @@ public :
     }
 
     int get_bitmaps_last_idx(MobState state){
+        GAME_ASSERT(img[state][dir].size() > 0, "No bitmap for this state");
         return img[state][dir].size() - 1;
     }
 
     Slime2(MobType type) : Mob{type}{
-        hp = 20;
-        atk = 40;
-        speed = 70;
+        hp = init_hp;
+        atk = init_atk;
+        speed = 200;
         explosive = true;
-        atk_range_radius = 40;
+        atk_range_radius = 60;
         init_atk_cool_down = 180;
         atk_cool_down = 20;
-        attack_frame_id = 6;
+        attack_frame_id = 4;
         const float &w = al_get_bitmap_width(img[state][dir][0]);
         const float &h = al_get_bitmap_height(img[state][dir][0]);
         shape.reset(new Rectangle{
@@ -113,7 +115,7 @@ public :
         atk_range.reset(new Circle{shape->center_x(), 
             shape->center_y(), 
             this->atk_range_radius});
-        bitmap_switch_freq = 5;
+        bitmap_switch_freq = 3;
 
         debug_log("mob spawn at x=%f y=%f\n", shape->center_x(), shape->center_y());
     }

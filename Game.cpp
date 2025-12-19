@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Hero.h"
+#include "Exp.h"
 #include "./mobs/Mob.h"
 #include "./enemy_spell/EnemySpell.h"
 #include "Camera.h"
@@ -20,6 +21,7 @@
 #include <cstring>
 #include "WorldCoordinate.h"
 #include "Random.h"
+
 
 
 // fixed settings
@@ -148,8 +150,6 @@ Game::game_init() {
     al_register_event_source(event_queue, al_get_mouse_event_source());
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
-	//消費亂數
-	Random::range(0, 99999);
 	// init sound setting
 	SC->init();
 
@@ -163,6 +163,7 @@ Game::game_init() {
 	DC->camera->init();
 	Mob::init();
 	EnemySpell::init();
+	Exp::init_img();
 
 
 	show_help_menu = false;
@@ -239,11 +240,10 @@ Game::game_update() {
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
 			}
-			if(DC->hero->hp == 0) {
+			if(DC->hero->hp < 1) {
 				debug_log("<Game> state: change to GAMEOVER\n");
 				if(background) al_stop_sample_instance(background);
 				state = STATE::GAMEOVER;
-			}
 			break;
 		} case STATE::PAUSE: {
 			if(mouse_down && !mouse_prev) {
@@ -280,6 +280,7 @@ Game::game_update() {
 	memcpy(DC->prev_key_state, DC->key_state, sizeof(DC->key_state));
 	memcpy(DC->prev_mouse_state, DC->mouse_state, sizeof(DC->mouse_state));
 	return true;
+	}
 }
 
 /**

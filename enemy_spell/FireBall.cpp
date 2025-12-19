@@ -37,8 +37,8 @@ FireBall::FireBall(Object *shooter, const double &atk, EnemySpellType type) : En
     des.reset(new Point{des_x, des_y});
     const double &start_x = shooter->shape->center_x();
     const double &start_y = shooter->shape->center_y(); 
-    const float &w = al_get_bitmap_width(img[state][0]) * 0.8;
-    const float &h = al_get_bitmap_height(img[state][0]) * 0.8;
+    const float &w = al_get_bitmap_width(img[state][0]) * 2;
+    const float &h = al_get_bitmap_height(img[state][0]) * 2;
     bitmap_angle = std::atan2(des_y - start_y, des_x - start_x);// 初始化火球面對方向
     shape.reset(new Rectangle{
         start_x - w/2,
@@ -78,8 +78,8 @@ void FireBall::update(){
         case State::FLYING:{
             if(shape->overlap(*des) || shape->overlap(*DC->hero->shape)){
                 state = State::EXPLODE;
-                const float &h = al_get_bitmap_width(img[state][0]);
-                const float &w = al_get_bitmap_height(img[state][0]);
+                const float &w = al_get_bitmap_width(img[state][0]) * 2;
+                const float &h = al_get_bitmap_height(img[state][0]) * 2;
                 const float &x = shape->center_x();
                 const float &y = shape->center_y();
                 shape.reset(new Rectangle{
@@ -119,24 +119,28 @@ void FireBall::update(){
 
 void FireBall::draw(){
     if(end) return;
-    static const float &w = al_get_bitmap_width(img[state][0]);
-    static const float &h = al_get_bitmap_height(img[state][0]);
+    const float &w = al_get_bitmap_width(img[state][0]);
+    const float &h = al_get_bitmap_height(img[state][0]);
     switch(state){
         case State::FLYING:{
-            al_draw_rotated_bitmap(
+            al_draw_scaled_rotated_bitmap(
                 img[state][bitmap_img_id],
                 w/2, h/2,
                 shape->center_x(), shape->center_y(),
+                2.0, 2.0,
                 bitmap_angle,
                 0
             );
             break;
         }
         case State::EXPLODE:{
-            al_draw_bitmap(
+            al_draw_scaled_bitmap(
                 img[state][bitmap_img_id],
+                0, 0,
+                w, h,
                 shape->center_x() - w/2,
                 shape->center_y() - h/2,
+                w*2.0, h*2.0,
                 0
             );
             break;

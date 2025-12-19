@@ -32,6 +32,7 @@ void Mob::init(){
     Flower::init_img();
     Vampire::init_img();
     Slime2::init_img();
+    reset();
 }
 
 
@@ -39,6 +40,25 @@ std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime1::img;
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Slime2::img;
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Flower::img;
 std::map<MobState, std::map<MobDir, std::vector<ALLEGRO_BITMAP *>>> Vampire::img;
+float Vampire::init_atk = 20;float Vampire::init_hp = 20;
+float Flower::init_atk = 20;float Flower::init_hp = 20;
+float Slime1::init_atk = 10;float Slime1::init_hp = 10;
+float Slime2::init_atk = 30;float Slime2::init_hp = 5;
+
+void Mob::reset(){
+    Vampire::init_atk = 20;Vampire::init_hp = 20;
+    Flower::init_atk = 20;Flower::init_hp = 20;
+    Slime1::init_atk = 10;Slime1::init_hp = 10;
+    Slime2::init_atk = 30;Slime2::init_hp = 5;
+}
+
+void Mob::mob_level_up(){
+    Vampire::init_atk += 20;Vampire::init_hp += 20;
+    Flower::init_atk += 20;Flower::init_hp += 20;
+    Slime1::init_atk += 20;Slime1::init_hp += 10;
+    Slime2::init_atk += 30;Slime2::init_hp += 10;
+}
+
 
 std::unique_ptr<Mob> Mob::create_mob(MobType type){
     switch(type){
@@ -74,7 +94,7 @@ Mob::Mob(MobType type){
 
     float x = 0, y = 0;
     x = Random::range((float)DC->wall_width, (float)DC->game_field_width - DC->wall_width);
-    y = Random::range(92.0, DC->game_field_height - DC->wall_width);
+    y = Random::range(92.0, (float)(DC->game_field_height - DC->wall_width));
     shape.reset(new Point{x, y});
 }
 
@@ -89,7 +109,7 @@ void Mob::hurt(float dmg){
         state = MobState::DIE;
         DataCenter *DC = DataCenter::get_instance();
         Hero *hero = DC->hero;
-        hero->gain_exp(20);
+        
         hero->score++;
         return;
     }
@@ -261,9 +281,19 @@ void Mob::dropItem(){
             Point{shape->center_x(), shape->center_y()}));
         debug_log("spawn buff at x=%.1f y=%.1f type=%d\n", shape->center_x(), shape->center_y(), (int)type);
     }
+    DataCenter *DC = DataCenter::get_instance();
+    if(DC->exps.size() >= 300) return;
+    for(auto &exp:DC->exps){
+        if(exp->picked){
+            exp = std::make_unique<Exp>(shape->center_x(), shape->center_y());
+            return;
+        }
+    }
+    DC->exps.emplace_back(std::make_unique<Exp>(shape->center_x(), shape->center_y()));
 }
 
 void Mob::draw(){
+    if(die) return;
     //超出範圍不draw
     static const int &window_width = DataCenter::get_instance()->window_width;
     static const int &window_height = DataCenter::get_instance()->window_height;

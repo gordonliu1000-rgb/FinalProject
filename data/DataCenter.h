@@ -10,6 +10,7 @@
 #include "../buffs/Buffitem.h" 
 #include "../mobs/Mob.h"
 #include "../enemy_spell/EnemySpell.h"
+#include "../Exp.h"
 
 class Player;
 class Level;
@@ -87,7 +88,8 @@ public:
 	bool prev_mouse_state[ALLEGRO_MOUSE_MAX_EXTRA_AXES];
 private:
 	struct Cell{
-		std::vector<Mob*> mobs;
+		std::vector<std::size_t> mobs;
+		std::vector<std::size_t> exps;
 		Cell(){};
 	};
 public:
@@ -130,6 +132,8 @@ public:
 	std::vector<std::unique_ptr<Buffitem>> buff_items;
 
 	std::vector<std::unique_ptr<Mob>> mobs;
+
+	std::vector<std::unique_ptr<Exp>> exps;
 
 	std::vector<std::unique_ptr<EnemySpell>> enemy_spells;
 

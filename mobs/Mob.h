@@ -50,6 +50,8 @@ enum class MobDir{
 class Mob : public Creature{
 public:
     static void init();
+    static void reset();
+    static void mob_level_up();
 public :
     float hp;
     float atk;
@@ -69,7 +71,7 @@ private :
     void dropItem();
     void chase_hero();
     void calculate_distance();
-    float distance;
+    float distance = 1;
     int update_distance_cooldown = 5;
     int update_distance_counter = 0;
 protected :
@@ -89,7 +91,7 @@ protected :
     
     virtual ALLEGRO_BITMAP* get_bitmap(int bitmap_id) = 0;
     virtual int get_bitmaps_last_idx(MobState state) = 0;
-    
+
 };
 
 
