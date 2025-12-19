@@ -37,7 +37,7 @@ constexpr char pulse_image[] = "./assets/image/pulse.png";
 
 void Game::reset_game(){
 	DataCenter *DC = DataCenter::get_instance();
-	OperationCenter *OP = OperationCenter::get_instance();
+	//OperationCenter *OP = OperationCenter::get_instance();
 	DC->reset_object();
 	DC->camera->init();
 	DC->hero->reset();
@@ -266,17 +266,16 @@ Game::game_update() {
 		}
 	}
 	// If the game is not paused, we should progress update.
-	if(state != STATE::PAUSE) {
-		//DC->player->update();
+	if(state != STATE::PAUSE && state != STATE::GAMEOVER) {
+		debug_log("STATE_1 = %d\n",static_cast<int>(state));
 		SC->update();
 		DC->camera->update();
 		if(state != STATE::START) {
-			//debug_log("update hero\n");
 			DC->hero->update();
-			//debug_log("update OC\n");
 			OC->update();
 		}
 	}
+	debug_log("STATE_2 = %d\n",static_cast<int>(state));
 	// game_update is finished. The states of current frame will be previous states of the next frame.
 	memcpy(DC->prev_key_state, DC->key_state, sizeof(DC->key_state));
 	memcpy(DC->prev_mouse_state, DC->mouse_state, sizeof(DC->mouse_state));
