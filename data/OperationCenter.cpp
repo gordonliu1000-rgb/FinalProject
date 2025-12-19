@@ -4,7 +4,6 @@
 #include "../weapon/Weapon.h"
 #include "../buffs/Buffitem.h"
 #include "../Random.h"
-#include "../Player.h"
 #include "../Hero.h"
 #include "../Utils.h"
 #include "../mobs/Mob.h"
@@ -68,13 +67,18 @@ void OperationCenter:: _update_mob_spawn(){
 		timer = init_timer;
 		int rn = Random::range(0, static_cast<int>(MobType::MOBTYPE_MAX)-1);
 		MobType type = static_cast<MobType>(rn);
-		for(size_t i=0;i<DC->mobs.size();i++){
-			if(DC->mobs[i]->die){
-				DC->mobs[i] = Mob::create_mob(type);
-				return;
-			}
-		} 
-		DC->mobs.emplace_back(Mob::create_mob(type));
+		if(DC->next_mob_idx >= DC->mobs.size()) DC->mobs.emplace_back(Mob::create_mob(type));
+		else {
+			DC->mobs[DC->next_mob_idx] = Mob::create_mob(type);
+		}
+		DC->next_mob_idx++;
+		// for(size_t i=0;i<DC->mobs.size();i++){
+		// 	if(DC->mobs[i]->die){
+		// 		DC->mobs[i] = Mob::create_mob(type);
+		// 		return;
+		// 	}
+		// }
+		
 	}
 }
 
@@ -90,14 +94,22 @@ void OperationCenter::_update_mob(){
 		}
 	}
 
-	for(size_t i=0;i<mobs.size();i++){
-		if(mobs[i]->die) continue;
+	for(size_t i=0;i<DC->next_mob_idx;){
+		if(mobs[i]->die){
+			if(!mobs[i]->swapped){
+				mobs[i]->swapped = true;
+				std::swap(mobs[DC->next_mob_idx-1], mobs[i]);
+				DC->next_mob_idx--;
+			}
+			continue;
+		}
 		static int grid_x = 0, grid_y = 0;
 		grid_x = mobs[i]->shape->center_x()/DC->cell_width;
 		grid_y = mobs[i]->shape->center_y()/DC->cell_width;
 		if(grid_x < 0) grid_x = 0;
 		if(grid_y < 0) grid_y = 0;
 		DC->grids[grid_y][grid_x].mobs.push_back(i);
+		i++;
 	}
 
 }
@@ -135,6 +147,22 @@ void OperationCenter::_update_enemy_spell(){
 	}
 }
 
+void OperationCenter::drop_exp(const double &x, const double &y){
+	DataCenter *DC = DataCenter::get_instance();
+	if(DC->next_exp_idx >= 300) return;
+	std::size_t &next_idx = DC->next_exp_idx;
+	if(next_idx >= DC->exps.size()){
+		DC->exps.emplace_back(std::make_unique<Exp>(x, y));
+		next_idx ++;
+		return;
+	}
+	while(!DC->exps[next_idx].get()->picked){
+		next_idx++;
+	}
+	DC->exps[next_idx] = std::make_unique<Exp>(x, y);
+	next_idx++;
+}	
+
 void OperationCenter::_update_exp_to_grid(){
 	DataCenter *DC = DataCenter::get_instance();
 	for(auto &grids:DC->grids){
@@ -143,7 +171,7 @@ void OperationCenter::_update_exp_to_grid(){
 		}
 	}
 
-	for(std::size_t i=0;i<DC->exps.size();i++){
+	for(std::size_t i=0;i<DC->next_exp_idx;i++){
 		if(DC->exps[i]->picked) continue;
 		static int grid_x = 0, grid_y = 0;
 		grid_x = DC->exps[i]->shape->center_x()/DC->cell_width;
@@ -155,25 +183,44 @@ void OperationCenter::_update_exp_to_grid(){
 }
 
 void OperationCenter::_update_exp_pickup(){
-	std::vector<std::unique_ptr<Exp>> &exps = DataCenter::get_instance()->exps;
 	DataCenter *DC = DataCenter::get_instance();
+	std::vector<std::unique_ptr<Exp>> &exps = DC->exps;
 	Hero *hero = DC->hero;
-	static int grid_x = 0, grid_y = 0;
-	static const int dx[9] = {1, -1, 0,  0,  0, 1,  1, -1, -1};
-	static const int dy[9] = {0,  0, 1, -1,  0, 1, -1,  1, -1};
-	for(int i=0;i<9;i++){
-		grid_x = hero->shape->center_x()/DC->cell_width + dx[i];
-		grid_y = hero->shape->center_y()/DC->cell_width + dy[i]; // find the target mobs
-		if(DC->grid_inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
-			for(auto &idx:DC->grids[grid_y][grid_x].exps){
-				if(hero->shape->overlap(*(DC->exps[idx].get()->shape))) {
-					hero->gain_exp(exps[idx].get()->get_val());
-					exps[idx].get()->picked = true;
+	const int &cell_width = DC->cell_width;
+    int min_grid_x = std::max((int)(hero->shape->center_x() - (int)hero->exp_pickup_radius)/cell_width, 0);
+    int min_grid_y = std::max((int)(hero->shape->center_y() - (int)hero->exp_pickup_radius)/cell_width, 0);
+    int max_grid_x = std::min((int)(hero->shape->center_x() + (int)hero->exp_pickup_radius)/cell_width, (int)DC->grids[0].size()-1);
+    int max_grid_y = std::min((int)(hero->shape->center_y() + (int)hero->exp_pickup_radius)/cell_width, (int)DC->grids.size()-1);
+	
+	for(int grid_y=min_grid_y;grid_y<=max_grid_y;grid_y++){
+		for(int grid_x=min_grid_x;grid_x<=max_grid_x;grid_x++){
+			if(DC->grid_inbounds(grid_x, grid_y, DC->grids[0].size(), DC->grids.size())){
+				for(auto &idx:DC->grids[grid_y][grid_x].exps){
+					if(hero->exp_pickup_range->overlap(*(DC->exps[idx].get()->shape))){
+						exps[idx].get()->chasing = true;
+					}
 				}
 			}
 		}
 	}
 
+	static const float exp_speed_factor = 0.2;
+	for(std::size_t idx=0;idx < DC->next_exp_idx;idx++){
+		if(exps[idx].get()->picked) continue;
+		if(!exps[idx].get()->chasing) continue;
+		if(hero->shape->overlap(*(exps[idx].get()->shape))) {
+			hero->gain_exp(exps[idx].get()->get_val());
+			exps[idx].get()->picked = true;
+			exps[idx].get()->chasing = false;
+			std::swap(exps[idx], exps[DC->next_exp_idx-1]);
+			DC->next_exp_idx--;
+			continue;
+		}
+		float dx = hero->shape->center_x() - exps[idx].get()->shape->center_x();
+		float dy = hero->shape->center_y() - exps[idx].get()->shape->center_y();
+		exps[idx].get()->shape->update_center_x(exps[idx].get()->shape->center_x() + dx*exp_speed_factor);
+		exps[idx].get()->shape->update_center_y(exps[idx].get()->shape->center_y() + dy*exp_speed_factor);
+	}
 }
 
 void OperationCenter::_update_buffitem_pickup(){

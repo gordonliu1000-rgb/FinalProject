@@ -5,7 +5,6 @@
 #include "data/SoundCenter.h"
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
-#include "Player.h"
 #include "Level.h"
 #include "Hero.h"
 #include "Exp.h"

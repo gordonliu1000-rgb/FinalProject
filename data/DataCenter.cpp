@@ -1,7 +1,6 @@
 #include "DataCenter.h"
 #include <cstring>
 #include "../Level.h"
-#include "../Player.h"
 #include "../Hero.h"
 #include "../Camera.h"
 
@@ -10,8 +9,6 @@ namespace DataSetting {
 	constexpr double FPS = 60;
 	constexpr int window_width = 1200;
 	constexpr int window_height = 800;
-	//constexpr int backgorund_width = 800;
-	//constexpr int backgorund_height = 600;
 	constexpr int game_field_height = 2048;
 	constexpr int game_field_width = 2048;
 	constexpr int wall_width = 32;
@@ -34,18 +31,20 @@ DataCenter::DataCenter() {
 	memset(prev_mouse_state, false, sizeof(prev_mouse_state));
 	grids.assign(this->game_field_height/DataSetting::cell_width,
 		std::vector<Cell>(this->game_field_width/DataSetting::cell_width, Cell()));
-	player = new Player();
 	level = new Level();
 	hero = new Hero();
 	camera = Camera::get_instance();
 	mobs.reserve(200);
 }
 
-void DataCenter::reset_object() {
+void DataCenter::reset_object() { 
 	buff_items.clear();
+	next_mob_idx = 0;
 	mobs.clear();
 	Mob::reset();
 	enemy_spells.clear();
+	next_exp_idx = 0;
+	exps.clear();
 	for(auto &g : grids) {
 		for(auto &c : g) {
 			c.mobs.clear();
@@ -54,6 +53,5 @@ void DataCenter::reset_object() {
 }
 
 DataCenter::~DataCenter() {
-	delete player;
 	delete level;
 }

@@ -36,7 +36,6 @@ class Hero : public Creature{
         float y() const {return shape->center_y();}
         std::vector<std::unique_ptr<Weapon>> weapons; //store the weapon that hero have
         std::vector<std::unique_ptr<Spell>> spells;
-
     private:
         HeroState state = HeroState::FRONT;
         std::map<HeroState, std::string> gifPath;
@@ -56,6 +55,9 @@ class Hero : public Creature{
         double speed;
         int hurt_cooldown = 0;
         bool levelup = false;
+
+        double exp_pickup_radius;
+        std::unique_ptr<Circle> exp_pickup_range;
         
 };
 #endif

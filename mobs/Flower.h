@@ -96,7 +96,7 @@ public :
     Flower(MobType type) : Mob{type}{
         hp = init_hp;
         atk = init_atk;
-        speed = 20;
+        speed = 30;
         atk_range_radius = 40;
         init_atk_cool_down = 180;
         atk_cool_down = 30;
