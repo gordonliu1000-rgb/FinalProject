@@ -20,11 +20,14 @@ public:
 	void game_init();
 	bool game_update();
 	void game_draw();
+	void reset_game();
 	bool show_help_menu;
 	Button start_btn;
 	Button help_btn;
 	Button quit_btn;
 	Button pulse_btn;
+	Button restart_btn;
+	Button end_btn;
 private:
 	/**
 	 * @brief States of the game process in game_update.
@@ -32,8 +35,9 @@ private:
 	 */
 	enum class STATE {
 		START, // -> LEVEL
-		LEVEL, // -> PAUSE, END
+		LEVEL, // -> PAUSE, GAMEOVER
 		PAUSE, // -> LEVEL
+		GAMEOVER, //->START, END
 		END
 	};
 	STATE state;

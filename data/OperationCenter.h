@@ -22,6 +22,7 @@ public:
 	 * @details Calls all other draw functions.
 	 */
 	void draw();
+	void reset();
 private:
 	OperationCenter() {}
 private:

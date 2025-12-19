@@ -41,6 +41,17 @@ DataCenter::DataCenter() {
 	mobs.reserve(200);
 }
 
+void DataCenter::reset_object() {
+	buff_items.clear();
+	mobs.clear();
+	enemy_spells.clear();
+	for(auto &g : grids) {
+		for(auto &c : g) {
+			c.mobs.clear();
+		}
+	}
+}
+
 DataCenter::~DataCenter() {
 	delete player;
 	delete level;

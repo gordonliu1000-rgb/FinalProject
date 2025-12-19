@@ -30,6 +30,7 @@ class Hero : public Creature{
         void gain_exp(int amount);
         void level_up();
         void gain_shield(float amount);
+        void reset();
         ~Hero();
         float x() const {return shape->center_x();}
         float y() const {return shape->center_y();}
