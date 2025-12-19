@@ -11,7 +11,6 @@
 
 void OperationCenter::update() {
 	_update_buffitem_pickup();
-	//_update_buffitem_spawn();
 	_update_mob_spawn();
 	_update_mob();
 	_update_bump_dmg();
@@ -43,9 +42,7 @@ void OperationCenter::_update_mob_weapon(){
 			if(DataCenter::grid_inbounds(grid_x, grid_y, DC->grids.size(), DC->grids[0].size())){
 				for(auto &idx:DC->grids[grid_y][grid_x].mobs){
 					if(DC->mobs[idx].get()->shape->overlap(*(weapon->shape))){
-						//debug_log("mob hurt1\n");
 						DC->mobs[idx].get()->hurt(weapon->get_dmg());
-						//debug_log("mob hurt2\n");
 						if(DC->hero->levelup){
 							debug_log("hero level up stop update\n");
 							return;
