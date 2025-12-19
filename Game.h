@@ -2,6 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_audio.h>
 #include "Button/Button.h"
 #include "UI.h"
 
@@ -53,7 +54,9 @@ private:
 	UI *ui;
 	bool bgm_played = false;
 	ALLEGRO_SAMPLE_INSTANCE *bgm_instance = nullptr;
-	
+	ALLEGRO_SAMPLE_INSTANCE *game_over_sound = nullptr;
+	bool gameover_played = false;
+
 };
 
 #endif

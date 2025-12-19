@@ -39,13 +39,18 @@ constexpr char pulse_image[] = "./assets/image/pulse.png";
 
 void Game::reset_game(){
 	DataCenter *DC = DataCenter::get_instance();
-	//OperationCenter *OP = OperationCenter::get_instance();
+	SoundCenter *SC = SoundCenter::get_instance();
 	DC->reset_object();
 	DC->camera->init();
 	DC->hero->reset();
-	//OP->reset();
 	DC->play_time = 0;
 	DC->last_time = al_get_time();
+	bgm_played = false;
+	bgm_instance = nullptr;
+	if(game_over_sound) {
+		al_stop_sample_instance(game_over_sound);
+	}
+	game_over_sound = nullptr;
 }
 void
 Game::execute() {
@@ -200,7 +205,7 @@ Game::game_update() {
 	DataCenter *DC = DataCenter::get_instance();
 	OperationCenter *OC = OperationCenter::get_instance();
 	SoundCenter *SC = SoundCenter::get_instance();
-	static ALLEGRO_SAMPLE_INSTANCE *background = nullptr;
+	//static ALLEGRO_SAMPLE_INSTANCE *background = nullptr;
 	bool mouse_down = DC->mouse_state[1];
 	bool mouse_prev = DC->prev_mouse_state[1];
 	const Point &mouse = DC->mouse;
@@ -233,35 +238,32 @@ Game::game_update() {
 			}
 			break;
 		} case STATE::LEVEL: {
-			static bool BGM_played = false;
-			if(!BGM_played) {
-				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP, 0.1);
-				BGM_played = true;
+			if(!bgm_played) {
+				bgm_instance = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP, 0.1);
+				bgm_played = true;
 			}
 			if(pulse_btn.update(mouse, mouse_down, mouse_prev)) {
-				SC->toggle_playing(background);
+				SC->toggle_playing(bgm_instance);
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
 			}
 			if(DC->hero->hp < 1) {
 				debug_log("<Game> state: change to GAMEOVER\n");
-				if(background) al_stop_sample_instance(background);
+				if(bgm_instance) al_stop_sample_instance(bgm_instance);
 				state = STATE::GAMEOVER;
 			}
 			break;
 		} case STATE::PAUSE: {
 			if(mouse_down && !mouse_prev) {
-				SC->toggle_playing(background);
+				SC->toggle_playing(bgm_instance);
 				debug_log("<Game> state: change to LEVEL\n");
 				state = STATE::LEVEL;
 			}
 			break;
 		}case STATE::GAMEOVER: {
-			static bool isplayed = false;
-			if(!isplayed) {
-				SoundCenter *SC = SoundCenter::get_instance();
-				SC->play(gameover_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.5);
-				isplayed = true;
+			if(!gameover_played) {
+				game_over_sound = SC->play(gameover_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.5);
+				gameover_played = true;
 			}
 			if(restart_btn.update(mouse, mouse_down, mouse_prev)) {
 				reset_game();
