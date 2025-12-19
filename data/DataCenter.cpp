@@ -42,6 +42,7 @@ void DataCenter::reset_object() {
 	next_mob_idx = 0;
 	mobs.clear();
 	Mob::reset();
+	next_mob_levelup_time = 30;
 	enemy_spells.clear();
 	next_exp_idx = 0;
 	exps.clear();

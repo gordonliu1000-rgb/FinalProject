@@ -283,15 +283,6 @@ void Mob::dropItem(){
         debug_log("spawn buff at x=%.1f y=%.1f type=%d\n", shape->center_x(), shape->center_y(), (int)type);
     }
     OperationCenter::get_instance()->drop_exp(shape->center_x(), shape->center_y());
-    // DataCenter *DC = DataCenter::get_instance();
-    // if(DC->exps.size() >= 300) return;
-    // for(auto &exp:DC->exps){
-    //     if(exp->picked){
-    //         exp = std::make_unique<Exp>(shape->center_x(), shape->center_y());
-    //         return;
-    //     }
-    // }
-    // DC->exps.emplace_back(std::make_unique<Exp>(shape->center_x(), shape->center_y()));
     
 }
 

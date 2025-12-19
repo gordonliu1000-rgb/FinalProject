@@ -56,7 +56,6 @@ private:
 	ALLEGRO_SAMPLE_INSTANCE *bgm_instance = nullptr;
 	ALLEGRO_SAMPLE_INSTANCE *game_over_sound = nullptr;
 	bool gameover_played = false;
-
 };
 
 #endif

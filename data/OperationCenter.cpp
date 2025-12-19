@@ -59,31 +59,54 @@ void OperationCenter::_update_mob_weapon(){
 
 void OperationCenter:: _update_mob_spawn(){
 	DataCenter *DC = DataCenter::get_instance();
+
+	
 	if(DC->mobs.size() >= 300) return;
 	const int init_timer = 30;
 	static int timer = init_timer;
 	if(timer > 0) timer--;
 	else {
 		timer = init_timer;
-		int rn = Random::range(0, static_cast<int>(MobType::MOBTYPE_MAX)-1);
-		MobType type = static_cast<MobType>(rn);
-		if(DC->next_mob_idx >= DC->mobs.size()) DC->mobs.emplace_back(Mob::create_mob(type));
-		else {
-			DC->mobs[DC->next_mob_idx] = Mob::create_mob(type);
+		struct MobInfo{
+			MobType type;
+			int weight;
+		};
+		static const std::vector<MobInfo> mob_table ={
+			{MobType::SLIME1, 40},
+			{MobType::SLIME2, 20},
+			{MobType::VAMPIRE, 20},
+			{MobType::FLOWER, 20}
+		};
+		const int total = 100;
+		int rn = Random::range(0, total);
+		MobType type = MobType::SLIME1;
+		for(const MobInfo &m : mob_table){
+			if(rn < m.weight){
+				type = m.type;
+				break;
+			}
+			rn -= m.weight;
 		}
-		DC->next_mob_idx++;
-		// for(size_t i=0;i<DC->mobs.size();i++){
-		// 	if(DC->mobs[i]->die){
-		// 		DC->mobs[i] = Mob::create_mob(type);
-		// 		return;
-		// 	}
-		// }
+		
+		for(size_t i=0;i<DC->mobs.size();i++){
+			if(DC->mobs[i]->die){
+				DC->mobs[i] = Mob::create_mob(type);
+				return;
+			}
+		}
+		DC->mobs.emplace_back(Mob::create_mob(type));
 		
 	}
 }
 
 void OperationCenter::_update_mob(){
 	DataCenter *DC = DataCenter::get_instance();
+
+	if (DC->play_time >= DC->next_mob_levelup_time) {
+		Mob::mob_level_up();
+		debug_log("mob lvl up!\n");
+		DC->next_mob_levelup_time += 30;
+	}
 	std::vector<std::unique_ptr<Mob>> &mobs = DataCenter::get_instance()->mobs;
 	
 	for (auto& m : mobs) m->update();
@@ -94,22 +117,15 @@ void OperationCenter::_update_mob(){
 		}
 	}
 
-	for(size_t i=0;i<DC->next_mob_idx;){
-		if(mobs[i]->die){
-			if(!mobs[i]->swapped){
-				mobs[i]->swapped = true;
-				std::swap(mobs[DC->next_mob_idx-1], mobs[i]);
-				DC->next_mob_idx--;
-			}
-			continue;
-		}
+	for(size_t i=0;i<DC->mobs.size();i++){
+		if(mobs[i]->die) continue;
 		static int grid_x = 0, grid_y = 0;
 		grid_x = mobs[i]->shape->center_x()/DC->cell_width;
 		grid_y = mobs[i]->shape->center_y()/DC->cell_width;
 		if(grid_x < 0) grid_x = 0;
 		if(grid_y < 0) grid_y = 0;
 		DC->grids[grid_y][grid_x].mobs.push_back(i);
-		i++;
+		
 	}
 
 }
