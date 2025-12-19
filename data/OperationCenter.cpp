@@ -14,8 +14,8 @@ void OperationCenter::update() {
 	//_update_buffitem_spawn();
 	_update_mob_spawn();
 	_update_mob();
-	_update_mob_weapon();
 	_update_bump_dmg();
+	_update_mob_weapon();
 	_update_enemy_spell();
 
 	_update_exp_pickup();
