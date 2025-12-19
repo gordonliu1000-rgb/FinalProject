@@ -120,6 +120,7 @@ SoundCenter::is_playing(const ALLEGRO_SAMPLE_INSTANCE *const inst) {
  */
 void
 SoundCenter::toggle_playing(ALLEGRO_SAMPLE_INSTANCE *inst) {
+	if(!inst) return; 
 	bool is_playing = al_get_sample_instance_playing(inst);
 	if(is_playing) {
 		unsigned int pos = al_get_sample_instance_position(inst);

@@ -44,6 +44,7 @@ DataCenter::DataCenter() {
 void DataCenter::reset_object() {
 	buff_items.clear();
 	mobs.clear();
+	Mob::reset();
 	enemy_spells.clear();
 	for(auto &g : grids) {
 		for(auto &c : g) {
