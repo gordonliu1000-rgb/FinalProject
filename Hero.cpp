@@ -218,7 +218,7 @@ void Hero::reset() {
     }
     buffs.clear(); weapons.clear(); spells.clear();
     shield = 0; hurt_cooldown = 0; damage_hp = 0;
-    max_hp = 100; level = 1; exp = 0;
+    max_hp = 100; level = 1; exp = 0; hp = 100;
     exp_to_next = 100; init_atk = HeroSetting::init_ATK;
     atk = init_atk; speed = HeroSetting::init_SPEED;
     score = 0; levelup = false;

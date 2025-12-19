@@ -25,9 +25,10 @@
 
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
-constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
+constexpr char game_start_sound_path[] = "./assets/sound/game_start.wav";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/BackGroundSound.mp3";
+constexpr char gameover_sound_path[] = "./assets/sound/gameover_sound.wav";
 constexpr char help_img_path[] = "./assets/image/help.jpg";
 constexpr char pulse_image[] = "./assets/image/pulse.png";
 /**
@@ -43,7 +44,6 @@ void Game::reset_game(){
 	DC->camera->init();
 	DC->hero->reset();
 	//OP->reset();
-	// DC->timer_t = al_get_timer_count(timer);
 	DC->play_time = 0;
 	DC->last_time = al_get_time();
 }
@@ -206,11 +206,12 @@ Game::game_update() {
 	const Point &mouse = DC->mouse;
 	switch(state) {
 		case STATE::START: {
-			static bool is_played = false;
-			if(!is_played) {
-				SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.3);
+			//static bool is_played = false;
+			//ALLEGRO_SAMPLE_INSTANCE *start = nullptr;
+			/*if(!is_played) {
+				//start = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.5);
 				is_played = true;
-			}
+			}*/
 			if(show_help_menu){
 				if(mouse_down && !mouse_prev){
 					show_help_menu = false;
@@ -220,7 +221,7 @@ Game::game_update() {
 
 			if(start_btn.update(mouse, mouse_down, mouse_prev)){
 				debug_log("<Game> state: change to LEVEL\n");
-				// DC->timer_t = al_get_timer_count(timer);
+				//al_stop_sample_instance(start);
 				state = STATE::LEVEL;
 			}
 			else if(help_btn.update(mouse, mouse_down, mouse_prev)){
@@ -256,6 +257,12 @@ Game::game_update() {
 			}
 			break;
 		}case STATE::GAMEOVER: {
+			static bool isplayed = false;
+			if(!isplayed) {
+				SoundCenter *SC = SoundCenter::get_instance();
+				SC->play(gameover_sound_path, ALLEGRO_PLAYMODE_ONCE, 0.5);
+				isplayed = true;
+			}
 			if(restart_btn.update(mouse, mouse_down, mouse_prev)) {
 				reset_game();
 				state = STATE::START;
@@ -370,18 +377,22 @@ Game::game_draw() {
         }
         case STATE::PAUSE: {
             // 半透明遮罩
-            al_draw_filled_rectangle(
-                0, 0, DC->window_width, DC->window_height,
-                al_map_rgba(50, 50, 50, 64)
-            );
-            // 中央顯示 GAME PAUSED
-            al_draw_text(
-                FC->caviar_dreams[FontSize::LARGE],
-                al_map_rgb(255, 255, 255),
-                DC->window_width / 2.0, DC->window_height / 2.0,
-                ALLEGRO_ALIGN_CENTRE,
-                "press anywhere to continue"
-            );
+            al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(50, 50, 50, 64));
+            al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+			 DC->window_width / 2.0, DC->window_height / 2.0, ALLEGRO_ALIGN_CENTRE,"press anywhere to continue" );
+			char word[128];
+			sprintf(word, "Level: %d", DC->hero->level);
+			al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255), 
+							DC->window_width / 2, DC->window_height/2 - 100, ALLEGRO_ALIGN_CENTRE, word);
+			sprintf(word, "Kills: %d", DC->hero->score);
+			al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+							DC->window_width / 2, DC->window_height/2 - 200, ALLEGRO_ALIGN_CENTRE, word);
+			unsigned int sec = (int)(DC->play_time);
+			int mm = (int)(sec / 60);
+			int ss = (int)(sec % 60);
+			sprintf(word, "Time: %02d : %02d", mm, ss);
+			al_draw_text(FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+							DC->window_width / 2, DC->window_height/2 - 300,ALLEGRO_ALIGN_CENTRE, word);
             break;
         }
 		case STATE::GAMEOVER: {
@@ -403,6 +414,12 @@ Game::game_draw() {
 			sprintf(word, "Kills: %d", DC->hero->score);
 			al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255),
 							DC->window_width / 2, y + 160, ALLEGRO_ALIGN_CENTRE, word);
+			unsigned int sec = (int)(DC->play_time);
+			int mm = (int)(sec / 60);
+			int ss = (int)(sec % 60);
+			sprintf(word, "Time: %02d : %02d", mm, ss);
+			al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(255, 255, 255), 
+							DC->window_width / 2, y + 200, ALLEGRO_ALIGN_CENTRE, word);
 
 			ALLEGRO_COLOR btn_color = al_map_rgb(50, 50, 50);
 			ALLEGRO_COLOR btn_hover = al_map_rgb(80, 80, 80);

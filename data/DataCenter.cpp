@@ -41,6 +41,7 @@ void DataCenter::reset_object() {
 	buff_items.clear();
 	next_mob_idx = 0;
 	mobs.clear();
+	Mob::reset();
 	enemy_spells.clear();
 	next_exp_idx = 0;
 	exps.clear();
